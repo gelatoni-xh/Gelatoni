@@ -4,6 +4,7 @@ import com.csxuhuan.gelatoni.application.service.user.UserService;
 import com.csxuhuan.gelatoni.domain.model.user.User;
 import com.csxuhuan.gelatoni.infrastructure.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -11,10 +12,14 @@ import java.util.List;
  * 用户服务实现类
  * 提供用户相关的业务操作实现
  */
+@Service
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
+
+    public UserServiceImpl(UserRepository repository) {
+        this.repository = repository;
+    }
 
     /**
      * 获取所有用户信息

@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.infrastructure.repository.user.impl;
 
 import com.csxuhuan.gelatoni.domain.model.user.User;
 import com.csxuhuan.gelatoni.infrastructure.repository.user.UserRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
  * 用户仓库实现类
  * 提供用户数据访问的具体实现
  */
+@Repository
 public class UserRepositoryImpl implements UserRepository {
     /**
      * 查询所有用户

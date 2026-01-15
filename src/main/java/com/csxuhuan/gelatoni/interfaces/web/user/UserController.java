@@ -11,7 +11,7 @@ import java.util.List;
  * 提供用户相关的REST API接口
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
 
     private final UserService service;
