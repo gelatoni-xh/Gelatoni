@@ -34,8 +34,9 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_PEM }}
           port: 22
-          source: "gelatoni-0.0.1-SNAPSHOT.jar"
+          source: "target/gelatoni-0.0.1-SNAPSHOT.jar"
           target: ${{ vars.JAR_TARGET_PATH }}
+          strip_components: 1
 
       # 5. 重启 systemd 服务
       - name: Restart Gelatoni Service
