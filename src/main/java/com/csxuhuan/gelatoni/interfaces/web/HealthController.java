@@ -1,4 +1,4 @@
-package com.csxuhuan.gelatoni.interfaces.web.system;
+package com.csxuhuan.gelatoni.interfaces.web;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
