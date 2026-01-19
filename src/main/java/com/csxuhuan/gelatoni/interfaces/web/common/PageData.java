@@ -1,14 +1,12 @@
-package com.csxuhuan.gelatoni.interfaces.web.response;
-
+package com.csxuhuan.gelatoni.interfaces.web.common;
 
 import java.util.List;
 
 /**
- * 分页响应的协议基类
- *
+ * 分页数据响应
  * @param <T> 前端展示用 DTO
  */
-public class BasePageResponse<T> {
+public class PageData<T> {
 
     /**
      * 当前页数据列表
@@ -30,8 +28,16 @@ public class BasePageResponse<T> {
      */
     private Integer pageSize;
 
-    public BasePageResponse(List<T> collect, long total, int pageNo, int pageSize) {
-        this.list = collect;
+    /**
+     * 创建分页数据响应
+     *
+     * @param list 当前页数据列表
+     * @param total 总记录数
+     * @param pageNo 当前页码
+     * @param pageSize 每页大小
+     */
+    public PageData(List<T> list, Long total, Integer pageNo, Integer pageSize) {
+        this.list = list;
         this.total = total;
         this.pageNo = pageNo;
         this.pageSize = pageSize;

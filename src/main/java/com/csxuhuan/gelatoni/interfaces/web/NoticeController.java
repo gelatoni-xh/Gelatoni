@@ -7,11 +7,10 @@ import com.csxuhuan.gelatoni.domain.result.PageResult;
 import com.csxuhuan.gelatoni.interfaces.web.assembler.NoticePageAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.dto.NoticeDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.NoticePageRequest;
-import com.csxuhuan.gelatoni.interfaces.web.response.BasePageResponse;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
+import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/notice")
@@ -24,13 +23,22 @@ public class NoticeController {
         this.noticeAppService = noticeAppService;
     }
 
-    @PostMapping("/page")
-    public BasePageResponse<NoticeDTO> page(@RequestBody NoticePageRequest request) {
+    /**
+     * 分页查询
+     * @param request 请求参数
+     * @return 分页结果
+     */
+    @PostMapping(value = "/page",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<PageData<NoticeDTO>> page(@RequestBody NoticePageRequest request) {
 
         NoticePageQuery query = assembler.toDomainQuery(request);
 
         PageResult<Notice> pageResult = noticeAppService.pageQuery(query);
 
-        return assembler.toResponse(pageResult);
+        PageData<NoticeDTO> pageData = assembler.toPageData(pageResult);
+
+        return BaseResponse.success(pageData);
     }
 }

@@ -1,23 +1,24 @@
 <configuration scan="true">
 
-    <!-- 日志模式 -->
-    <property name="LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"/>
+    <!-- ================= 基础属性 ================= -->
 
-    <!-- 日志目录 -->
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"/>
+
     <property name="LOG_HOME" value="${LOG_HOME:-./logs}"/>
-    <property name="LOG_FILE" value="app.log"/>
-    <property name="ERROR_FILE" value="error.log"/>
 
-    <!-- 控制台输出 -->
+    <!-- ================= Appenders ================= -->
+
+    <!-- 控制台 -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- 主日志文件输出 + 滚动 -->
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/${LOG_FILE}</file>
+    <!-- 应用主日志 -->
+    <appender name="APP_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/app.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_HOME}/app-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>50MB</maxFileSize>
@@ -29,32 +30,67 @@
         </encoder>
     </appender>
 
-    <!-- ERROR 日志单独文件 -->
-    <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_HOME}/${ERROR_FILE}</file>
+    <!-- 应用 ERROR 日志 -->
+    <appender name="APP_ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/error.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <fileNamePattern>${LOG_HOME}/error-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>50MB</maxFileSize>
             <maxHistory>30</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
         </rollingPolicy>
+
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>ERROR</level>
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
+
         <encoder>
             <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- Root 日志 -->
+    <!-- ================= Controller Digest ================= -->
+
+    <appender name="CONTROLLER_DIGEST"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/digest/controller/digest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_HOME}/digest/controller/digest.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- ================= Root（极简兜底） ================= -->
+
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-        <appender-ref ref="ERROR_FILE"/>
+        <appender-ref ref="APP_ERROR_FILE"/>
     </root>
 
-    <!-- 项目包单独 DEBUG 输出 -->
-    <logger name="com.csxuhuan.gelatoni" level="DEBUG"/>
+    <!-- ================= 应用级日志 ================= -->
+
+    <logger name="com.csxuhuan.gelatoni"
+            level="DEBUG"
+            additivity="false">
+        <appender-ref ref="APP_FILE"/>
+        <appender-ref ref="APP_ERROR_FILE"/>
+    </logger>
+
+    <!-- ================= Controller Digest Logger ================= -->
+
+    <logger name="com.csxuhuan.gelatoni.digest.controller"
+            level="INFO"
+            additivity="false">
+        <appender-ref ref="CONTROLLER_DIGEST"/>
+    </logger>
+
 </configuration>

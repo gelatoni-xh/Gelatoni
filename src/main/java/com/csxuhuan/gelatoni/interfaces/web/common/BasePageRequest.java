@@ -1,4 +1,4 @@
-package com.csxuhuan.gelatoni.interfaces.web.request;
+package com.csxuhuan.gelatoni.interfaces.web.common;
 
 /**
  * 分页请求的协议基类

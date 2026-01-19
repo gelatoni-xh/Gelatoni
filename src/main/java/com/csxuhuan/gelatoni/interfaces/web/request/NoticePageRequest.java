@@ -1,6 +1,8 @@
 package com.csxuhuan.gelatoni.interfaces.web.request;
 
 
+import com.csxuhuan.gelatoni.interfaces.web.common.BasePageRequest;
+
 /**
  * 公告分页查询请求
  *
