@@ -1,5 +1,7 @@
 package com.csxuhuan.gelatoni.interfaces.web.common;
 
+import javax.validation.constraints.Min;
+
 /**
  * 分页请求的协议基类
  *
@@ -12,11 +14,13 @@ public abstract class BasePageRequest {
     /**
      * 页码，从 1 开始
      */
+    @Min(value = 1, message = "页码不能小于 1")
     private Integer pageNo = 1;
 
     /**
      * 每页大小
      */
+    @Min(value = 1, message = "每页大小不能小于 1")
     private Integer pageSize = 10;
 
     public Integer getPageNo() {

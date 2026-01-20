@@ -1,4 +1,4 @@
-package com.csxuhuan.gelatoni.interfaces.digest;
+package com.csxuhuan.gelatoni.interfaces.aspect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -11,7 +11,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 
-@Slf4j(topic = "com.csxuhuan.gelatoni.digest.controller")
+@Slf4j(topic = "com.csxuhuan.gelatoni.aspect.controller")
 @Aspect
 @Component
 public class ControllerLogAspect {

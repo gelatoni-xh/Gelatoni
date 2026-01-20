@@ -12,6 +12,8 @@ import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/api/notice")
 public class NoticeController {
@@ -31,7 +33,7 @@ public class NoticeController {
     @PostMapping(value = "/page",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponse<PageData<NoticeDTO>> page(@RequestBody NoticePageRequest request) {
+    public BaseResponse<PageData<NoticeDTO>> page(@Valid @RequestBody NoticePageRequest request) {
 
         NoticePageQuery query = assembler.toDomainQuery(request);
 

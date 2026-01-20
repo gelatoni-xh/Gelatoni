@@ -87,7 +87,7 @@
 
     <!-- ================= Controller Digest Logger ================= -->
 
-    <logger name="com.csxuhuan.gelatoni.digest.controller"
+    <logger name="com.csxuhuan.gelatoni.aspect.controller"
             level="INFO"
             additivity="false">
         <appender-ref ref="CONTROLLER_DIGEST"/>

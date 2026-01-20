@@ -10,9 +10,19 @@ public enum ResultCode {
     SUCCESS("200", "成功"),
 
     /**
+     * 参数错误
+     */
+    PARAM_ERROR("400", "参数错误"),
+
+    /**
+     * 业务处理失败
+     */
+    BIZ_ERROR("1000", "业务处理失败"),
+
+    /**
      * 系统异常
      */
-    FAIL("500", "系统异常")
+    SYSTEM_ERROR("500", "系统异常");
     ;
 
     private String code;
