@@ -1,5 +1,7 @@
 package com.csxuhuan.gelatoni.interfaces.web.common;
 
+import org.springframework.cloud.sleuth.Tracer;
+
 /**
  * 响应基类
  * @param <T> 前端展示用 DTO
@@ -27,6 +29,16 @@ public class BaseResponse<T> {
     private String message;
 
     /**
+     * 链路追踪ID
+     */
+    private String traceId;
+
+    /**
+     * Tracer
+     */
+    private static Tracer staticTracer;
+
+    /**
      * 创建响应
      *
      * @param success 是否成功
@@ -39,6 +51,7 @@ public class BaseResponse<T> {
         this.statusCode = statusCode;
         this.data = data;
         this.message = message;
+        this.traceId = getTraceIdFromContext();
     }
 
 
@@ -63,6 +76,24 @@ public class BaseResponse<T> {
      */
     public static <T> BaseResponse<T> error(ResultCode resultCode, String message) {
         return new BaseResponse<>(false, resultCode.getCode(), null, message);
+    }
+
+    /**
+     * 安全获取traceId
+     */
+    private String getTraceIdFromContext() {
+        if (staticTracer != null) {
+            try {
+                org.springframework.cloud.sleuth.TraceContext currentSpan = staticTracer.currentTraceContext().context();
+                if (currentSpan != null) {
+                    return currentSpan.traceId();
+                }
+            } catch (Exception e) {
+                // 如果获取traceId失败，返回null或默认值
+                return null;
+            }
+        }
+        return null;
     }
 
     public boolean isSuccess() {
@@ -95,5 +126,13 @@ public class BaseResponse<T> {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getTraceId() {
+        return traceId;
+    }
+
+    public void setTraceId(String traceId) {
+        this.traceId = traceId;
     }
 }
