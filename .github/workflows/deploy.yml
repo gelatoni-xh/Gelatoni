@@ -9,9 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     environment: prod
-    env:
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout repository
