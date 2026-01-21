@@ -46,6 +46,7 @@ public class NoticePageAssembler {
      */
     private NoticeDTO toDTO(Notice notice) {
         NoticeDTO dto = new NoticeDTO();
+        dto.setTitle(notice.getTitle());
         dto.setContent(notice.getContent());
         dto.setCreateTime(notice.getCreateTime());
         return dto;
