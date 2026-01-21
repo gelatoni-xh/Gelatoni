@@ -11,15 +11,18 @@ import java.time.LocalDateTime;
 public class Notice {
 
     private final Long id;
+    private final String title;
     private final String content;
     private final LocalDateTime createTime;
     private final LocalDateTime modifiedTime;
 
     public Notice(Long id,
+                  String title,
                   String content,
                   LocalDateTime createTime,
                   LocalDateTime modifiedTime) {
         this.id = id;
+        this.title = title;
         this.content = content;
         this.createTime = createTime;
         this.modifiedTime = modifiedTime;

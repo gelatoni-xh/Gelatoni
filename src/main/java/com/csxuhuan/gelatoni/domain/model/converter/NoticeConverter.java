@@ -23,6 +23,7 @@ public class NoticeConverter {
 
         return new Notice(
                 noticeDO.getId(),
+                noticeDO.getTitle(),
                 noticeDO.getContent(),
                 noticeDO.getCreateTime(),
                 noticeDO.getModifiedTime()

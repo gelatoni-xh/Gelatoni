@@ -42,6 +42,8 @@ public class NoticeRepositoryImpl implements NoticeRepository {
         List<Notice> notices = doPage.getRecords()
                 .stream()
                 .map(NoticeConverter::toDomain)
+                // 按时间倒序
+                .sorted((a, b) -> b.getCreateTime().compareTo(a.getCreateTime()))
                 .collect(Collectors.toList());
 
         // 4️⃣ 构造领域分页对象
