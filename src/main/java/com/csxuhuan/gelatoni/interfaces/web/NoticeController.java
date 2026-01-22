@@ -5,6 +5,7 @@ import com.csxuhuan.gelatoni.domain.model.entity.Notice;
 import com.csxuhuan.gelatoni.domain.query.NoticeCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.NoticePageQuery;
 import com.csxuhuan.gelatoni.domain.result.PageResult;
+import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.interfaces.web.assembler.NoticeAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.dto.NoticeDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.NoticeCreateRequest;
@@ -49,6 +50,7 @@ public class NoticeController {
     /**
      * 新增公告
      */
+    @AuthCheck
     @PostMapping(value = "/create",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

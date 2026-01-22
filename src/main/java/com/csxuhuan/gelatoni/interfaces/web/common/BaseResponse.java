@@ -1,10 +1,5 @@
 package com.csxuhuan.gelatoni.interfaces.web.common;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.sleuth.Span;
-import org.springframework.cloud.sleuth.TraceContext;
-import org.springframework.cloud.sleuth.Tracer;
-
 /**
  * 响应基类
  * @param <T> 前端展示用 DTO

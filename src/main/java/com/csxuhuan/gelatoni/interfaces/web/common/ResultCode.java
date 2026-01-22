@@ -15,6 +15,11 @@ public enum ResultCode {
     PARAM_ERROR("400", "参数错误"),
 
     /**
+     * 未授权
+     */
+    UNAUTHORIZED("401", "未授权"),
+
+    /**
      * 业务处理失败
      */
     BIZ_ERROR("1000", "业务处理失败"),
