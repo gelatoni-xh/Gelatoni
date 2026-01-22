@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.interfaces.config;
 
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Slf4j
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
@@ -32,6 +34,9 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (method.getMethod().isAnnotationPresent(AuthCheck.class)) {
             String authHeader = request.getHeader("Authorization");
             if (authHeader == null || !authHeader.equals("Bearer " + fixedToken)) {
+                // 在error.log里打印 authHeader和fixedToken
+                log.error("authHeader: {}, fixedToken: {}", authHeader, fixedToken);
+
                 // 返回统一 BaseResponse JSON
                 response.setContentType("application/json;charset=UTF-8");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
