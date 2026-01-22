@@ -56,4 +56,15 @@ public class NoticeRepositoryImpl implements NoticeRepository {
 
         return domainPage;
     }
+
+    /**
+     * 新增
+     *
+     * @param notice 新增的领域对象
+     * @return 新增的ID
+     */
+    @Override
+    public int createNotice(Notice notice) {
+        return noticeMapper.insert(NoticeConverter.toDO(notice));
+    }
 }

@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.domain.service;
 
 import com.csxuhuan.gelatoni.domain.model.entity.Notice;
+import com.csxuhuan.gelatoni.domain.query.NoticeCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.NoticePageQuery;
 import com.csxuhuan.gelatoni.domain.result.PageResult;
 
@@ -20,4 +21,12 @@ public interface NoticeDomainService {
      * @return 分页结果
      */
     PageResult<Notice> pageQuery(NoticePageQuery query);
+
+    /**
+     * 创建公告
+     *
+     * @param query 创建条件
+     * @return 创建结果
+     */
+    int create(NoticeCreateQuery query);
 }

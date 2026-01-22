@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.domain.service.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.csxuhuan.gelatoni.domain.model.entity.Notice;
+import com.csxuhuan.gelatoni.domain.query.NoticeCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.NoticePageQuery;
 import com.csxuhuan.gelatoni.domain.result.PageResult;
 import com.csxuhuan.gelatoni.domain.service.NoticeDomainService;
@@ -30,5 +31,17 @@ public class NoticeDomainServiceImpl implements NoticeDomainService {
     public PageResult<Notice> pageQuery(NoticePageQuery query) {
         IPage<Notice> page = noticeRepository.pageNotices(query.getPageNo(), query.getPageSize());
         return PageResult.of(page.getRecords(), page.getCurrent(), page.getSize(), page.getTotal());
+    }
+
+    /**
+     * 新增
+     *
+     * @param query 创建条件
+     * @return 新增的ID
+     */
+    @Override
+    public int create(NoticeCreateQuery query) {
+        Notice notice = query.toNotice();
+        return noticeRepository.createNotice(notice);
     }
 }

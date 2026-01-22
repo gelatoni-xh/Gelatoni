@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.application.service.impl;
 
 import com.csxuhuan.gelatoni.application.service.NoticeAppService;
 import com.csxuhuan.gelatoni.domain.model.entity.Notice;
+import com.csxuhuan.gelatoni.domain.query.NoticeCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.NoticePageQuery;
 import com.csxuhuan.gelatoni.domain.result.PageResult;
 import com.csxuhuan.gelatoni.domain.service.NoticeDomainService;
@@ -32,4 +33,14 @@ public class NoticeAppServiceImpl implements NoticeAppService {
         return noticeDomainService.pageQuery(query);
     }
 
+    /**
+     * 新增
+     *
+     * @param query 创建公告的参数
+     * @return 新增的公告ID
+     */
+    @Override
+    public int create(NoticeCreateQuery query) {
+        return noticeDomainService.create(query);
+    }
 }

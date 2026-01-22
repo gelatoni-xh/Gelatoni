@@ -48,6 +48,15 @@ public class NoticeDO {
      */
     private Boolean isDeleted;
 
+    public NoticeDO(Long id, String title, String content, LocalDateTime createTime, LocalDateTime modifiedTime, Boolean isDeleted) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createTime = createTime;
+        this.modifiedTime = modifiedTime;
+        this.isDeleted = isDeleted;
+    }
+
     // ===== Getter / Setter =====
 
     public Long getId() {

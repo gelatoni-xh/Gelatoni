@@ -1,5 +1,6 @@
 package com.csxuhuan.gelatoni.domain.model.converter;
 
+import com.csxuhuan.gelatoni.domain.model.common.DeletedEnum;
 import com.csxuhuan.gelatoni.domain.model.entity.Notice;
 import com.csxuhuan.gelatoni.infrastructure.repository.entity.NoticeDO;
 
@@ -27,6 +28,21 @@ public class NoticeConverter {
                 noticeDO.getContent(),
                 noticeDO.getCreateTime(),
                 noticeDO.getModifiedTime()
+        );
+    }
+
+
+    public static NoticeDO toDO(Notice notice) {
+        if (notice == null) {
+            return null;
+        }
+        return new NoticeDO(
+                notice.getId(),
+                notice.getTitle(),
+                notice.getContent(),
+                notice.getCreateTime(),
+                notice.getModifiedTime(),
+                DeletedEnum.NOT_DELETED.getValue()
         );
     }
 }

@@ -20,4 +20,12 @@ public interface NoticeRepository {
      * @return 公告分页结果（领域对象）
      */
     IPage<Notice> pageNotices(long pageNo, long pageSize);
+
+    /**
+     * 新增公告
+     *
+     * @param notice 新增的领域对象
+     * @return 新增的ID
+     */
+    int createNotice(Notice notice);
 }
