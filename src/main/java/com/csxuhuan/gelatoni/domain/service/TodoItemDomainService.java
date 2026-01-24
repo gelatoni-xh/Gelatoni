@@ -7,41 +7,47 @@ import com.csxuhuan.gelatoni.domain.query.TodoItemUpdateQuery;
 import java.util.List;
 
 /**
- * TODO项领域服务
+ * TODO 项领域服务接口
  *
- * 说明：
- * - 负责TODO项相关的领域行为
+ * <p>定义 TODO 项相关的领域行为，包括查询、创建和更新操作。
+ *
+ * @author csxuhuan
+ * @see com.csxuhuan.gelatoni.domain.service.impl.TodoItemDomainServiceImpl
  */
 public interface TodoItemDomainService {
 
     /**
-     * 查询所有TODO项
+     * 查询所有 TODO 项
      *
-     * @return TODO项列表
+     * <p>返回所有未删除的 TODO 项，按创建时间倒序排列。
+     *
+     * @return TODO 项列表
      */
     List<TodoItem> findAll();
 
     /**
-     * 根据标签ID查询TODO项
+     * 根据标签 ID 查询 TODO 项
      *
-     * @param tagId 标签ID
-     * @return TODO项列表
+     * <p>查询指定标签下的所有未删除 TODO 项。
+     *
+     * @param tagId 标签 ID
+     * @return 该标签下的 TODO 项列表
      */
     List<TodoItem> findByTagId(Long tagId);
 
     /**
-     * 创建TODO项
+     * 创建 TODO 项
      *
      * @param query 创建条件
-     * @return 创建结果
+     * @return 影响的行数
      */
     int create(TodoItemCreateQuery query);
 
     /**
-     * 更新TODO项
+     * 更新 TODO 项
      *
      * @param query 更新条件
-     * @return 更新结果
+     * @return 影响的行数
      */
     int update(TodoItemUpdateQuery query);
 }

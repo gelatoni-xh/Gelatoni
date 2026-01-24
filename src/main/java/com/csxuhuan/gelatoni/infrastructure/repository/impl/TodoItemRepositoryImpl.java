@@ -13,18 +13,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TODO项仓储实现
+ * TODO 项仓储实现
  *
- * 职责边界：
- * - 只在这里出现 TodoItemDO
- * - 负责 DO → Domain 的转换
- * - 屏蔽 MyBatis-Plus 对上层的影响
+ * <p>实现 {@link TodoItemRepository} 接口，使用 MyBatis-Plus 进行数据访问。
+ *
+ * <p>查询约定：
+ * <ul>
+ *     <li>所有查询默认过滤已删除的记录（isDeleted = false）</li>
+ *     <li>列表查询按创建时间倒序排列</li>
+ * </ul>
+ *
+ * @author csxuhuan
  */
 @Repository
 public class TodoItemRepositoryImpl implements TodoItemRepository {
 
     private final TodoItemMapper todoItemMapper;
 
+    /**
+     * 构造函数，注入 Mapper
+     *
+     * @param todoItemMapper TODO 项 Mapper
+     */
     public TodoItemRepositoryImpl(TodoItemMapper todoItemMapper) {
         this.todoItemMapper = todoItemMapper;
     }

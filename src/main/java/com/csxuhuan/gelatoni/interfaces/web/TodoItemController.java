@@ -98,10 +98,14 @@ public class TodoItemController {
     }
 
     /**
-     * 创建TODO项
+     * 创建 TODO 项
      *
-     * @param request 创建请求
-     * @return 创建结果
+     * <p>创建一条新的 TODO 待办事项。此接口需要认证（Bearer Token），
+     * 仅授权用户可以调用。新创建的 TODO 项默认为未完成状态。
+     *
+     * @param request 创建请求，包含 content（内容）和可选的 tagId（标签ID）
+     * @return 创建结果，返回影响的行数
+     * @see AuthCheck 认证注解
      */
     @AuthCheck
     @PostMapping(value = "/create",
@@ -114,10 +118,14 @@ public class TodoItemController {
     }
 
     /**
-     * 更新TODO项
+     * 更新 TODO 项
      *
-     * @param request 更新请求
-     * @return 更新结果
+     * <p>更新指定的 TODO 项信息。此接口需要认证（Bearer Token），
+     * 仅授权用户可以调用。支持部分更新，只更新请求中提供的字段。
+     *
+     * @param request 更新请求，包含 id（必填）以及可选的 content、completed、tagId
+     * @return 更新结果，返回影响的行数
+     * @see AuthCheck 认证注解
      */
     @AuthCheck
     @PostMapping(value = "/update",
@@ -130,9 +138,12 @@ public class TodoItemController {
     }
 
     /**
-     * 获取标签ID到标签的映射
+     * 构建标签 ID 到标签对象的映射
      *
-     * @return 标签映射
+     * <p>查询所有标签并构建映射表，用于在返回 TODO 项时填充标签名称。
+     * 避免了 N+1 查询问题。
+     *
+     * @return Map&lt;标签ID, 标签对象&gt;
      */
     private Map<Long, TodoTag> getTagMap() {
         List<TodoTag> tags = todoTagAppService.findAll();

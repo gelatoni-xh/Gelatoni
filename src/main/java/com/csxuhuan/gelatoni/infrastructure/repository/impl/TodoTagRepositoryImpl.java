@@ -12,18 +12,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 标签仓储实现
+ * TODO 标签仓储实现
  *
- * 职责边界：
- * - 只在这里出现 TodoTagDO
- * - 负责 DO → Domain 的转换
- * - 屏蔽 MyBatis-Plus 对上层的影响
+ * <p>实现 {@link TodoTagRepository} 接口，使用 MyBatis-Plus 进行数据访问。
+ *
+ * @author csxuhuan
  */
 @Repository
 public class TodoTagRepositoryImpl implements TodoTagRepository {
 
     private final TodoTagMapper todoTagMapper;
 
+    /**
+     * 构造函数，注入 Mapper
+     *
+     * @param todoTagMapper 标签 Mapper
+     */
     public TodoTagRepositoryImpl(TodoTagMapper todoTagMapper) {
         this.todoTagMapper = todoTagMapper;
     }

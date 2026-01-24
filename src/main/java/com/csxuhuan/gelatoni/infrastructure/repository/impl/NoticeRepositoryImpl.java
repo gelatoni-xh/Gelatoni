@@ -15,38 +15,59 @@ import java.util.stream.Collectors;
 /**
  * 公告仓储实现
  *
- * 职责边界：
- * - 只在这里出现 NoticeDO
- * - 负责 DO → Domain 的转换
- * - 屏蔽 MyBatis-Plus 对上层的影响
+ * <p>实现 {@link NoticeRepository} 接口，使用 MyBatis-Plus 进行数据访问。
+ *
+ * <p>职责边界（DDD 仓储模式）：
+ * <ul>
+ *     <li>NoticeDO 只在此类中出现，不向上层暴露</li>
+ *     <li>负责 DO ↔ Domain 的转换（通过 Converter）</li>
+ *     <li>屏蔽 MyBatis-Plus 的实现细节，上层只看到领域对象</li>
+ * </ul>
+ *
+ * @author csxuhuan
  */
 @Repository
 public class NoticeRepositoryImpl implements NoticeRepository {
 
     private final NoticeMapper noticeMapper;
 
+    /**
+     * 构造函数，注入 Mapper
+     *
+     * @param noticeMapper 公告 Mapper
+     */
     public NoticeRepositoryImpl(NoticeMapper noticeMapper) {
         this.noticeMapper = noticeMapper;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>实现说明：
+     * <ol>
+     *     <li>使用 MyBatis-Plus 的 Page 对象执行分页查询</li>
+     *     <li>将查询结果的 DO 列表转换为领域对象列表</li>
+     *     <li>按创建时间倒序排序</li>
+     *     <li>封装为领域层的分页对象返回</li>
+     * </ol>
+     */
     @Override
     public IPage<Notice> pageNotices(long pageNo, long pageSize) {
 
-        // 1️⃣ MyBatis-Plus 强约束：Page 泛型必须是 DO
+        // MyBatis-Plus 约束：Page 泛型必须是 DO 类型
         Page<NoticeDO> page = new Page<>(pageNo, pageSize);
 
-        // 2️⃣ 执行分页查询
+        // 执行分页查询
         IPage<NoticeDO> doPage = noticeMapper.selectPage(page, null);
 
-        // 3️⃣ DO → Domain
+        // DO → Domain 转换，并按时间倒序排列
         List<Notice> notices = doPage.getRecords()
                 .stream()
                 .map(NoticeConverter::toDomain)
-                // 按时间倒序
                 .sorted((a, b) -> b.getCreateTime().compareTo(a.getCreateTime()))
                 .collect(Collectors.toList());
 
-        // 4️⃣ 构造领域分页对象
+        // 构造领域分页对象
         Page<Notice> domainPage = new Page<>(
                 doPage.getCurrent(),
                 doPage.getSize(),
@@ -58,10 +79,7 @@ public class NoticeRepositoryImpl implements NoticeRepository {
     }
 
     /**
-     * 新增
-     *
-     * @param notice 新增的领域对象
-     * @return 新增的ID
+     * {@inheritDoc}
      */
     @Override
     public int createNotice(Notice notice) {

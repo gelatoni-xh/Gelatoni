@@ -9,23 +9,33 @@ import com.csxuhuan.gelatoni.domain.service.NoticeDomainService;
 import com.csxuhuan.gelatoni.infrastructure.repository.NoticeRepository;
 import org.springframework.stereotype.Service;
 
-
 /**
  * 公告领域服务实现
+ *
+ * <p>实现 {@link NoticeDomainService} 接口，处理公告相关的领域逻辑。
+ * 通过 {@link NoticeRepository} 访问数据，屏蔽持久化实现细节。
+ *
+ * @author csxuhuan
  */
 @Service
 public class NoticeDomainServiceImpl implements NoticeDomainService {
 
     private final NoticeRepository noticeRepository;
 
+    /**
+     * 构造函数，注入仓储接口
+     *
+     * @param noticeRepository 公告仓储
+     */
     public NoticeDomainServiceImpl(NoticeRepository noticeRepository) {
         this.noticeRepository = noticeRepository;
     }
 
     /**
-     * 分页查询
-     * @param query 查询条件
-     * @return 分页结果
+     * {@inheritDoc}
+     *
+     * <p>实现说明：委托给 Repository 执行分页查询，
+     * 将 MyBatis-Plus 的 IPage 转换为领域层的 PageResult。
      */
     @Override
     public PageResult<Notice> pageQuery(NoticePageQuery query) {
@@ -34,10 +44,9 @@ public class NoticeDomainServiceImpl implements NoticeDomainService {
     }
 
     /**
-     * 新增
+     * {@inheritDoc}
      *
-     * @param query 创建条件
-     * @return 新增的ID
+     * <p>实现说明：将查询对象转换为领域实体，然后委托给 Repository 持久化。
      */
     @Override
     public int create(NoticeCreateQuery query) {
