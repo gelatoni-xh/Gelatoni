@@ -1,6 +1,6 @@
 package com.csxuhuan.gelatoni.interfaces.web;
 
-import com.csxuhuan.gelatoni.application.service.TodoTagAppService;
+import com.csxuhuan.gelatoni.application.service.TodoAppService;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.domain.query.TodoTagCreateQuery;
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
@@ -28,22 +28,22 @@ import java.util.List;
  * <p>接口路径前缀：/api/todo/tag
  *
  * @author csxuhuan
- * @see TodoTagAppService
+ * @see TodoAppService
  */
 @RestController
 @RequestMapping("/api/todo/tag")
 public class TodoTagController {
 
-    private final TodoTagAppService todoTagAppService;
+    private final TodoAppService todoAppService;
     private final TodoTagAssembler assembler = new TodoTagAssembler();
 
     /**
-     * 构造函数，注入标签应用服务
+     * 构造函数，注入应用服务
      *
-     * @param todoTagAppService 标签应用服务
+     * @param todoAppService TODO应用服务
      */
-    public TodoTagController(TodoTagAppService todoTagAppService) {
-        this.todoTagAppService = todoTagAppService;
+    public TodoTagController(TodoAppService todoAppService) {
+        this.todoAppService = todoAppService;
     }
 
     /**
@@ -56,7 +56,7 @@ public class TodoTagController {
      */
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoTagDTO>> list() {
-        List<TodoTag> tags = todoTagAppService.findAll();
+        List<TodoTag> tags = todoAppService.findAllTags();
         List<TodoTagDTO> dtoList = assembler.toDTOList(tags);
         return BaseResponse.success(dtoList);
     }
@@ -77,7 +77,7 @@ public class TodoTagController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> create(@Valid @RequestBody TodoTagCreateRequest request) {
         TodoTagCreateQuery query = assembler.toDomainQuery(request);
-        int result = todoTagAppService.create(query);
+        int result = todoAppService.createTag(query);
         return BaseResponse.success(result);
     }
 }

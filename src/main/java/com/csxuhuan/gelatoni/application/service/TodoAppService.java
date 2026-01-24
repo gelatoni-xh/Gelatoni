@@ -1,15 +1,17 @@
 package com.csxuhuan.gelatoni.application.service;
 
 import com.csxuhuan.gelatoni.domain.model.entity.TodoItem;
+import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.domain.query.TodoItemCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.TodoItemUpdateQuery;
+import com.csxuhuan.gelatoni.domain.query.TodoTagCreateQuery;
 
 import java.util.List;
 
 /**
- * TODO 项应用服务接口
+ * TODO 应用服务接口
  *
- * <p>应用层服务，提供 TODO 待办事项相关的业务操作。
+ * <p>应用层服务，提供 TODO 待办事项和标签相关的业务操作。
  * 作为 interfaces 层与 domain 层之间的桥梁。
  *
  * <p>支持的操作：
@@ -18,12 +20,16 @@ import java.util.List;
  *     <li>按标签筛选 TODO 项</li>
  *     <li>创建新的 TODO 项</li>
  *     <li>更新已有的 TODO 项</li>
+ *     <li>查询所有标签</li>
+ *     <li>创建新标签</li>
  * </ul>
  *
  * @author csxuhuan
- * @see com.csxuhuan.gelatoni.application.service.impl.TodoItemAppServiceImpl
+ * @see com.csxuhuan.gelatoni.application.service.impl.TodoAppServiceImpl
  */
-public interface TodoItemAppService {
+public interface TodoAppService {
+
+    // ========== TODO 项相关方法 ==========
 
     /**
      * 查询所有 TODO 项
@@ -32,7 +38,7 @@ public interface TodoItemAppService {
      *
      * @return TODO 项列表
      */
-    List<TodoItem> findAll();
+    List<TodoItem> findAllItems();
 
     /**
      * 根据标签 ID 查询 TODO 项
@@ -42,7 +48,7 @@ public interface TodoItemAppService {
      * @param tagId 标签 ID
      * @return 该标签下的 TODO 项列表
      */
-    List<TodoItem> findByTagId(Long tagId);
+    List<TodoItem> findItemsByTagId(Long tagId);
 
     /**
      * 创建 TODO 项
@@ -52,7 +58,7 @@ public interface TodoItemAppService {
      * @param query 创建条件，包含 content 和可选的 tagId
      * @return 影响的行数
      */
-    int create(TodoItemCreateQuery query);
+    int createItem(TodoItemCreateQuery query);
 
     /**
      * 更新 TODO 项
@@ -62,5 +68,26 @@ public interface TodoItemAppService {
      * @param query 更新条件，包含 id（必填）及可选的 content、completed、tagId
      * @return 影响的行数
      */
-    int update(TodoItemUpdateQuery query);
+    int updateItem(TodoItemUpdateQuery query);
+
+    // ========== TODO 标签相关方法 ==========
+
+    /**
+     * 查询所有标签
+     *
+     * <p>返回所有未删除的标签，按创建时间倒序排列。
+     *
+     * @return 标签列表
+     */
+    List<TodoTag> findAllTags();
+
+    /**
+     * 创建标签
+     *
+     * <p>创建一个新的 TODO 标签。
+     *
+     * @param query 创建条件，包含 name（标签名称）
+     * @return 影响的行数
+     */
+    int createTag(TodoTagCreateQuery query);
 }

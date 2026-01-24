@@ -1,7 +1,6 @@
 package com.csxuhuan.gelatoni.interfaces.web;
 
-import com.csxuhuan.gelatoni.application.service.TodoItemAppService;
-import com.csxuhuan.gelatoni.application.service.TodoTagAppService;
+import com.csxuhuan.gelatoni.application.service.TodoAppService;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoItem;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.domain.query.TodoItemCreateQuery;
@@ -35,26 +34,22 @@ import java.util.stream.Collectors;
  * <p>接口路径前缀：/api/todo/item
  *
  * @author csxuhuan
- * @see TodoItemAppService
- * @see TodoTagAppService
+ * @see TodoAppService
  */
 @RestController
 @RequestMapping("/api/todo/item")
 public class TodoItemController {
 
-    private final TodoItemAppService todoItemAppService;
-    private final TodoTagAppService todoTagAppService;
+    private final TodoAppService todoAppService;
     private final TodoItemAssembler assembler = new TodoItemAssembler();
 
     /**
      * 构造函数，注入依赖服务
      *
-     * @param todoItemAppService TODO项应用服务
-     * @param todoTagAppService  标签应用服务（用于获取标签名称）
+     * @param todoAppService TODO应用服务
      */
-    public TodoItemController(TodoItemAppService todoItemAppService, TodoTagAppService todoTagAppService) {
-        this.todoItemAppService = todoItemAppService;
-        this.todoTagAppService = todoTagAppService;
+    public TodoItemController(TodoAppService todoAppService) {
+        this.todoAppService = todoAppService;
     }
 
     /**
@@ -68,7 +63,7 @@ public class TodoItemController {
      */
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoItemDTO>> list() {
-        List<TodoItem> items = todoItemAppService.findAll();
+        List<TodoItem> items = todoAppService.findAllItems();
 
         // 获取标签映射，填充标签名称
         Map<Long, TodoTag> tagMap = getTagMap();
@@ -88,7 +83,7 @@ public class TodoItemController {
      */
     @GetMapping(value = "/listByTag", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoItemDTO>> listByTag(@RequestParam("tagId") Long tagId) {
-        List<TodoItem> items = todoItemAppService.findByTagId(tagId);
+        List<TodoItem> items = todoAppService.findItemsByTagId(tagId);
 
         // 获取标签映射，填充标签名称
         Map<Long, TodoTag> tagMap = getTagMap();
@@ -113,7 +108,7 @@ public class TodoItemController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> create(@Valid @RequestBody TodoItemCreateRequest request) {
         TodoItemCreateQuery query = assembler.toDomainQuery(request);
-        int result = todoItemAppService.create(query);
+        int result = todoAppService.createItem(query);
         return BaseResponse.success(result);
     }
 
@@ -133,7 +128,7 @@ public class TodoItemController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> update(@Valid @RequestBody TodoItemUpdateRequest request) {
         TodoItemUpdateQuery query = assembler.toDomainQuery(request);
-        int result = todoItemAppService.update(query);
+        int result = todoAppService.updateItem(query);
         return BaseResponse.success(result);
     }
 
@@ -146,7 +141,7 @@ public class TodoItemController {
      * @return Map&lt;标签ID, 标签对象&gt;
      */
     private Map<Long, TodoTag> getTagMap() {
-        List<TodoTag> tags = todoTagAppService.findAll();
+        List<TodoTag> tags = todoAppService.findAllTags();
         return tags.stream()
                 .collect(Collectors.toMap(TodoTag::getId, Function.identity()));
     }
