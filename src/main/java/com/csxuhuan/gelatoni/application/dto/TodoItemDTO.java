@@ -1,4 +1,4 @@
-package com.csxuhuan.gelatoni.interfaces.web.dto;
+package com.csxuhuan.gelatoni.application.dto;
 
 import java.time.LocalDateTime;
 

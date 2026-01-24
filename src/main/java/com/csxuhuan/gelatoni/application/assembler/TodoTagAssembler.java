@@ -1,8 +1,8 @@
-package com.csxuhuan.gelatoni.interfaces.web.assembler;
+package com.csxuhuan.gelatoni.application.assembler;
 
 import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.domain.query.TodoTagCreateQuery;
-import com.csxuhuan.gelatoni.interfaces.web.dto.TodoTagDTO;
+import com.csxuhuan.gelatoni.application.dto.TodoTagDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoTagCreateRequest;
 
 import java.util.List;

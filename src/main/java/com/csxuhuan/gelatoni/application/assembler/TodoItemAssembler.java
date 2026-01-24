@@ -1,10 +1,10 @@
-package com.csxuhuan.gelatoni.interfaces.web.assembler;
+package com.csxuhuan.gelatoni.application.assembler;
 
 import com.csxuhuan.gelatoni.domain.model.entity.TodoItem;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.domain.query.TodoItemCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.TodoItemUpdateQuery;
-import com.csxuhuan.gelatoni.interfaces.web.dto.TodoItemDTO;
+import com.csxuhuan.gelatoni.application.dto.TodoItemDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoItemCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoItemUpdateRequest;
 

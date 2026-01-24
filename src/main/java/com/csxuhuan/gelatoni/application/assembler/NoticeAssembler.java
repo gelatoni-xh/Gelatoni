@@ -1,11 +1,11 @@
-package com.csxuhuan.gelatoni.interfaces.web.assembler;
+package com.csxuhuan.gelatoni.application.assembler;
 
 import com.csxuhuan.gelatoni.domain.model.entity.Notice;
 import com.csxuhuan.gelatoni.domain.query.NoticeCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.NoticePageQuery;
 import com.csxuhuan.gelatoni.domain.result.PageResult;
 import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
-import com.csxuhuan.gelatoni.interfaces.web.dto.NoticeDTO;
+import com.csxuhuan.gelatoni.application.dto.NoticeDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.NoticeCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.NoticePageRequest;
 
