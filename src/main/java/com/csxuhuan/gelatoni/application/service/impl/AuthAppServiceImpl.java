@@ -2,7 +2,7 @@ package com.csxuhuan.gelatoni.application.service.impl;
 
 import com.csxuhuan.gelatoni.application.assembler.UserAssembler;
 import com.csxuhuan.gelatoni.application.dto.UserInfoDTO;
-import com.csxuhuan.gelatoni.application.service.UserAppService;
+import com.csxuhuan.gelatoni.application.service.AuthAppService;
 import com.csxuhuan.gelatoni.domain.model.entity.User;
 import com.csxuhuan.gelatoni.domain.service.UserDomainService;
 import com.csxuhuan.gelatoni.infrastructure.repository.PermissionRepository;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 /**
  * 用户应用服务实现类
  *
- * <p>实现 {@link UserAppService} 接口，委托给领域服务处理具体业务逻辑。
+ * <p>实现 {@link AuthAppService} 接口，委托给领域服务处理具体业务逻辑。
  * 负责编排多个领域服务和仓储，完成跨领域的业务用例。
  *
  * <p>扩展点：
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * @author csxuhuan
  */
 @Service
-public class UserAppServiceImpl implements UserAppService {
+public class AuthAppServiceImpl implements AuthAppService {
 
     private final UserDomainService userDomainService;
     private final UserRoleRepository userRoleRepository;
@@ -51,7 +51,7 @@ public class UserAppServiceImpl implements UserAppService {
      * @param permissionRepository      权限仓储
      * @param userAssembler             用户装配器
      */
-    public UserAppServiceImpl(UserDomainService userDomainService,
+    public AuthAppServiceImpl(UserDomainService userDomainService,
                               UserRoleRepository userRoleRepository,
                               RoleRepository roleRepository,
                               RolePermissionRepository rolePermissionRepository,

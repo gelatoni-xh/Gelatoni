@@ -7,7 +7,6 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.RolePermissionDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.RolePermissionMapper;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;

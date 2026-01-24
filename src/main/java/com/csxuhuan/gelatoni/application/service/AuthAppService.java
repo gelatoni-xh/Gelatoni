@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.application.service;
 
 import com.csxuhuan.gelatoni.application.dto.UserInfoDTO;
+import com.csxuhuan.gelatoni.application.service.impl.AuthAppServiceImpl;
 
 /**
  * 用户应用服务接口
@@ -18,9 +19,9 @@ import com.csxuhuan.gelatoni.application.dto.UserInfoDTO;
  * <p>注意：应用服务不应包含业务规则，业务规则应该放在领域层。
  *
  * @author csxuhuan
- * @see com.csxuhuan.gelatoni.application.service.impl.UserAppServiceImpl
+ * @see AuthAppServiceImpl
  */
-public interface UserAppService {
+public interface AuthAppService {
 
     /**
      * 根据用户名获取用户及其所有角色码、权限码
