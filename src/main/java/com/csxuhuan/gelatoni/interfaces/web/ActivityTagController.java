@@ -8,6 +8,7 @@ import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.ActivityTagAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
 import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
 import com.csxuhuan.gelatoni.application.dto.ActivityTagDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.ActivityTagCreateRequest;
@@ -83,6 +84,9 @@ public class ActivityTagController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> create(@Valid @RequestBody ActivityTagCreateRequest request) {
         Long userId = UserHolder.getUserId();
+        if (userId == null) {
+            return BaseResponse.error(ResultCode.UNAUTHORIZED, "用户信息不存在，请重新登录");
+        }
         ActivityTagCreateQuery query = assembler.toDomainQuery(request);
         int result = activityAppService.createTag(query, userId);
         return BaseResponse.success(result);

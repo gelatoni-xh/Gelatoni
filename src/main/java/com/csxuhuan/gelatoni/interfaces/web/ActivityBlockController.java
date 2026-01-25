@@ -7,6 +7,7 @@ import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.ActivityBlockAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
 import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
 import com.csxuhuan.gelatoni.application.dto.ActivityBlockDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.ActivityBlockCreateOrUpdateRequest;
@@ -86,6 +87,9 @@ public class ActivityBlockController {
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> createOrUpdate(@Valid @RequestBody ActivityBlockCreateOrUpdateRequest request) {
         Long userId = UserHolder.getUserId();
+        if (userId == null) {
+            return BaseResponse.error(ResultCode.UNAUTHORIZED, "用户信息不存在，请重新登录");
+        }
         ActivityBlockCreateOrUpdateQuery query = assembler.toDomainQuery(request);
         int result = activityAppService.createOrUpdateBlock(query, userId);
         return BaseResponse.success(result);

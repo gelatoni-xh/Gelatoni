@@ -155,9 +155,15 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
         }
 
+        // 检查用户信息是否完整
+        if (userInfo.getUser() == null || userInfo.getUser().getId() == null) {
+            log.error("认证失败 - 用户信息不完整，用户 {} 的User对象或ID为null", username);
+            return sendUnauthorizedResponse(response, "Unauthorized: User information is incomplete");
+        }
+
         // 将用户信息存储到 UserHolder
         UserHolder.set(
-                userInfo.getUser() != null ? userInfo.getUser().getId() : null,
+                userInfo.getUser().getId(),
                 username,
                 userInfo.getRoleCodes(),
                 userInfo.getPermissionCodes()
