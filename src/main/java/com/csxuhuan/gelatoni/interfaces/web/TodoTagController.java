@@ -6,6 +6,7 @@ import com.csxuhuan.gelatoni.domain.query.TodoTagCreateQuery;
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.TodoTagAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
+import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import com.csxuhuan.gelatoni.application.dto.TodoTagDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoTagCreateRequest;
 import org.springframework.http.MediaType;
@@ -50,10 +51,12 @@ public class TodoTagController {
      * 查询所有标签
      *
      * <p>返回所有未删除的标签列表，按创建时间倒序排列。
-     * 此接口不需要认证，所有用户均可访问。
+     * 此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
      *
      * @return 标签列表
+     * @see AuthCheck 权限检查注解
      */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoTagDTO>> list() {
         List<TodoTag> tags = todoAppService.findAllTags();
@@ -64,14 +67,13 @@ public class TodoTagController {
     /**
      * 创建标签
      *
-     * <p>创建一个新的 TODO 标签。此接口需要认证（Bearer Token），
-     * 仅授权用户可以调用。
+     * <p>创建一个新的 TODO 标签。此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
      *
      * @param request 创建请求，包含 name（标签名称）
      * @return 创建结果，返回影响的行数
-     * @see AuthCheck 认证注解
+     * @see AuthCheck 权限检查注解
      */
-    @AuthCheck
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @PostMapping(value = "/create",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

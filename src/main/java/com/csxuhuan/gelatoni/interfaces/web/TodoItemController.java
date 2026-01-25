@@ -8,6 +8,7 @@ import com.csxuhuan.gelatoni.domain.query.TodoItemUpdateQuery;
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.TodoItemAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
+import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import com.csxuhuan.gelatoni.application.dto.TodoItemDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoItemCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoItemUpdateRequest;
@@ -76,11 +77,13 @@ public class TodoItemController {
      * 按标签筛选 TODO 项
      *
      * <p>根据指定的标签 ID 筛选 TODO 项，返回该标签下所有未删除的 TODO 项，
-     * 按创建时间倒序排列。此接口不需要认证。
+     * 按创建时间倒序排列。此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
      *
      * @param tagId 标签 ID，用于筛选 TODO 项
      * @return 该标签下的 TODO 项列表
+     * @see AuthCheck 权限检查注解
      */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @GetMapping(value = "/listByTag", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoItemDTO>> listByTag(@RequestParam("tagId") Long tagId) {
         List<TodoItem> items = todoAppService.findItemsByTagId(tagId);
@@ -95,14 +98,14 @@ public class TodoItemController {
     /**
      * 创建 TODO 项
      *
-     * <p>创建一条新的 TODO 待办事项。此接口需要认证（Bearer Token），
-     * 仅授权用户可以调用。新创建的 TODO 项默认为未完成状态。
+     * <p>创建一条新的 TODO 待办事项。此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
+     * 新创建的 TODO 项默认为未完成状态。
      *
      * @param request 创建请求，包含 content（内容）和可选的 tagId（标签ID）
      * @return 创建结果，返回影响的行数
-     * @see AuthCheck 认证注解
+     * @see AuthCheck 权限检查注解
      */
-    @AuthCheck
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @PostMapping(value = "/create",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -115,14 +118,14 @@ public class TodoItemController {
     /**
      * 更新 TODO 项
      *
-     * <p>更新指定的 TODO 项信息。此接口需要认证（Bearer Token），
-     * 仅授权用户可以调用。支持部分更新，只更新请求中提供的字段。
+     * <p>更新指定的 TODO 项信息。此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
+     * 支持部分更新，只更新请求中提供的字段。
      *
      * @param request 更新请求，包含 id（必填）以及可选的 content、completed、tagId
      * @return 更新结果，返回影响的行数
-     * @see AuthCheck 认证注解
+     * @see AuthCheck 权限检查注解
      */
-    @AuthCheck
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @PostMapping(value = "/update",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)

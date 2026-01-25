@@ -12,6 +12,7 @@ import com.csxuhuan.gelatoni.interfaces.web.request.NoticeCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.NoticePageRequest;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
+import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,12 +51,13 @@ public class NoticeController {
     /**
      * 分页查询公告列表
      *
-     * <p>支持分页参数配置，返回按创建时间倒序排列的公告列表。
-     * 此接口不需要认证，所有用户均可访问。
+     * <p>支持分页参数配置，返回按创建时间倒序排列的公告列表。 此接口需要 {@link PermissionConstants#PERM_NOTICE_VIEW} 权限。
      *
      * @param request 分页查询请求，包含 pageNo（页码）和 pageSize（每页大小）
      * @return 分页结果，包含公告列表和分页信息
+     * @see AuthCheck 权限检查注解
      */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_NOTICE_VIEW)
     @PostMapping(value = "/page",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -73,14 +75,13 @@ public class NoticeController {
     /**
      * 新增公告
      *
-     * <p>创建一条新的公告记录。此接口需要认证（Bearer Token），
-     * 仅授权用户可以调用。
+     * <p>创建一条新的公告记录。此接口需要 {@link PermissionConstants#PERM_NOTICE_CREATE} 权限。
      *
      * @param request 创建公告请求，包含 title（标题）和 content（内容）
      * @return 新创建的公告 ID
-     * @see AuthCheck 认证注解
+     * @see AuthCheck 权限检查注解
      */
-    @AuthCheck
+    @AuthCheck(permissionCode = PermissionConstants.PERM_NOTICE_CREATE)
     @PostMapping(value = "/create",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
