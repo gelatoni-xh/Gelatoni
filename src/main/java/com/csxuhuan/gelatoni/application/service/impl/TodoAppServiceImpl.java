@@ -51,32 +51,32 @@ public class TodoAppServiceImpl implements TodoAppService {
      * {@inheritDoc}
      */
     @Override
-    public List<TodoItem> findAllItems() {
-        return todoItemDomainService.findAll();
+    public List<TodoItem> findAllItems(Long userId) {
+        return todoItemDomainService.findAll(userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<TodoItem> findItemsByTagId(Long tagId) {
-        return todoItemDomainService.findByTagId(tagId);
+    public List<TodoItem> findItemsByTagId(Long tagId, Long userId) {
+        return todoItemDomainService.findByTagId(tagId, userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int createItem(TodoItemCreateQuery query) {
-        return todoItemDomainService.create(query);
+    public int createItem(TodoItemCreateQuery query, Long userId) {
+        return todoItemDomainService.create(query, userId, userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int updateItem(TodoItemUpdateQuery query) {
-        return todoItemDomainService.update(query);
+    public int updateItem(TodoItemUpdateQuery query, Long userId) {
+        return todoItemDomainService.update(query, userId, userId);
     }
 
     // ========== TODO 标签相关方法 ==========
@@ -85,15 +85,15 @@ public class TodoAppServiceImpl implements TodoAppService {
      * {@inheritDoc}
      */
     @Override
-    public List<TodoTag> findAllTags() {
-        return todoTagDomainService.findAll();
+    public List<TodoTag> findAllTags(Long userId) {
+        return todoTagDomainService.findAll(userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int createTag(TodoTagCreateQuery query) {
-        return todoTagDomainService.create(query);
+    public int createTag(TodoTagCreateQuery query, Long userId) {
+        return todoTagDomainService.create(query, userId, userId);
     }
 }

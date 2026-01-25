@@ -34,33 +34,33 @@ public class TodoItemDomainServiceImpl implements TodoItemDomainService {
      * {@inheritDoc}
      */
     @Override
-    public List<TodoItem> findAll() {
-        return todoItemRepository.findAll();
+    public List<TodoItem> findAll(Long userId) {
+        return todoItemRepository.findAll(userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<TodoItem> findByTagId(Long tagId) {
-        return todoItemRepository.findByTagId(tagId);
+    public List<TodoItem> findByTagId(Long tagId, Long userId) {
+        return todoItemRepository.findByTagId(tagId, userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int create(TodoItemCreateQuery query) {
+    public int create(TodoItemCreateQuery query, Long userId, Long creator) {
         TodoItem item = query.toTodoItem();
-        return todoItemRepository.create(item);
+        return todoItemRepository.create(item, userId, creator);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int update(TodoItemUpdateQuery query) {
+    public int update(TodoItemUpdateQuery query, Long userId, Long modifier) {
         TodoItem item = query.toTodoItem();
-        return todoItemRepository.update(item);
+        return todoItemRepository.update(item, userId, modifier);
     }
 }

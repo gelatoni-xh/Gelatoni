@@ -9,6 +9,7 @@ import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.TodoItemAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
 import com.csxuhuan.gelatoni.application.dto.TodoItemDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoItemCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoItemUpdateRequest;
@@ -16,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -58,16 +60,22 @@ public class TodoItemController {
      *
      * <p>返回所有未删除的 TODO 项列表，按创建时间倒序排列。
      * 每个 TODO 项会自动关联对应的标签名称。
-     * 此接口不需要认证。
+     * 此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
      *
      * @return TODO项列表，包含完整的 TODO 信息和关联的标签名称
+     * @see AuthCheck 权限检查注解
      */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoItemDTO>> list() {
-        List<TodoItem> items = todoAppService.findAllItems();
+        Long userId = UserHolder.getUserId();
+        if (userId == null) {
+            return BaseResponse.success(Collections.emptyList());
+        }
+        List<TodoItem> items = todoAppService.findAllItems(userId);
 
         // 获取标签映射，填充标签名称
-        Map<Long, TodoTag> tagMap = getTagMap();
+        Map<Long, TodoTag> tagMap = getTagMap(userId);
 
         List<TodoItemDTO> dtoList = assembler.toDTOList(items, tagMap);
         return BaseResponse.success(dtoList);
@@ -86,10 +94,11 @@ public class TodoItemController {
     @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @GetMapping(value = "/listByTag", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoItemDTO>> listByTag(@RequestParam("tagId") Long tagId) {
-        List<TodoItem> items = todoAppService.findItemsByTagId(tagId);
+        Long userId = UserHolder.getUserId();
+        List<TodoItem> items = todoAppService.findItemsByTagId(tagId, userId);
 
         // 获取标签映射，填充标签名称
-        Map<Long, TodoTag> tagMap = getTagMap();
+        Map<Long, TodoTag> tagMap = getTagMap(userId);
 
         List<TodoItemDTO> dtoList = assembler.toDTOList(items, tagMap);
         return BaseResponse.success(dtoList);
@@ -110,8 +119,9 @@ public class TodoItemController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> create(@Valid @RequestBody TodoItemCreateRequest request) {
+        Long userId = UserHolder.getUserId();
         TodoItemCreateQuery query = assembler.toDomainQuery(request);
-        int result = todoAppService.createItem(query);
+        int result = todoAppService.createItem(query, userId);
         return BaseResponse.success(result);
     }
 
@@ -130,8 +140,9 @@ public class TodoItemController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> update(@Valid @RequestBody TodoItemUpdateRequest request) {
+        Long userId = UserHolder.getUserId();
         TodoItemUpdateQuery query = assembler.toDomainQuery(request);
-        int result = todoAppService.updateItem(query);
+        int result = todoAppService.updateItem(query, userId);
         return BaseResponse.success(result);
     }
 
@@ -141,10 +152,14 @@ public class TodoItemController {
      * <p>查询所有标签并构建映射表，用于在返回 TODO 项时填充标签名称。
      * 避免了 N+1 查询问题。
      *
+     * @param userId 用户ID，用于筛选标签
      * @return Map&lt;标签ID, 标签对象&gt;
      */
-    private Map<Long, TodoTag> getTagMap() {
-        List<TodoTag> tags = todoAppService.findAllTags();
+    private Map<Long, TodoTag> getTagMap(Long userId) {
+        if (userId == null) {
+            return Collections.emptyMap();
+        }
+        List<TodoTag> tags = todoAppService.findAllTags(userId);
         return tags.stream()
                 .collect(Collectors.toMap(TodoTag::getId, Function.identity()));
     }

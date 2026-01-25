@@ -47,6 +47,21 @@ public class TodoItemDO {
     private LocalDateTime modifiedTime;
 
     /**
+     * 用户ID
+     */
+    private Long userId;
+
+    /**
+     * 创建人
+     */
+    private Long creator;
+
+    /**
+     * 修改人
+     */
+    private Long modifier;
+
+    /**
      * 逻辑删除标记
      * 0 - 未删除
      * 1 - 已删除
@@ -62,6 +77,20 @@ public class TodoItemDO {
         this.content = content;
         this.completed = completed;
         this.tagId = tagId;
+        this.createTime = createTime;
+        this.modifiedTime = modifiedTime;
+        this.isDeleted = isDeleted;
+    }
+
+    public TodoItemDO(Long id, String content, Boolean completed, Long tagId, Long userId,
+                      Long creator, Long modifier, LocalDateTime createTime, LocalDateTime modifiedTime, Boolean isDeleted) {
+        this.id = id;
+        this.content = content;
+        this.completed = completed;
+        this.tagId = tagId;
+        this.userId = userId;
+        this.creator = creator;
+        this.modifier = modifier;
         this.createTime = createTime;
         this.modifiedTime = modifiedTime;
         this.isDeleted = isDeleted;
@@ -123,5 +152,29 @@ public class TodoItemDO {
 
     public void setIsDeleted(Boolean deleted) {
         isDeleted = deleted;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getCreator() {
+        return creator;
+    }
+
+    public void setCreator(Long creator) {
+        this.creator = creator;
+    }
+
+    public Long getModifier() {
+        return modifier;
+    }
+
+    public void setModifier(Long modifier) {
+        this.modifier = modifier;
     }
 }

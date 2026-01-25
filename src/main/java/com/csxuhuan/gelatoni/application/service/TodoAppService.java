@@ -36,9 +36,10 @@ public interface TodoAppService {
      *
      * <p>返回所有未删除的 TODO 项，按创建时间倒序排列。
      *
+     * @param userId 用户ID，用于筛选
      * @return TODO 项列表
      */
-    List<TodoItem> findAllItems();
+    List<TodoItem> findAllItems(Long userId);
 
     /**
      * 根据标签 ID 查询 TODO 项
@@ -46,9 +47,10 @@ public interface TodoAppService {
      * <p>查询指定标签下的所有未删除 TODO 项，按创建时间倒序排列。
      *
      * @param tagId 标签 ID
+     * @param userId 用户ID，用于筛选
      * @return 该标签下的 TODO 项列表
      */
-    List<TodoItem> findItemsByTagId(Long tagId);
+    List<TodoItem> findItemsByTagId(Long tagId, Long userId);
 
     /**
      * 创建 TODO 项
@@ -56,9 +58,10 @@ public interface TodoAppService {
      * <p>创建一个新的 TODO 项，默认状态为未完成。
      *
      * @param query 创建条件，包含 content 和可选的 tagId
+     * @param userId 用户ID
      * @return 影响的行数
      */
-    int createItem(TodoItemCreateQuery query);
+    int createItem(TodoItemCreateQuery query, Long userId);
 
     /**
      * 更新 TODO 项
@@ -66,9 +69,10 @@ public interface TodoAppService {
      * <p>更新指定 TODO 项的信息，支持部分更新。
      *
      * @param query 更新条件，包含 id（必填）及可选的 content、completed、tagId
+     * @param userId 用户ID，用于权限校验
      * @return 影响的行数
      */
-    int updateItem(TodoItemUpdateQuery query);
+    int updateItem(TodoItemUpdateQuery query, Long userId);
 
     // ========== TODO 标签相关方法 ==========
 
@@ -77,9 +81,10 @@ public interface TodoAppService {
      *
      * <p>返回所有未删除的标签，按创建时间倒序排列。
      *
+     * @param userId 用户ID，用于筛选
      * @return 标签列表
      */
-    List<TodoTag> findAllTags();
+    List<TodoTag> findAllTags(Long userId);
 
     /**
      * 创建标签
@@ -87,7 +92,8 @@ public interface TodoAppService {
      * <p>创建一个新的 TODO 标签。
      *
      * @param query 创建条件，包含 name（标签名称）
+     * @param userId 用户ID
      * @return 影响的行数
      */
-    int createTag(TodoTagCreateQuery query);
+    int createTag(TodoTagCreateQuery query, Long userId);
 }

@@ -33,16 +33,16 @@ public class TodoTagDomainServiceImpl implements TodoTagDomainService {
      * {@inheritDoc}
      */
     @Override
-    public List<TodoTag> findAll() {
-        return todoTagRepository.findAll();
+    public List<TodoTag> findAll(Long userId) {
+        return todoTagRepository.findAll(userId);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public int create(TodoTagCreateQuery query) {
+    public int create(TodoTagCreateQuery query, Long userId, Long creator) {
         TodoTag tag = query.toTodoTag();
-        return todoTagRepository.create(tag);
+        return todoTagRepository.create(tag, userId, creator);
     }
 }

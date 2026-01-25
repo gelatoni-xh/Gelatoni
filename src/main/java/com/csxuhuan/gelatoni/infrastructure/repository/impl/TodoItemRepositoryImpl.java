@@ -40,9 +40,10 @@ public class TodoItemRepositoryImpl implements TodoItemRepository {
     }
 
     @Override
-    public List<TodoItem> findAll() {
+    public List<TodoItem> findAll(Long userId) {
         LambdaQueryWrapper<TodoItemDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TodoItemDO::getIsDeleted, false)
+                .eq(TodoItemDO::getUserId, userId)
                 .orderByDesc(TodoItemDO::getCreateTime);
 
         List<TodoItemDO> itemDOList = todoItemMapper.selectList(wrapper);
@@ -53,10 +54,11 @@ public class TodoItemRepositoryImpl implements TodoItemRepository {
     }
 
     @Override
-    public List<TodoItem> findByTagId(Long tagId) {
+    public List<TodoItem> findByTagId(Long tagId, Long userId) {
         LambdaQueryWrapper<TodoItemDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TodoItemDO::getTagId, tagId)
                 .eq(TodoItemDO::getIsDeleted, false)
+                .eq(TodoItemDO::getUserId, userId)
                 .orderByDesc(TodoItemDO::getCreateTime);
 
         List<TodoItemDO> itemDOList = todoItemMapper.selectList(wrapper);
@@ -67,30 +69,37 @@ public class TodoItemRepositoryImpl implements TodoItemRepository {
     }
 
     @Override
-    public TodoItem findById(Long id) {
+    public TodoItem findById(Long id, Long userId) {
         LambdaQueryWrapper<TodoItemDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TodoItemDO::getId, id)
-                .eq(TodoItemDO::getIsDeleted, false);
+                .eq(TodoItemDO::getIsDeleted, false)
+                .eq(TodoItemDO::getUserId, userId);
 
         TodoItemDO itemDO = todoItemMapper.selectOne(wrapper);
         return TodoItemConverter.toDomain(itemDO);
     }
 
     @Override
-    public int create(TodoItem item) {
-        return todoItemMapper.insert(TodoItemConverter.toDO(item));
+    public int create(TodoItem item, Long userId, Long creator) {
+        TodoItemDO itemDO = TodoItemConverter.toDO(item);
+        itemDO.setUserId(userId);
+        itemDO.setCreator(creator);
+        itemDO.setModifier(creator);
+        return todoItemMapper.insert(itemDO);
     }
 
     @Override
-    public int update(TodoItem item) {
+    public int update(TodoItem item, Long userId, Long modifier) {
         LambdaUpdateWrapper<TodoItemDO> wrapper = new LambdaUpdateWrapper<>();
         wrapper.eq(TodoItemDO::getId, item.getId())
-                .eq(TodoItemDO::getIsDeleted, false);
+                .eq(TodoItemDO::getIsDeleted, false)
+                .eq(TodoItemDO::getUserId, userId);
 
         TodoItemDO itemDO = new TodoItemDO();
         itemDO.setContent(item.getContent());
         itemDO.setCompleted(item.getCompleted());
         itemDO.setTagId(item.getTagId());
+        itemDO.setModifier(modifier);
 
         return todoItemMapper.update(itemDO, wrapper);
     }

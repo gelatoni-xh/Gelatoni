@@ -33,9 +33,10 @@ public class TodoTagRepositoryImpl implements TodoTagRepository {
     }
 
     @Override
-    public List<TodoTag> findAll() {
+    public List<TodoTag> findAll(Long userId) {
         LambdaQueryWrapper<TodoTagDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TodoTagDO::getIsDeleted, false)
+                .eq(TodoTagDO::getUserId, userId)
                 .orderByDesc(TodoTagDO::getCreateTime);
 
         List<TodoTagDO> tagDOList = todoTagMapper.selectList(wrapper);
@@ -46,17 +47,22 @@ public class TodoTagRepositoryImpl implements TodoTagRepository {
     }
 
     @Override
-    public TodoTag findById(Long id) {
+    public TodoTag findById(Long id, Long userId) {
         LambdaQueryWrapper<TodoTagDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(TodoTagDO::getId, id)
-                .eq(TodoTagDO::getIsDeleted, false);
+                .eq(TodoTagDO::getIsDeleted, false)
+                .eq(TodoTagDO::getUserId, userId);
 
         TodoTagDO tagDO = todoTagMapper.selectOne(wrapper);
         return TodoTagConverter.toDomain(tagDO);
     }
 
     @Override
-    public int create(TodoTag tag) {
-        return todoTagMapper.insert(TodoTagConverter.toDO(tag));
+    public int create(TodoTag tag, Long userId, Long creator) {
+        TodoTagDO tagDO = TodoTagConverter.toDO(tag);
+        tagDO.setUserId(userId);
+        tagDO.setCreator(creator);
+        tagDO.setModifier(creator);
+        return todoTagMapper.insert(tagDO);
     }
 }

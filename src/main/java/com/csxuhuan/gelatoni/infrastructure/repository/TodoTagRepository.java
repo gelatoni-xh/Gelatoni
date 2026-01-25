@@ -16,23 +16,27 @@ public interface TodoTagRepository {
     /**
      * 查询所有标签
      *
+     * @param userId 用户ID，用于筛选
      * @return 标签列表（领域对象）
      */
-    List<TodoTag> findAll();
+    List<TodoTag> findAll(Long userId);
 
     /**
      * 根据ID查询标签
      *
      * @param id 标签ID
+     * @param userId 用户ID，用于权限校验
      * @return 标签（领域对象）
      */
-    TodoTag findById(Long id);
+    TodoTag findById(Long id, Long userId);
 
     /**
      * 新增标签
      *
      * @param tag 新增的领域对象
+     * @param userId 用户ID
+     * @param creator 创建人ID
      * @return 新增的ID
      */
-    int create(TodoTag tag);
+    int create(TodoTag tag, Long userId, Long creator);
 }

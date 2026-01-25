@@ -7,6 +7,7 @@ import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.TodoTagAssembler;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
 import com.csxuhuan.gelatoni.application.dto.TodoTagDTO;
 import com.csxuhuan.gelatoni.interfaces.web.request.TodoTagCreateRequest;
 import org.springframework.http.MediaType;
@@ -59,7 +60,8 @@ public class TodoTagController {
     @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
     @GetMapping(value = "/list", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<List<TodoTagDTO>> list() {
-        List<TodoTag> tags = todoAppService.findAllTags();
+        Long userId = UserHolder.getUserId();
+        List<TodoTag> tags = todoAppService.findAllTags(userId);
         List<TodoTagDTO> dtoList = assembler.toDTOList(tags);
         return BaseResponse.success(dtoList);
     }
@@ -78,8 +80,9 @@ public class TodoTagController {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> create(@Valid @RequestBody TodoTagCreateRequest request) {
+        Long userId = UserHolder.getUserId();
         TodoTagCreateQuery query = assembler.toDomainQuery(request);
-        int result = todoAppService.createTag(query);
+        int result = todoAppService.createTag(query, userId);
         return BaseResponse.success(result);
     }
 }
