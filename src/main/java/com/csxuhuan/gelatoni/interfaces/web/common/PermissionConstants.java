@@ -33,6 +33,11 @@ public class PermissionConstants {
     public static final String PERM_TODO = "PERM_TODO";
 
     /**
+     * 活动记录权限（用于所有活动记录相关的操作）
+     */
+    public static final String PERM_ACTIVITY = "PERM_ACTIVITY";
+
+    /**
      * 私有构造函数，防止实例化
      */
     private PermissionConstants() {
