@@ -20,4 +20,12 @@ public interface RoleRepository {
      * @return 角色领域对象列表
      */
     List<Role> findByIds(List<Long> roleIds);
+
+    /**
+     * 根据角色编码查询角色
+     *
+     * @param roleCode 角色编码
+     * @return 角色领域对象，如果不存在则返回 null
+     */
+    Role findByRoleCode(String roleCode);
 }

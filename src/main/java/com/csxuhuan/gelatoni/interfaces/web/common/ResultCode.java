@@ -27,7 +27,7 @@ public enum ResultCode {
     /**
      * 系统异常
      */
-    SYSTEM_ERROR("500", "系统异常");
+    SYSTEM_ERROR("500", "系统异常")
     ;
 
     private String code;

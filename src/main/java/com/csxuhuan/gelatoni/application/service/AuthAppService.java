@@ -37,4 +37,46 @@ public interface AuthAppService {
      * @return 用户信息结果，包含用户 DTO、角色码列表、权限码列表
      */
     UserInfoDTO getUserWithRolesAndPermissions(String username);
+
+    /**
+     * 用户登录
+     *
+     * <p>接收用户名和密码，完成登录验证并返回用户信息和 Token：
+     * <ol>
+     *     <li>校验用户是否存在</li>
+     *     <li>校验密码是否正确</li>
+     *     <li>获取用户角色和权限信息</li>
+     *     <li>生成 JWT Token</li>
+     *     <li>返回用户信息（包含用户 DTO、角色码列表、权限码列表、Token）</li>
+     * </ol>
+     *
+     * @param username 用户名
+     * @param password 密码
+     * @return 用户信息结果，包含用户 DTO、角色码列表、权限码列表、Token
+     * @throws RuntimeException 如果用户不存在或密码错误
+     */
+    UserInfoDTO login(String username, String password);
+
+    /**
+     * 根据角色编码获取用户信息
+     *
+     * <p>返回指定角色对应的用户信息，包括：
+     * <ul>
+     *     <li>用户基本信息（匿名用户时为 null）</li>
+     *     <li>角色编码列表（包含指定的角色）</li>
+     *     <li>权限编码列表（该角色拥有的所有权限）</li>
+     * </ul>
+     *
+     * <p>实现说明：
+     * <ol>
+     *     <li>根据角色编码查询角色信息</li>
+     *     <li>根据角色ID查询权限ID列表</li>
+     *     <li>根据权限ID列表查询权限信息，提取权限码</li>
+     *     <li>使用 Assembler 转换为 DTO 并返回</li>
+     * </ol>
+     *
+     * @param roleCode 角色编码
+     * @return 用户信息结果，包含用户 DTO（匿名用户时为 null）、角色码列表、权限码列表
+     */
+    UserInfoDTO getUserInfoByRoleCode(String roleCode);
 }

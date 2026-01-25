@@ -57,4 +57,19 @@ public class RoleRepositoryImpl implements RoleRepository {
                 .map(RoleConverter::toDomain)
                 .collect(Collectors.toList());
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Role findByRoleCode(String roleCode) {
+        if (roleCode == null || roleCode.isEmpty()) {
+            return null;
+        }
+        LambdaQueryWrapper<RoleDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleDO::getRoleCode, roleCode)
+                .eq(RoleDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+        RoleDO roleDO = roleMapper.selectOne(wrapper);
+        return roleDO != null ? RoleConverter.toDomain(roleDO) : null;
+    }
 }

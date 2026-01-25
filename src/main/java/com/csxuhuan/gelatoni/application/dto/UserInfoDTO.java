@@ -32,6 +32,9 @@ public class UserInfoDTO {
     /** 权限编码列表 */
     private List<String> permissionCodes;
 
+    /** JWT Token */
+    private String token;
+
     public UserInfoDTO() {
     }
 
@@ -39,6 +42,13 @@ public class UserInfoDTO {
         this.user = user;
         this.roleCodes = roleCodes;
         this.permissionCodes = permissionCodes;
+    }
+
+    public UserInfoDTO(UserDTO user, List<String> roleCodes, List<String> permissionCodes, String token) {
+        this.user = user;
+        this.roleCodes = roleCodes;
+        this.permissionCodes = permissionCodes;
+        this.token = token;
     }
 
     public UserDTO getUser() {
@@ -63,5 +73,13 @@ public class UserInfoDTO {
 
     public void setPermissionCodes(List<String> permissionCodes) {
         this.permissionCodes = permissionCodes;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

@@ -37,11 +37,6 @@ public class PermissionDO {
     private Byte type;
 
     /**
-     * 父权限ID
-     */
-    private Long parentId;
-
-    /**
      * 创建人
      */
     private Long creator;
@@ -71,13 +66,12 @@ public class PermissionDO {
     public PermissionDO() {
     }
 
-    public PermissionDO(Long id, String permissionCode, String permissionName, Byte type, Long parentId,
+    public PermissionDO(Long id, String permissionCode, String permissionName, Byte type,
                         Long creator, Long modifier, LocalDateTime createTime, LocalDateTime modifiedTime, Boolean isDeleted) {
         this.id = id;
         this.permissionCode = permissionCode;
         this.permissionName = permissionName;
         this.type = type;
-        this.parentId = parentId;
         this.creator = creator;
         this.modifier = modifier;
         this.createTime = createTime;
@@ -117,14 +111,6 @@ public class PermissionDO {
 
     public void setType(Byte type) {
         this.type = type;
-    }
-
-    public Long getParentId() {
-        return parentId;
-    }
-
-    public void setParentId(Long parentId) {
-        this.parentId = parentId;
     }
 
     public Long getCreator() {
