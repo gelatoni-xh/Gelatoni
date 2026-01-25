@@ -49,6 +49,9 @@ import java.util.List;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
+    /** 匿名角色编码 */
+    private static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
+
     private final AuthAppService authAppService;
     private final JwtUtil jwtUtil;
 
@@ -105,11 +108,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         // 如果指定了权限编码，先检查是否为未登录权限（匿名用户权限）
         if (permissionCode != null && !permissionCode.isEmpty()) {
-            UserInfoDTO roleInfo = authAppService.getUserInfoByRoleCode(permissionCode);
-            // 如果该权限对应的角色是未登录权限（user 为 null），则可以不传 Token 直接放行
-            if (roleInfo != null && roleInfo.getUser() == null) {
-                // 未登录权限，直接放行，不设置 UserHolder
-                return true;
+            // 获取匿名角色的权限列表
+            UserInfoDTO anonymousRoleInfo = authAppService.getUserInfoByRoleCode(ROLE_ANONYMOUS);
+            // 检查请求的权限是否在匿名角色的权限列表中
+            if (anonymousRoleInfo != null && anonymousRoleInfo.getPermissionCodes() != null) {
+                if (anonymousRoleInfo.getPermissionCodes().contains(permissionCode)) {
+                    // 该权限属于匿名角色，可以不传 Token 直接放行，不设置 UserHolder
+                    return true;
+                }
             }
         }
 
