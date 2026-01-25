@@ -1,5 +1,7 @@
 package com.csxuhuan.gelatoni.domain.service.impl;
 
+import com.csxuhuan.gelatoni.application.exception.BizErrorCode;
+import com.csxuhuan.gelatoni.application.exception.BizException;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoItem;
 import com.csxuhuan.gelatoni.domain.query.TodoItemCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.TodoItemUpdateQuery;
@@ -60,6 +62,12 @@ public class TodoItemDomainServiceImpl implements TodoItemDomainService {
      */
     @Override
     public int update(TodoItemUpdateQuery query, Long userId, Long modifier) {
+        // 校验：TODO项存在且属于当前用户
+        TodoItem existingItem = todoItemRepository.findById(query.getId(), userId);
+        if (existingItem == null) {
+            throw new BizException(BizErrorCode.OPERATION_NOT_ALLOWED, "TODO项不存在或无权访问");
+        }
+
         TodoItem item = query.toTodoItem();
         return todoItemRepository.update(item, userId, modifier);
     }
