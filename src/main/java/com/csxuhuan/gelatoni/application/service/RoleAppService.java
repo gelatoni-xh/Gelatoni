@@ -44,4 +44,12 @@ public interface RoleAppService {
      * @return 影响行数
      */
     int assignPermissions(Long roleId, List<Long> permissionIds, Long operator);
+
+    /**
+     * 根据角色ID获取权限码列表
+     *
+     * @param roleId 角色ID
+     * @return 权限编码列表
+     */
+    List<String> getPermissionCodesByRoleId(Long roleId);
 }

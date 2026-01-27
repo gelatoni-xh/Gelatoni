@@ -3,6 +3,7 @@ package com.csxuhuan.gelatoni.application.service.impl;
 import com.csxuhuan.gelatoni.application.assembler.UserAssembler;
 import com.csxuhuan.gelatoni.application.dto.UserInfoDTO;
 import com.csxuhuan.gelatoni.application.service.UserAppService;
+import com.csxuhuan.gelatoni.domain.model.entity.Role;
 import com.csxuhuan.gelatoni.domain.model.entity.User;
 import com.csxuhuan.gelatoni.domain.service.UserDomainService;
 import com.csxuhuan.gelatoni.infrastructure.repository.PermissionRepository;
@@ -129,5 +130,20 @@ public class UserAppServiceImpl implements UserAppService {
 
         // 6. 使用 Assembler 转换为 DTO 并返回
         return userAssembler.toUserInfoDTO(user, roleCodes, permissionCodes);
+    }
+
+    @Override
+    public List<String> getRoleCodesByUserId(Long userId) {
+        // 1. 查询用户关联的角色ID列表
+        List<Long> roleIds = userRoleRepository.findRoleIdsByUserId(userId);
+        if (roleIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 2. 根据角色ID列表查询角色信息，提取角色码
+        return roleRepository.findByIds(roleIds)
+                .stream()
+                .map(Role::getRoleCode)
+                .collect(Collectors.toList());
     }
 }

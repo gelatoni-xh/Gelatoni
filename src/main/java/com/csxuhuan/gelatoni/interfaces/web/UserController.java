@@ -65,4 +65,14 @@ public class UserController {
         int result = userAppService.assignRoles(request.getUserId(), request.getRoleIds(), operator);
         return BaseResponse.success(result);
     }
+
+    /**
+     * 根据用户ID获取角色码列表
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_USER_PERMISSION_MGMT)
+    @GetMapping(value = "/roles-by-user/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<List<String>> getRoleCodesByUserId(@PathVariable Long userId) {
+        List<String> roleCodes = userAppService.getRoleCodesByUserId(userId);
+        return BaseResponse.success(roleCodes);
+    }
 }

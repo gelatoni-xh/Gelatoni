@@ -2,6 +2,8 @@ package com.csxuhuan.gelatoni.application.service;
 
 import com.csxuhuan.gelatoni.application.dto.UserInfoDTO;
 
+import java.util.List;
+
 /**
  * 用户应用服务接口
  *
@@ -53,4 +55,12 @@ public interface UserAppService {
      * @return 用户信息结果，包含用户 DTO、角色码列表、权限码列表
      */
     UserInfoDTO getUserWithRolesAndPermissions(String username);
+
+    /**
+     * 根据用户ID获取角色码列表
+     *
+     * @param userId 用户ID
+     * @return 角色编码列表
+     */
+    List<String> getRoleCodesByUserId(Long userId);
 }

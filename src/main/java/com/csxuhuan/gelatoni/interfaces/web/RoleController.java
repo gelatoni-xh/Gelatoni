@@ -103,4 +103,14 @@ public class RoleController {
         int result = roleAppService.assignPermissions(request.getRoleId(), request.getPermissionIds(), operator);
         return BaseResponse.success(result);
     }
+
+    /**
+     * 根据角色ID获取权限码列表
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_USER_PERMISSION_MGMT)
+    @GetMapping(value = "/permissions-by-role/{roleId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<List<String>> getPermissionCodesByRoleId(@PathVariable Long roleId) {
+        List<String> permissionCodes = roleAppService.getPermissionCodesByRoleId(roleId);
+        return BaseResponse.success(permissionCodes);
+    }
 }
