@@ -60,8 +60,11 @@ public class NoticeRepositoryImpl implements NoticeRepository {
         // MyBatis-Plus 约束：Page 泛型必须是 DO 类型
         Page<NoticeDO> page = new Page<>(pageNo, pageSize);
 
+        LambdaUpdateWrapper<NoticeDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(NoticeDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
         // 执行分页查询
-        IPage<NoticeDO> doPage = noticeMapper.selectPage(page, null);
+        IPage<NoticeDO> doPage = noticeMapper.selectPage(page, wrapper);
 
         // DO → Domain 转换，并按时间倒序排列
         List<Notice> notices = doPage.getRecords()
