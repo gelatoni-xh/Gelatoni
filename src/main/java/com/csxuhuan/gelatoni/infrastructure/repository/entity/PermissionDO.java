@@ -32,11 +32,6 @@ public class PermissionDO {
     private String permissionName;
 
     /**
-     * 权限类型：1-菜单 2-按钮 3-接口
-     */
-    private Byte type;
-
-    /**
      * 创建人
      */
     private Long creator;
@@ -66,12 +61,11 @@ public class PermissionDO {
     public PermissionDO() {
     }
 
-    public PermissionDO(Long id, String permissionCode, String permissionName, Byte type,
+    public PermissionDO(Long id, String permissionCode, String permissionName,
                         Long creator, Long modifier, LocalDateTime createTime, LocalDateTime modifiedTime, Boolean isDeleted) {
         this.id = id;
         this.permissionCode = permissionCode;
         this.permissionName = permissionName;
-        this.type = type;
         this.creator = creator;
         this.modifier = modifier;
         this.createTime = createTime;
@@ -103,14 +97,6 @@ public class PermissionDO {
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
-    }
-
-    public Byte getType() {
-        return type;
-    }
-
-    public void setType(Byte type) {
-        this.type = type;
     }
 
     public Long getCreator() {

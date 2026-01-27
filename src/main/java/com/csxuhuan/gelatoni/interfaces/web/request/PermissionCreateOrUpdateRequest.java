@@ -1,7 +1,6 @@
 package com.csxuhuan.gelatoni.interfaces.web.request;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
@@ -28,12 +27,6 @@ public class PermissionCreateOrUpdateRequest {
     @Size(max = 64, message = "权限名称长度不能超过64个字符")
     private String permissionName;
 
-    /**
-     * 权限类型：1-菜单 2-按钮 3-接口
-     */
-    @NotNull(message = "权限类型不能为空")
-    private Byte type;
-
     public Long getId() {
         return id;
     }
@@ -56,13 +49,5 @@ public class PermissionCreateOrUpdateRequest {
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
-    }
-
-    public Byte getType() {
-        return type;
-    }
-
-    public void setType(Byte type) {
-        this.type = type;
     }
 }

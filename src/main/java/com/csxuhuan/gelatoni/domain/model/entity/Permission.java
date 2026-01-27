@@ -33,9 +33,6 @@ public class Permission {
     /** 权限名称 */
     private final String permissionName;
 
-    /** 权限类型：1-菜单 2-按钮 3-接口 */
-    private final Byte type;
-
     /** 创建人 */
     private final Long creator;
 
@@ -54,7 +51,6 @@ public class Permission {
      * @param id             权限 ID，新建时可为 null
      * @param permissionCode 权限编码
      * @param permissionName 权限名称
-     * @param type           权限类型：1-菜单 2-按钮 3-接口
      * @param creator        创建人
      * @param modifier       修改人
      * @param createTime     创建时间，新建时可为 null（由数据库填充）
@@ -63,7 +59,6 @@ public class Permission {
     public Permission(Long id,
                       String permissionCode,
                       String permissionName,
-                      Byte type,
                       Long creator,
                       Long modifier,
                       LocalDateTime createTime,
@@ -71,7 +66,6 @@ public class Permission {
         this.id = id;
         this.permissionCode = permissionCode;
         this.permissionName = permissionName;
-        this.type = type;
         this.creator = creator;
         this.modifier = modifier;
         this.createTime = createTime;
@@ -88,10 +82,6 @@ public class Permission {
 
     public String getPermissionName() {
         return permissionName;
-    }
-
-    public Byte getType() {
-        return type;
     }
 
     public Long getCreator() {

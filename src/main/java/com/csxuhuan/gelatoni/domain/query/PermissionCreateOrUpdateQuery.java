@@ -16,14 +16,10 @@ public class PermissionCreateOrUpdateQuery {
     /** 权限名称 */
     private String permissionName;
 
-    /** 权限类型：1-菜单 2-按钮 3-接口 */
-    private Byte type;
-
-    public PermissionCreateOrUpdateQuery(Long id, String permissionCode, String permissionName, Byte type) {
+    public PermissionCreateOrUpdateQuery(Long id, String permissionCode, String permissionName) {
         this.id = id;
         this.permissionCode = permissionCode;
         this.permissionName = permissionName;
-        this.type = type;
     }
 
     public Long getId() {
@@ -50,18 +46,10 @@ public class PermissionCreateOrUpdateQuery {
         this.permissionName = permissionName;
     }
 
-    public Byte getType() {
-        return type;
-    }
-
-    public void setType(Byte type) {
-        this.type = type;
-    }
-
     /**
      * 转换为权限领域实体
      */
     public Permission toPermission() {
-        return new Permission(id, permissionCode, permissionName, type, null, null, null, null);
+        return new Permission(id, permissionCode, permissionName, null, null, null, null);
     }
 }

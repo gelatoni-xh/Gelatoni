@@ -24,8 +24,7 @@ public class PermissionAssembler {
         return new PermissionCreateOrUpdateQuery(
                 request.getId(),
                 request.getPermissionCode(),
-                request.getPermissionName(),
-                request.getType()
+                request.getPermissionName()
         );
     }
 
@@ -43,7 +42,6 @@ public class PermissionAssembler {
         dto.setId(permission.getId());
         dto.setPermissionCode(permission.getPermissionCode());
         dto.setPermissionName(permission.getPermissionName());
-        dto.setType(permission.getType());
         dto.setCreateTime(permission.getCreateTime());
         dto.setModifiedTime(permission.getModifiedTime());
         return dto;

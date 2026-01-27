@@ -18,9 +18,6 @@ public class PermissionDTO {
     /** 权限名称 */
     private String permissionName;
 
-    /** 权限类型：1-菜单 2-按钮 3-接口 */
-    private Byte type;
-
     /** 创建时间 */
     private LocalDateTime createTime;
 
@@ -49,14 +46,6 @@ public class PermissionDTO {
 
     public void setPermissionName(String permissionName) {
         this.permissionName = permissionName;
-    }
-
-    public Byte getType() {
-        return type;
-    }
-
-    public void setType(Byte type) {
-        this.type = type;
     }
 
     public LocalDateTime getCreateTime() {

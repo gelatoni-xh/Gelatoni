@@ -78,7 +78,6 @@ public class PermissionRepositoryImpl implements PermissionRepository {
         PermissionDO permissionDO = new PermissionDO();
         permissionDO.setPermissionCode(permission.getPermissionCode());
         permissionDO.setPermissionName(permission.getPermissionName());
-        permissionDO.setType(permission.getType());
         permissionDO.setModifier(modifier);
 
         return permissionMapper.update(permissionDO, wrapper);
