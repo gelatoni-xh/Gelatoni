@@ -38,6 +38,11 @@ public class PermissionConstants {
     public static final String PERM_ACTIVITY = "PERM_ACTIVITY";
 
     /**
+     * 用户/角色/权限管理统一权限
+     */
+    public static final String PERM_USER_PERMISSION_MGMT = "PERM_USER_PERMISSION_MGMT";
+
+    /**
      * 私有构造函数，防止实例化
      */
     private PermissionConstants() {

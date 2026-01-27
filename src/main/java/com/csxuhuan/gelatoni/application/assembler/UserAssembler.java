@@ -59,4 +59,19 @@ public class UserAssembler {
         List<String> safePermissionCodes = permissionCodes != null ? permissionCodes : Collections.emptyList();
         return new UserInfoDTO(userDTO, safeRoleCodes, safePermissionCodes);
     }
+
+    /**
+     * 将用户实体列表转换为 DTO 列表
+     *
+     * @param users 用户领域实体列表
+     * @return 用户 DTO 列表
+     */
+    public List<UserDTO> toDTOList(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return users.stream()
+                .map(this::toDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
 }

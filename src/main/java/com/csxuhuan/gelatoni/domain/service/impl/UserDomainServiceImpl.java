@@ -31,6 +31,14 @@ public class UserDomainServiceImpl implements UserDomainService {
      * {@inheritDoc}
      */
     @Override
+    public java.util.List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public User findByUsername(String username) {
         return userRepository.findByUsername(username);
     }

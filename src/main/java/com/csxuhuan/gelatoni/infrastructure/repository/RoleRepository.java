@@ -14,6 +14,31 @@ import java.util.List;
 public interface RoleRepository {
 
     /**
+     * 查询所有角色
+     *
+     * @return 角色领域对象列表
+     */
+    List<Role> findAll();
+
+    /**
+     * 创建角色
+     *
+     * @param role 角色领域对象
+     * @param creator 创建人ID
+     * @return 影响行数
+     */
+    int create(Role role, Long creator);
+
+    /**
+     * 更新角色
+     *
+     * @param role 角色领域对象
+     * @param modifier 修改人ID
+     * @return 影响行数
+     */
+    int update(Role role, Long modifier);
+
+    /**
      * 根据角色ID列表查询角色列表
      *
      * @param roleIds 角色ID列表

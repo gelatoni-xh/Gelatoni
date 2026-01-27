@@ -45,6 +45,49 @@ public class PermissionRepositoryImpl implements PermissionRepository {
      * {@inheritDoc}
      */
     @Override
+    public List<Permission> findAll() {
+        LambdaQueryWrapper<PermissionDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PermissionDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
+                .orderByDesc(PermissionDO::getCreateTime);
+        List<PermissionDO> permissionDOList = permissionMapper.selectList(wrapper);
+        return permissionDOList.stream()
+                .map(PermissionConverter::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int create(Permission permission, Long creator) {
+        PermissionDO permissionDO = PermissionConverter.toDO(permission);
+        permissionDO.setCreator(creator);
+        permissionDO.setModifier(creator);
+        return permissionMapper.insert(permissionDO);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int update(Permission permission, Long modifier) {
+        LambdaQueryWrapper<PermissionDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PermissionDO::getId, permission.getId())
+                .eq(PermissionDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
+        PermissionDO permissionDO = new PermissionDO();
+        permissionDO.setPermissionCode(permission.getPermissionCode());
+        permissionDO.setPermissionName(permission.getPermissionName());
+        permissionDO.setType(permission.getType());
+        permissionDO.setModifier(modifier);
+
+        return permissionMapper.update(permissionDO, wrapper);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Permission> findByIds(List<Long> permissionIds) {
         if (permissionIds == null || permissionIds.isEmpty()) {
             return Collections.emptyList();

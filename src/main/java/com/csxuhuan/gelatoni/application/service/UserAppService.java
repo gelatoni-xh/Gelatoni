@@ -23,6 +23,23 @@ import com.csxuhuan.gelatoni.application.dto.UserInfoDTO;
 public interface UserAppService {
 
     /**
+     * 查询所有用户
+     *
+     * @return 用户领域对象列表
+     */
+    java.util.List<com.csxuhuan.gelatoni.domain.model.entity.User> findAllUsers();
+
+    /**
+     * 给用户分配角色（覆盖式）
+     *
+     * @param userId 用户ID
+     * @param roleIds 角色ID列表
+     * @param operator 操作人ID
+     * @return 影响行数
+     */
+    int assignRoles(Long userId, java.util.List<Long> roleIds, Long operator);
+
+    /**
      * 根据用户名获取用户及其所有角色码、权限码
      *
      * <p>返回用户完整信息，包括：

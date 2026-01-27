@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.csxuhuan.gelatoni.domain.model.common.DeletedEnum;
 import com.csxuhuan.gelatoni.infrastructure.repository.RolePermissionRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.entity.RolePermissionDO;
@@ -48,5 +49,41 @@ public class RolePermissionRepositoryImpl implements RolePermissionRepository {
                 .map(RolePermissionDO::getPermissionId)
                 .distinct()
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int deleteByRoleId(Long roleId, Long modifier) {
+        LambdaUpdateWrapper<RolePermissionDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(RolePermissionDO::getRoleId, roleId)
+                .eq(RolePermissionDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
+        RolePermissionDO record = new RolePermissionDO();
+        record.setIsDeleted(DeletedEnum.DELETED.getValue());
+        record.setModifier(modifier);
+        return rolePermissionMapper.update(record, wrapper);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int createBatch(Long roleId, List<Long> permissionIds, Long creator) {
+        if (permissionIds == null || permissionIds.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        for (Long permissionId : permissionIds) {
+            RolePermissionDO record = new RolePermissionDO();
+            record.setRoleId(roleId);
+            record.setPermissionId(permissionId);
+            record.setCreator(creator);
+            record.setModifier(creator);
+            record.setIsDeleted(DeletedEnum.NOT_DELETED.getValue());
+            count += rolePermissionMapper.insert(record);
+        }
+        return count;
     }
 }

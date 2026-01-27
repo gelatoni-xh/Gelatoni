@@ -20,6 +20,13 @@ import com.csxuhuan.gelatoni.domain.model.entity.User;
 public interface UserDomainService {
 
     /**
+     * 查询所有用户
+     *
+     * @return 用户领域对象列表
+     */
+    java.util.List<User> findAll();
+
+    /**
      * 根据用户名查询用户
      *
      * @param username 用户名

@@ -41,6 +41,20 @@ public class UserRepositoryImpl implements UserRepository {
      * {@inheritDoc}
      */
     @Override
+    public java.util.List<User> findAll() {
+        LambdaQueryWrapper<UserDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
+                .orderByDesc(UserDO::getCreateTime);
+        java.util.List<UserDO> userDOList = userMapper.selectList(wrapper);
+        return userDOList.stream()
+                .map(UserConverter::toDomain)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public User findByUsername(String username) {
         LambdaQueryWrapper<UserDO> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(UserDO::getUsername, username)

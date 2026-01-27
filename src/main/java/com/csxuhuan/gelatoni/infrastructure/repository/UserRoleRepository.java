@@ -18,4 +18,23 @@ public interface UserRoleRepository {
      * @return 角色ID列表
      */
     List<Long> findRoleIdsByUserId(Long userId);
+
+    /**
+     * 删除用户的所有角色关联（软删除）
+     *
+     * @param userId 用户ID
+     * @param modifier 修改人ID
+     * @return 影响行数
+     */
+    int deleteByUserId(Long userId, Long modifier);
+
+    /**
+     * 批量创建用户角色关联
+     *
+     * @param userId 用户ID
+     * @param roleIds 角色ID列表
+     * @param creator 创建人ID
+     * @return 影响行数
+     */
+    int createBatch(Long userId, java.util.List<Long> roleIds, Long creator);
 }

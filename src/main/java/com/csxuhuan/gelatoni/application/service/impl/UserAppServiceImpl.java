@@ -67,6 +67,23 @@ public class UserAppServiceImpl implements UserAppService {
 
     /**
      * {@inheritDoc}
+     */
+    @Override
+    public List<User> findAllUsers() {
+        return userDomainService.findAll();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int assignRoles(Long userId, List<Long> roleIds, Long operator) {
+        userRoleRepository.deleteByUserId(userId, operator);
+        return userRoleRepository.createBatch(userId, roleIds, operator);
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * <p>实现说明：
      * <ol>

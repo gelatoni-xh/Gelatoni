@@ -45,6 +45,49 @@ public class RoleRepositoryImpl implements RoleRepository {
      * {@inheritDoc}
      */
     @Override
+    public List<Role> findAll() {
+        LambdaQueryWrapper<RoleDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
+                .orderByDesc(RoleDO::getCreateTime);
+        List<RoleDO> roleDOList = roleMapper.selectList(wrapper);
+        return roleDOList.stream()
+                .map(RoleConverter::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int create(Role role, Long creator) {
+        RoleDO roleDO = RoleConverter.toDO(role);
+        roleDO.setCreator(creator);
+        roleDO.setModifier(creator);
+        return roleMapper.insert(roleDO);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int update(Role role, Long modifier) {
+        LambdaQueryWrapper<RoleDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RoleDO::getId, role.getId())
+                .eq(RoleDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
+        RoleDO roleDO = new RoleDO();
+        roleDO.setRoleCode(role.getRoleCode());
+        roleDO.setRoleName(role.getRoleName());
+        roleDO.setStatus(role.getStatus());
+        roleDO.setModifier(modifier);
+
+        return roleMapper.update(roleDO, wrapper);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public List<Role> findByIds(List<Long> roleIds) {
         if (roleIds == null || roleIds.isEmpty()) {
             return Collections.emptyList();

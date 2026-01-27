@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.csxuhuan.gelatoni.domain.model.common.DeletedEnum;
 import com.csxuhuan.gelatoni.infrastructure.repository.UserRoleRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.entity.UserRoleDO;
@@ -43,5 +44,41 @@ public class UserRoleRepositoryImpl implements UserRoleRepository {
         return userRoleDOList.stream()
                 .map(UserRoleDO::getRoleId)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int deleteByUserId(Long userId, Long modifier) {
+        LambdaUpdateWrapper<UserRoleDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(UserRoleDO::getUserId, userId)
+                .eq(UserRoleDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
+        UserRoleDO record = new UserRoleDO();
+        record.setIsDeleted(DeletedEnum.DELETED.getValue());
+        record.setModifier(modifier);
+        return userRoleMapper.update(record, wrapper);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int createBatch(Long userId, List<Long> roleIds, Long creator) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            return 0;
+        }
+        int count = 0;
+        for (Long roleId : roleIds) {
+            UserRoleDO record = new UserRoleDO();
+            record.setUserId(userId);
+            record.setRoleId(roleId);
+            record.setCreator(creator);
+            record.setModifier(creator);
+            record.setIsDeleted(DeletedEnum.NOT_DELETED.getValue());
+            count += userRoleMapper.insert(record);
+        }
+        return count;
     }
 }
