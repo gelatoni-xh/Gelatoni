@@ -79,6 +79,7 @@ public class NoticeAssembler {
      */
     private NoticeDTO toDTO(Notice notice) {
         NoticeDTO dto = new NoticeDTO();
+        dto.setId(notice.getId());
         dto.setTitle(notice.getTitle());
         dto.setContent(notice.getContent());
         dto.setCreateTime(notice.getCreateTime());

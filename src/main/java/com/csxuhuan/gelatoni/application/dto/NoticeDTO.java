@@ -19,6 +19,9 @@ import java.time.LocalDateTime;
  */
 public class NoticeDTO {
 
+    /** 公告 ID */
+    private Long id;
+
     /** 公告标题 */
     private String title;
 
@@ -27,6 +30,14 @@ public class NoticeDTO {
 
     /** 创建时间 */
     private LocalDateTime createTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getTitle() {
         return title;

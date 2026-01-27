@@ -105,7 +105,7 @@ public class NoticeController {
      * @see AuthCheck 权限检查注解
      */
     @AuthCheck(permissionCode = PermissionConstants.PERM_NOTICE_CREATE)
-    @DeleteMapping(value = "/{id}}",
+    @DeleteMapping(value = "/{id}",
             produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Integer> delete(@PathVariable Long id) {
         Long operator = UserHolder.getUserId();
