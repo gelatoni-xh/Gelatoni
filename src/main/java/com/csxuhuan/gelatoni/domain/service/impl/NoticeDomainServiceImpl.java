@@ -53,4 +53,9 @@ public class NoticeDomainServiceImpl implements NoticeDomainService {
         Notice notice = query.toNotice();
         return noticeRepository.createNotice(notice);
     }
+
+    @Override
+    public int delete(Long id, Long modifier) {
+        return noticeRepository.deleteNotice(id, modifier);
+    }
 }

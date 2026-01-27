@@ -58,4 +58,14 @@ public interface TodoItemRepository {
      * @return 受影响行数
      */
     int update(TodoItem item, Long userId, Long modifier);
+
+    /**
+     * 删除TODO项（软删除）
+     *
+     * @param id TODO项ID
+     * @param userId 用户ID，用于权限校验
+     * @param modifier 修改人ID
+     * @return 受影响行数
+     */
+    int delete(Long id, Long userId, Long modifier);
 }

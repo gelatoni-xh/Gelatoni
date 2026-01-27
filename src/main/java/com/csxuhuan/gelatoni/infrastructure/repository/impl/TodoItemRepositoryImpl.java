@@ -9,6 +9,7 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.TodoItemDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.TodoItemMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,10 +97,31 @@ public class TodoItemRepositoryImpl implements TodoItemRepository {
                 .eq(TodoItemDO::getUserId, userId);
 
         TodoItemDO itemDO = new TodoItemDO();
-        itemDO.setContent(item.getContent());
-        itemDO.setCompleted(item.getCompleted());
+        // 只设置非null的字段
+        if (item.getContent() != null) {
+            itemDO.setContent(item.getContent());
+        }
+        if (item.getCompleted() != null) {
+            itemDO.setCompleted(item.getCompleted());
+        }
+        // 处理tagId，即使为null也要更新（表示解除关联）
         itemDO.setTagId(item.getTagId());
         itemDO.setModifier(modifier);
+
+        return todoItemMapper.update(itemDO, wrapper);
+    }
+
+    @Override
+    public int delete(Long id, Long userId, Long modifier) {
+        LambdaUpdateWrapper<TodoItemDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TodoItemDO::getId, id)
+                .eq(TodoItemDO::getIsDeleted, false)
+                .eq(TodoItemDO::getUserId, userId);
+
+        TodoItemDO itemDO = new TodoItemDO();
+        itemDO.setIsDeleted(true); // 软删除标记
+        itemDO.setModifier(modifier);
+        itemDO.setModifiedTime(LocalDateTime.now());
 
         return todoItemMapper.update(itemDO, wrapper);
     }

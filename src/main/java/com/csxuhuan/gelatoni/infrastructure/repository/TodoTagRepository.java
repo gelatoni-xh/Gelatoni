@@ -39,4 +39,14 @@ public interface TodoTagRepository {
      * @return 新增的ID
      */
     int create(TodoTag tag, Long userId, Long creator);
+
+    /**
+     * 删除标签（软删除）
+     *
+     * @param id 标签ID
+     * @param userId 用户ID，用于权限校验
+     * @param modifier 修改人ID
+     * @return 受影响行数
+     */
+    int delete(Long id, Long userId, Long modifier);
 }

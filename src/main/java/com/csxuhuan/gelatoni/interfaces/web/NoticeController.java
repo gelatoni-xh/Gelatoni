@@ -8,11 +8,12 @@ import com.csxuhuan.gelatoni.domain.result.PageResult;
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.application.assembler.NoticeAssembler;
 import com.csxuhuan.gelatoni.application.dto.NoticeDTO;
-import com.csxuhuan.gelatoni.interfaces.web.request.NoticeCreateRequest;
-import com.csxuhuan.gelatoni.interfaces.web.request.NoticePageRequest;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
+import com.csxuhuan.gelatoni.interfaces.web.request.NoticeCreateRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.NoticePageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import javax.validation.Valid;
  * <ul>
  *     <li>分页查询公告列表</li>
  *     <li>创建新公告（需要认证）</li>
+ *     <li>删除公告（需要认证）</li>
  * </ul>
  *
  * <p>接口路径前缀：/api/notice
@@ -91,5 +93,23 @@ public class NoticeController {
         int id = noticeAppService.create(query);
 
         return BaseResponse.success(id);
+    }
+
+    /**
+     * 删除公告
+     *
+     * <p>删除指定的公告记录（软删除）。此接口需要 {@link PermissionConstants#PERM_NOTICE_CREATE} 权限。
+     *
+     * @param id 要删除的公告 ID
+     * @return 删除结果，返回影响的行数
+     * @see AuthCheck 权限检查注解
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_NOTICE_CREATE)
+    @DeleteMapping(value = "/{id}}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<Integer> delete(@PathVariable Long id) {
+        Long operator = UserHolder.getUserId();
+        int result = noticeAppService.delete(id, operator);
+        return BaseResponse.success(result);
     }
 }

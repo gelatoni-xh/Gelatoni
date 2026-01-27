@@ -28,4 +28,13 @@ public interface NoticeRepository {
      * @return 新增的ID
      */
     int createNotice(Notice notice);
+
+    /**
+     * 删除公告（软删除）
+     *
+     * @param id 公告ID
+     * @param modifier 修改人ID
+     * @return 受影响行数
+     */
+    int deleteNotice(Long id, Long modifier);
 }

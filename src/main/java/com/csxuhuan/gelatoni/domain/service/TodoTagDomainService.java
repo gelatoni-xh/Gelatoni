@@ -34,4 +34,14 @@ public interface TodoTagDomainService {
      * @return 影响的行数
      */
     int create(TodoTagCreateQuery query, Long userId, Long creator);
+
+    /**
+     * 删除标签
+     *
+     * @param id 标签ID
+     * @param userId 用户ID，用于权限校验
+     * @param modifier 修改人ID
+     * @return 影响的行数
+     */
+    int delete(Long id, Long userId, Long modifier);
 }

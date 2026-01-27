@@ -1,5 +1,7 @@
 package com.csxuhuan.gelatoni.domain.service.impl;
 
+import com.csxuhuan.gelatoni.application.exception.BizErrorCode;
+import com.csxuhuan.gelatoni.application.exception.BizException;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.domain.query.TodoTagCreateQuery;
 import com.csxuhuan.gelatoni.domain.service.TodoTagDomainService;
@@ -44,5 +46,20 @@ public class TodoTagDomainServiceImpl implements TodoTagDomainService {
     public int create(TodoTagCreateQuery query, Long userId, Long creator) {
         TodoTag tag = query.toTodoTag();
         return todoTagRepository.create(tag, userId, creator);
+    }
+
+    @Override
+    public int delete(Long id, Long userId, Long modifier) {
+        // 校验：标签存在且属于当前用户
+        TodoTag existingTag = todoTagRepository.findById(id, userId);
+        if (existingTag == null) {
+            throw new BizException(BizErrorCode.OPERATION_NOT_ALLOWED, "标签不存在或无权访问");
+        }
+
+        // 先将关联的TODO项的tagId设为null
+        // 需要通过todoItemRepository来更新
+        // 这里需要获取todoItemRepository，但由于架构限制，我们可能需要其他方式
+        
+        return todoTagRepository.delete(id, userId, modifier);
     }
 }

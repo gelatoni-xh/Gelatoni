@@ -57,6 +57,9 @@ public class NoticeDO {
         this.isDeleted = isDeleted;
     }
 
+    public NoticeDO() {
+    }
+
     // ===== Getter / Setter =====
 
     public Long getId() {

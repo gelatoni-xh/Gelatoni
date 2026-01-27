@@ -74,6 +74,15 @@ public interface TodoAppService {
      */
     int updateItem(TodoItemUpdateQuery query, Long userId);
 
+    /**
+     * 删除 TODO 项
+     *
+     * @param id TODO项ID
+     * @param userId 用户ID，用于权限校验
+     * @return 影响的行数
+     */
+    int deleteItem(Long id, Long userId);
+
     // ========== TODO 标签相关方法 ==========
 
     /**
@@ -96,4 +105,13 @@ public interface TodoAppService {
      * @return 影响的行数
      */
     int createTag(TodoTagCreateQuery query, Long userId);
+
+    /**
+     * 删除标签
+     *
+     * @param id 标签ID
+     * @param userId 用户ID，用于权限校验
+     * @return 影响的行数
+     */
+    int deleteTag(Long id, Long userId);
 }

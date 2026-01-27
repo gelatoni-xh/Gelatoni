@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
  *     <li>按标签筛选 TODO 项</li>
  *     <li>创建新 TODO 项（需要认证）</li>
  *     <li>更新 TODO 项（需要认证）</li>
+ *     <li>删除 TODO 项（需要认证）</li>
  * </ul>
  *
  * <p>接口路径前缀：/api/todo/item
@@ -147,6 +148,24 @@ public class TodoItemController {
         Long userId = UserHolder.getUserId();
         TodoItemUpdateQuery query = assembler.toDomainQuery(request);
         int result = todoAppService.updateItem(query, userId);
+        return BaseResponse.success(result);
+    }
+
+    /**
+     * 删除 TODO 项
+     *
+     * <p>删除指定的 TODO 项。此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
+     *
+     * @param id TODO项ID
+     * @return 删除结果，返回影响的行数
+     * @see AuthCheck 权限检查注解
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
+    @DeleteMapping(value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<Integer> delete(@PathVariable Long id) {
+        Long userId = UserHolder.getUserId();
+        int result = todoAppService.deleteItem(id, userId);
         return BaseResponse.success(result);
     }
 

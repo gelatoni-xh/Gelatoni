@@ -39,6 +39,9 @@ public class TodoItemUpdateQuery {
         this.tagId = tagId;
     }
 
+    // 无参数构造函数，用于手动设置
+    public TodoItemUpdateQuery() {}
+
     public Long getId() {
         return id;
     }

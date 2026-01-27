@@ -56,4 +56,14 @@ public interface TodoItemDomainService {
      * @return 影响的行数
      */
     int update(TodoItemUpdateQuery query, Long userId, Long modifier);
+
+    /**
+     * 删除 TODO 项
+     *
+     * @param id TODO项ID
+     * @param userId 用户ID，用于权限校验
+     * @param modifier 修改人ID
+     * @return 影响的行数
+     */
+    int delete(Long id, Long userId, Long modifier);
 }

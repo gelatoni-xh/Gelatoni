@@ -79,6 +79,11 @@ public class TodoAppServiceImpl implements TodoAppService {
         return todoItemDomainService.update(query, userId, userId);
     }
 
+    @Override
+    public int deleteItem(Long id, Long userId) {
+        return todoItemDomainService.delete(id, userId, userId);
+    }
+
     // ========== TODO 标签相关方法 ==========
 
     /**
@@ -95,5 +100,21 @@ public class TodoAppServiceImpl implements TodoAppService {
     @Override
     public int createTag(TodoTagCreateQuery query, Long userId) {
         return todoTagDomainService.create(query, userId, userId);
+    }
+
+    @Override
+    public int deleteTag(Long id, Long userId) {
+        // 先将关联的TODO项的tagId设为null
+        // 获取所有关联的TODO项并更新它们
+        List<TodoItem> itemsWithTag = todoItemDomainService.findByTagId(id, userId);
+        for (TodoItem item : itemsWithTag) {
+            TodoItemUpdateQuery updateQuery = new TodoItemUpdateQuery();
+            updateQuery.setId(item.getId());
+            updateQuery.setTagId(null);  // 解除关联
+            todoItemDomainService.update(updateQuery, userId, userId);
+        }
+        
+        // 然后删除标签
+        return todoTagDomainService.delete(id, userId, userId);
     }
 }

@@ -1,7 +1,9 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.csxuhuan.gelatoni.domain.model.common.DeletedEnum;
 import com.csxuhuan.gelatoni.domain.model.converter.NoticeConverter;
 import com.csxuhuan.gelatoni.domain.model.entity.Notice;
 import com.csxuhuan.gelatoni.infrastructure.repository.NoticeRepository;
@@ -9,6 +11,7 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.NoticeDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.NoticeMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,5 +87,17 @@ public class NoticeRepositoryImpl implements NoticeRepository {
     @Override
     public int createNotice(Notice notice) {
         return noticeMapper.insert(NoticeConverter.toDO(notice));
+    }
+
+    @Override
+    public int deleteNotice(Long id, Long modifier) {
+        LambdaUpdateWrapper<NoticeDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(NoticeDO::getId, id);
+
+        NoticeDO noticeDO = new NoticeDO();
+        noticeDO.setIsDeleted(DeletedEnum.DELETED.getValue());
+        noticeDO.setModifiedTime(LocalDateTime.now());
+
+        return noticeMapper.update(noticeDO, wrapper);
     }
 }

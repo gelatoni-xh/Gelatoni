@@ -44,5 +44,13 @@ public interface NoticeAppService {
      * @return 影响的行数（通常为 1）
      */
     int create(NoticeCreateQuery query);
-}
 
+    /**
+     * 删除公告
+     *
+     * @param id 公告ID
+     * @param modifier 修改人ID
+     * @return 影响的行数
+     */
+    int delete(Long id, Long modifier);
+}

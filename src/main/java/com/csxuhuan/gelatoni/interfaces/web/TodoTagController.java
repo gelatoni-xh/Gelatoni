@@ -24,6 +24,7 @@ import java.util.List;
  * <ul>
  *     <li>查询所有标签</li>
  *     <li>创建新标签（需要认证）</li>
+ *     <li>删除标签（需要认证）</li>
  * </ul>
  *
  * <p>标签用于对 TODO 项进行分类管理，每个 TODO 项可以关联一个标签。
@@ -87,6 +88,28 @@ public class TodoTagController {
         }
         TodoTagCreateQuery query = assembler.toDomainQuery(request);
         int result = todoAppService.createTag(query, userId);
+        return BaseResponse.success(result);
+    }
+
+    /**
+     * 删除标签
+     *
+     * <p>删除指定的 TODO 标签。此接口需要 {@link PermissionConstants#PERM_TODO} 权限。
+     * 删除标签时，原来关联该标签的 TODO 项的标签关联将被解除（tagId 设为 null）。
+     *
+     * @param id 标签ID
+     * @return 删除结果，返回影响的行数
+     * @see AuthCheck 权限检查注解
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_TODO)
+    @DeleteMapping(value = "/{id}",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<Integer> delete(@PathVariable Long id) {
+        Long userId = UserHolder.getUserId();
+        if (userId == null) {
+            return BaseResponse.error(ResultCode.UNAUTHORIZED, "用户信息不存在，请重新登录");
+        }
+        int result = todoAppService.deleteTag(id, userId);
         return BaseResponse.success(result);
     }
 }

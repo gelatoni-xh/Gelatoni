@@ -15,6 +15,7 @@ import java.util.List;
  * TODO 项领域服务实现
  *
  * <p>实现 {@link TodoItemDomainService} 接口，处理 TODO 项相关的领域逻辑。
+ * 通过 {@link TodoItemRepository} 访问数据，屏蔽持久化实现细节。
  *
  * @author csxuhuan
  */
@@ -70,5 +71,16 @@ public class TodoItemDomainServiceImpl implements TodoItemDomainService {
 
         TodoItem item = query.toTodoItem();
         return todoItemRepository.update(item, userId, modifier);
+    }
+
+    @Override
+    public int delete(Long id, Long userId, Long modifier) {
+        // 校验：TODO项存在且属于当前用户
+        TodoItem existingItem = todoItemRepository.findById(id, userId);
+        if (existingItem == null) {
+            throw new BizException(BizErrorCode.OPERATION_NOT_ALLOWED, "TODO项不存在或无权访问");
+        }
+
+        return todoItemRepository.delete(id, userId, modifier);
     }
 }

@@ -53,4 +53,9 @@ public class NoticeAppServiceImpl implements NoticeAppService {
     public int create(NoticeCreateQuery query) {
         return noticeDomainService.create(query);
     }
+
+    @Override
+    public int delete(Long id, Long modifier) {
+        return noticeDomainService.delete(id, modifier);
+    }
 }

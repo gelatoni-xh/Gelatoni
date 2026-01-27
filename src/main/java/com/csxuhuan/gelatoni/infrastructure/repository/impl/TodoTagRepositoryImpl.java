@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.csxuhuan.gelatoni.domain.model.converter.TodoTagConverter;
 import com.csxuhuan.gelatoni.domain.model.entity.TodoTag;
 import com.csxuhuan.gelatoni.infrastructure.repository.TodoTagRepository;
@@ -8,6 +9,7 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.TodoTagDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.TodoTagMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -64,5 +66,20 @@ public class TodoTagRepositoryImpl implements TodoTagRepository {
         tagDO.setCreator(creator);
         tagDO.setModifier(creator);
         return todoTagMapper.insert(tagDO);
+    }
+
+    @Override
+    public int delete(Long id, Long userId, Long modifier) {
+        LambdaUpdateWrapper<TodoTagDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TodoTagDO::getId, id)
+                .eq(TodoTagDO::getIsDeleted, false)
+                .eq(TodoTagDO::getUserId, userId);
+
+        TodoTagDO tagDO = new TodoTagDO();
+        tagDO.setIsDeleted(true); // 软删除标记
+        tagDO.setModifier(modifier);
+        tagDO.setModifiedTime(LocalDateTime.now());
+
+        return todoTagMapper.update(tagDO, wrapper);
     }
 }
