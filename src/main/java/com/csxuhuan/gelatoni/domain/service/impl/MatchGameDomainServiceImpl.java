@@ -46,15 +46,11 @@ public class MatchGameDomainServiceImpl implements MatchGameDomainService {
     public Long createMatchGame(MatchGameCreateQuery query) {
         // 创建比赛基础信息
         MatchGame matchGame = query.toMatchGame();
-        int result = matchGameRepository.create(matchGame, query.getCreator());
+        Long matchId = matchGameRepository.create(matchGame, query.getCreator());
         
-        if (result <= 0) {
+        if (matchId == null) {
             throw new RuntimeException("创建比赛失败");
         }
-
-        // 获取刚创建的比赛ID
-        MatchGame createdMatch = matchGameRepository.findById(matchGame.getId());
-        Long matchId = createdMatch.getId();
 
         // 如果提供了队伍统计数据，则批量创建
         if (query.getTeamStatsList() != null && !query.getTeamStatsList().isEmpty()) {

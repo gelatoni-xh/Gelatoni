@@ -14,6 +14,7 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.MatchGameDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchGameMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -77,11 +78,19 @@ public class MatchGameRepositoryImpl implements MatchGameRepository {
      * {@inheritDoc}
      */
     @Override
-    public int create(MatchGame game, Long creator) {
+    public Long create(MatchGame game, Long creator) {
         MatchGameDO matchGameDO = MatchGameConverter.toDO(game);
         matchGameDO.setCreator(creator);
         matchGameDO.setModifier(creator);
-        return matchGameMapper.insert(matchGameDO);
+        int result = matchGameMapper.insert(matchGameDO);
+        
+        if (result <= 0) {
+            return null; // 插入失败
+        }
+        
+        // MyBatis-Plus会在insert后自动将生成的ID设置回matchGameDO对象
+        // 返回新生成的ID
+        return matchGameDO.getId();
     }
 
     /**

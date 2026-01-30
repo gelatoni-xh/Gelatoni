@@ -1,8 +1,6 @@
 package com.csxuhuan.gelatoni.infrastructure.repository;
 
 import com.csxuhuan.gelatoni.domain.model.entity.MatchGame;
-import com.csxuhuan.gelatoni.domain.model.entity.MatchTeamStats;
-import com.csxuhuan.gelatoni.domain.model.entity.MatchPlayerStats;
 
 import java.util.List;
 
@@ -47,7 +45,7 @@ public interface MatchGameRepository {
      * @param creator 创建人ID
      * @return 新增的ID
      */
-    int create(MatchGame game, Long creator);
+    Long create(MatchGame game, Long creator);
 
     /**
      * 更新比赛
