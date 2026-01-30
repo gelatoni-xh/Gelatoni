@@ -2,6 +2,8 @@ package com.csxuhuan.gelatoni.application.service;
 
 import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGamePageQuery;
@@ -100,4 +102,14 @@ public interface MatchGameAppService {
      * @return 比赛详情DTO
      */
     MatchGameDetailDTO getMatchGameDetail(Long id);
+
+    /**
+     * 获取比赛数据统计（仅我方数据）
+     *
+     * <p>不做预计算/缓存/中间表；通过一次查询 + 内存聚合生成各榜单。
+     *
+     * @param request 统计请求
+     * @return 统计结果
+     */
+    MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request);
 }

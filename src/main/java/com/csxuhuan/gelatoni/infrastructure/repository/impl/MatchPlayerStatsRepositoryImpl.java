@@ -9,8 +9,11 @@ import com.csxuhuan.gelatoni.domain.model.converter.MatchPlayerStatsConverter;
 import com.csxuhuan.gelatoni.infrastructure.repository.MatchPlayerStatsRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.entity.MatchPlayerStatsDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchPlayerStatsMapper;
+import com.csxuhuan.gelatoni.infrastructure.repository.entity.MatchGameDO;
+import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchGameMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +26,11 @@ import java.util.stream.Collectors;
 public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepository {
 
     private final MatchPlayerStatsMapper matchPlayerStatsMapper;
+    private final MatchGameMapper matchGameMapper;
 
-    public MatchPlayerStatsRepositoryImpl(MatchPlayerStatsMapper matchPlayerStatsMapper) {
+    public MatchPlayerStatsRepositoryImpl(MatchPlayerStatsMapper matchPlayerStatsMapper, MatchGameMapper matchGameMapper) {
         this.matchPlayerStatsMapper = matchPlayerStatsMapper;
+        this.matchGameMapper = matchGameMapper;
     }
 
     /**
@@ -68,6 +73,42 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
                 .eq(MatchPlayerStatsDO::getTeamType, 2) // 2=对方
                 .eq(MatchPlayerStatsDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
         List<MatchPlayerStatsDO> matchPlayerStatsDOList = matchPlayerStatsMapper.selectList(wrapper);
+        return matchPlayerStatsDOList.stream()
+                .map(MatchPlayerStatsConverter::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<MatchPlayerStats> findMyPlayerStatsForStats(String season) {
+        // 使用 QueryWrapper 构建复杂查询
+        LambdaQueryWrapper<MatchPlayerStatsDO> playerStatsWrapper = Wrappers.lambdaQuery();
+        playerStatsWrapper.eq(MatchPlayerStatsDO::getTeamType, 1) // 只查询我方球员 (team_type = 1)
+                .eq(MatchPlayerStatsDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
+        // 如果提供了赛季，则通过子查询过滤比赛
+        if (season != null && !season.isEmpty()) {
+            // 先查询符合条件的比赛ID
+            LambdaQueryWrapper<MatchGameDO> gameWrapper = Wrappers.lambdaQuery();
+            gameWrapper.eq(MatchGameDO::getSeason, season)
+                    .eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+            List<Long> gameIds = matchGameMapper.selectList(gameWrapper).stream()
+                    .map(MatchGameDO::getId)
+                    .collect(Collectors.toList());
+            
+            // 如果没有符合条件的比赛，则返回空列表
+            if (gameIds.isEmpty()) {
+                return Collections.emptyList();
+            }
+            
+            // 在球员统计中过滤这些比赛ID
+            playerStatsWrapper.in(MatchPlayerStatsDO::getMatchId, gameIds);
+        }
+        
+        // 执行查询
+        List<MatchPlayerStatsDO> matchPlayerStatsDOList = matchPlayerStatsMapper.selectList(playerStatsWrapper);
         return matchPlayerStatsDOList.stream()
                 .map(MatchPlayerStatsConverter::toDomain)
                 .collect(Collectors.toList());

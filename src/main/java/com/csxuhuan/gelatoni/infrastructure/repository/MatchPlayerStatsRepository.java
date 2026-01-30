@@ -40,6 +40,17 @@ public interface MatchPlayerStatsRepository {
     List<MatchPlayerStats> findOpponentPlayerStatsByMatchId(Long matchId);
 
     /**
+     * 查询我方球员统计明细（用于数据统计聚合）
+     *
+     * <p>只统计我方数据（team_type=1）。
+     * season 为空/空字符串时表示全赛季。
+     *
+     * @param season 赛季（可选）
+     * @return 我方球员统计明细列表
+     */
+    List<MatchPlayerStats> findMyPlayerStatsForStats(String season);
+
+    /**
      * 批量新增球员统计数据
      *
      * @param playerStatsList 新增的球员统计数据列表

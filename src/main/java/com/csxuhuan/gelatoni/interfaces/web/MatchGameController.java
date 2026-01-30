@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.interfaces.web;
 
 import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
@@ -12,6 +13,7 @@ import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGamePageRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
 import com.csxuhuan.gelatoni.application.assembler.MatchGameAssembler;
 
 import org.springframework.http.MediaType;
@@ -139,5 +141,31 @@ public class MatchGameController {
     public BaseResponse<MatchGameDetailDTO> detail(@PathVariable Long id) {
         MatchGameDetailDTO matchGameDetail = matchGameAppService.getMatchGameDetail(id);
         return BaseResponse.success(matchGameDetail);
+    }
+
+    /**
+     * 比赛数据统计接口
+     *
+     * <p>用于比赛数据分析页面的基础统计能力。
+     * 支持：
+     * <ul>
+     *     <li>全赛季 / 指定赛季（season 为空表示全赛季）</li>
+     *     <li>统计维度：按用户维度、按球员维度</li>
+     * </ul>
+     *
+     * <p>设计约束：
+     * <ul>
+     *     <li>只统计我方数据（team_type=1）</li>
+     *     <li>不做预计算/缓存/中间表；一次查询 + 聚合计算得到结果</li>
+     * </ul>
+     *
+     * @param request 统计请求
+     * @return 统计结果
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
+    @PostMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<MatchGameStatsDTO> stats(@RequestBody MatchGameStatsRequest request) {
+        MatchGameStatsDTO data = matchGameAppService.getMatchGameStats(request);
+        return BaseResponse.success(data);
     }
 }
