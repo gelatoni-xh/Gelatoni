@@ -67,6 +67,9 @@ public class MatchGameController {
     @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
     @PostMapping(value = "/create", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Long> create(@RequestBody MatchGameCreateRequest request) {
+        // 先进行DTO级别数据校验
+        matchGameAppService.validateCreateRequest(request);
+        
         MatchGameCreateQuery query = assembler.toDomainQuery(request);
         Long matchId = matchGameAppService.createMatchGame(query);
         return BaseResponse.success(matchId);
@@ -89,6 +92,9 @@ public class MatchGameController {
     @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
     @PutMapping(value = "/update", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Boolean> update(@RequestBody MatchGameUpdateRequest request) {
+        // 先进行DTO级别数据校验
+        matchGameAppService.validateUpdateRequest(request);
+        
         MatchGameUpdateQuery query = assembler.toDomainQuery(request);
         Boolean result = matchGameAppService.updateMatchGame(query);
         return BaseResponse.success(result);

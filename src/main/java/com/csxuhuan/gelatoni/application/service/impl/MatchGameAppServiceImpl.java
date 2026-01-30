@@ -5,6 +5,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.application.service.MatchGameStatsCalculator;
+import com.csxuhuan.gelatoni.application.service.MatchGameDataValidator;
 import com.csxuhuan.gelatoni.domain.model.entity.MatchGame;
 import com.csxuhuan.gelatoni.domain.model.entity.MatchPlayerStats;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
@@ -13,6 +14,8 @@ import com.csxuhuan.gelatoni.domain.query.MatchGamePageQuery;
 import com.csxuhuan.gelatoni.domain.service.MatchGameDomainService;
 import com.csxuhuan.gelatoni.application.assembler.MatchGameAssembler;
 import com.csxuhuan.gelatoni.infrastructure.repository.MatchPlayerStatsRepository;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
 
 import java.util.List;
@@ -29,12 +32,15 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
 
     private final MatchGameDomainService matchGameDomainService;
     private final MatchPlayerStatsRepository matchPlayerStatsRepository;
+    private final MatchGameDataValidator dataValidator;
     private final MatchGameAssembler assembler = new MatchGameAssembler();
 
     public MatchGameAppServiceImpl(MatchGameDomainService matchGameDomainService,
-                                  MatchPlayerStatsRepository matchPlayerStatsRepository) {
+                                  MatchPlayerStatsRepository matchPlayerStatsRepository,
+                                  MatchGameDataValidator dataValidator) {
         this.matchGameDomainService = matchGameDomainService;
         this.matchPlayerStatsRepository = matchPlayerStatsRepository;
+        this.dataValidator = dataValidator;
     }
 
     /**
@@ -42,6 +48,9 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
      */
     @Override
     public Long createMatchGame(MatchGameCreateQuery query) {
+        // 数据校验
+        dataValidator.validateCreateData(query);
+        
         return matchGameDomainService.createMatchGame(query);
     }
 
@@ -50,6 +59,9 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
      */
     @Override
     public boolean updateMatchGame(MatchGameUpdateQuery query) {
+        // 数据校验
+        dataValidator.validateUpdateData(query);
+        
         return matchGameDomainService.updateMatchGame(query);
     }
 
@@ -131,5 +143,17 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
 
         List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot);
         return MatchGameStatsCalculator.calculate(season, dim, myPlayerStats);
+    }
+
+    @Override
+    public void validateCreateRequest(MatchGameCreateRequest request) {
+        MatchGameCreateQuery query = assembler.toDomainQuery(request);
+        dataValidator.validateCreateData(query);
+    }
+
+    @Override
+    public void validateUpdateRequest(MatchGameUpdateRequest request) {
+        MatchGameUpdateQuery query = assembler.toDomainQuery(request);
+        dataValidator.validateUpdateData(query);
     }
 }

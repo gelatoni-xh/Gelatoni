@@ -3,6 +3,9 @@ package com.csxuhuan.gelatoni.application.service;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.exception.BizException;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
@@ -112,4 +115,20 @@ public interface MatchGameAppService {
      * @return 统计结果
      */
     MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request);
+
+    /**
+     * 校验比赛创建请求数据
+     *
+     * @param request 比赛创建请求
+     * @throws BizException 当数据不一致时抛出业务异常
+     */
+    void validateCreateRequest(MatchGameCreateRequest request);
+
+    /**
+     * 校验比赛更新请求数据
+     *
+     * @param request 比赛更新请求
+     * @throws BizException 当数据不一致时抛出业务异常
+     */
+    void validateUpdateRequest(MatchGameUpdateRequest request);
 }
