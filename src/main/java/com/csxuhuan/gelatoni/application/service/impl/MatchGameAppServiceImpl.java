@@ -16,7 +16,6 @@ import com.csxuhuan.gelatoni.infrastructure.repository.MatchPlayerStatsRepositor
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -123,13 +122,14 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         // 约束：本期不做预计算/缓存/中间表，因此直接一次查询 + 内存聚合。
 
         String season = request == null ? null : request.getSeason();
+        Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
         MatchGameStatsRequest.StatsDimension reqDim = request == null ? null : request.getDimension();
 
         MatchGameStatsDTO.Dimension dim = reqDim == MatchGameStatsRequest.StatsDimension.USER
                 ? MatchGameStatsDTO.Dimension.USER
                 : MatchGameStatsDTO.Dimension.PLAYER;
 
-        List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season);
+        List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot);
         return MatchGameStatsCalculator.calculate(season, dim, myPlayerStats);
     }
 }

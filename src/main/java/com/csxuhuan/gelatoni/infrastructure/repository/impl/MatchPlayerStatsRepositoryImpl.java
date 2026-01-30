@@ -82,30 +82,38 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
      * {@inheritDoc}
      */
     @Override
-    public List<MatchPlayerStats> findMyPlayerStatsForStats(String season) {
+    public List<MatchPlayerStats> findMyPlayerStatsForStats(String season, Boolean excludeRobot) {
         // 使用 QueryWrapper 构建复杂查询
         LambdaQueryWrapper<MatchPlayerStatsDO> playerStatsWrapper = Wrappers.lambdaQuery();
         playerStatsWrapper.eq(MatchPlayerStatsDO::getTeamType, 1) // 只查询我方球员 (team_type = 1)
                 .eq(MatchPlayerStatsDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
 
-        // 如果提供了赛季，则通过子查询过滤比赛
+        // 构建比赛查询条件
+        LambdaQueryWrapper<MatchGameDO> gameWrapper = Wrappers.lambdaQuery();
+        gameWrapper.eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+        
+        // 如果提供了赛季，则按赛季过滤
         if (season != null && !season.isEmpty()) {
-            // 先查询符合条件的比赛ID
-            LambdaQueryWrapper<MatchGameDO> gameWrapper = Wrappers.lambdaQuery();
-            gameWrapper.eq(MatchGameDO::getSeason, season)
-                    .eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
-            List<Long> gameIds = matchGameMapper.selectList(gameWrapper).stream()
-                    .map(MatchGameDO::getId)
-                    .collect(Collectors.toList());
-            
-            // 如果没有符合条件的比赛，则返回空列表
-            if (gameIds.isEmpty()) {
-                return Collections.emptyList();
-            }
-            
-            // 在球员统计中过滤这些比赛ID
-            playerStatsWrapper.in(MatchPlayerStatsDO::getMatchId, gameIds);
+            gameWrapper.eq(MatchGameDO::getSeason, season);
         }
+        
+        // 如果excludeRobot = true，则排除机器人比赛(is_robot = 1)
+        if (Boolean.TRUE.equals(excludeRobot)) {
+            gameWrapper.eq(MatchGameDO::getIsRobot, false);
+        }
+        
+        // 查询符合条件的比赛ID
+        List<Long> gameIds = matchGameMapper.selectList(gameWrapper).stream()
+                .map(MatchGameDO::getId)
+                .collect(Collectors.toList());
+        
+        // 如果没有符合条件的比赛，则返回空列表
+        if (gameIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        // 在球员统计中过滤这些比赛ID
+        playerStatsWrapper.in(MatchPlayerStatsDO::getMatchId, gameIds);
         
         // 执行查询
         List<MatchPlayerStatsDO> matchPlayerStatsDOList = matchPlayerStatsMapper.selectList(playerStatsWrapper);

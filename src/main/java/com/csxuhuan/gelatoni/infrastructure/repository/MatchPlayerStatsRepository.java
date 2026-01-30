@@ -48,7 +48,7 @@ public interface MatchPlayerStatsRepository {
      * @param season 赛季（可选）
      * @return 我方球员统计明细列表
      */
-    List<MatchPlayerStats> findMyPlayerStatsForStats(String season);
+    List<MatchPlayerStats> findMyPlayerStatsForStats(String season, Boolean excludeRobot);
 
     /**
      * 批量新增球员统计数据

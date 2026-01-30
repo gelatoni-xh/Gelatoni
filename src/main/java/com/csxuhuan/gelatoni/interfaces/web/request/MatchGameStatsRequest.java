@@ -20,6 +20,9 @@ public class MatchGameStatsRequest {
     /** 赛季（可选）。为空/空字符串表示全赛季 */
     private String season;
 
+    /** 是否去除机器人 */
+    private Boolean excludeRobot = true;
+
     /** 统计维度（必填）：PLAYER=球员维度，USER=用户维度 */
     @NotNull(message = "统计维度不能为空")
     private StatsDimension dimension;
@@ -30,6 +33,14 @@ public class MatchGameStatsRequest {
 
     public void setSeason(String season) {
         this.season = season;
+    }
+
+    public Boolean getExcludeRobot() {
+        return excludeRobot;
+    }
+
+    public void setExcludeRobot(Boolean excludeRobot) {
+        this.excludeRobot = excludeRobot;
     }
 
     public StatsDimension getDimension() {
