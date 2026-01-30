@@ -3,8 +3,11 @@ package com.csxuhuan.gelatoni.interfaces.exception;
 import com.csxuhuan.gelatoni.application.exception.BizException;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 全局异常处理器
@@ -22,6 +25,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @see BizException
  * @see ResultCode
  */
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -61,7 +65,14 @@ public class GlobalExceptionHandler {
      * @return 系统错误响应
      */
     @ExceptionHandler(Exception.class)
-    public BaseResponse<Void> handleException(Exception ex) {
+    public BaseResponse<Void> handleException(HttpServletRequest request, Exception ex) {
+        // 记录详细的错误信息
+        log.error("系统异常 - URL: {} {}, Method: {}, User-Agent: {}, Error: {}", 
+                 request.getMethod(), request.getRequestURI(), 
+                 request.getMethod(), 
+                 request.getHeader("User-Agent"), 
+                 ex.getMessage(), ex);
+                 
         return BaseResponse.error(
                 ResultCode.SYSTEM_ERROR,
                 ex.getMessage()
