@@ -44,7 +44,7 @@ public class MatchGameAssembler {
                 request.getResult(),
                 request.getRemark(),
                 request.getCreator(),
-                CollectionUtils.isEmpty(request.getTeamStatsList()) ?
+                !CollectionUtils.isEmpty(request.getTeamStatsList()) ?
                     request.getTeamStatsList().stream()
                         .map(teamStat -> new MatchTeamStats(
                             null, null, teamStat.getTeamType(), teamStat.getScore(), 
@@ -58,7 +58,7 @@ public class MatchGameAssembler {
                             teamStat.getMaxLead(), request.getCreator(), request.getCreator(), 
                             null, null))
                         .collect(Collectors.toList()) : null,
-                CollectionUtils.isEmpty(request.getPlayerStatsList()) ?
+                !CollectionUtils.isEmpty(request.getPlayerStatsList()) ?
                     request.getPlayerStatsList().stream()
                         .map(playerStat -> new MatchPlayerStats(
                             null, null, playerStat.getTeamType(), playerStat.getUserName(), 
