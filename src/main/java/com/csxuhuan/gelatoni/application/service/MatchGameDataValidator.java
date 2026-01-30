@@ -360,11 +360,6 @@ public class MatchGameDataValidator {
 
         // 3. 队伍统计各项指标与球员统计总和一致性校验
         validateTeamStatsWithPlayerStats(myTeamStat, playerStatsList, 1, "我方");
-        
-        // 非机器人对局时校验对方队伍统计一致性
-        if (!Boolean.TRUE.equals(isRobot)) {
-            validateTeamStatsWithPlayerStats(opponentTeamStat, playerStatsList, 2, "对方");
-        }
     }
 
     /**
