@@ -42,7 +42,7 @@ public class MatchPlayerStats {
     private final String playerName;
 
     /** 比赛评分 */
-    private final Integer rating;
+    private final Long rating;
 
     /** 是否MVP：1=是 */
     private final Boolean isMvp;
@@ -131,7 +131,7 @@ public class MatchPlayerStats {
      * @param modifiedTime    修改时间，新建时可为 null（由数据库填充）
      */
     public MatchPlayerStats(Long id, Long matchId, Integer teamType, String userName, String playerName,
-                            Integer rating, Boolean isMvp, Boolean isSvp, Integer score, Integer assist,
+                            Long rating, Boolean isMvp, Boolean isSvp, Integer score, Integer assist,
                             Integer rebound, Integer steal, Integer block, Integer turnover, Integer dunk,
                             Integer fgAttempt, Integer fgMade, Integer threeAttempt, Integer threeMade,
                             Integer midCount, Integer maxScoringRun, Long creator, Long modifier,
@@ -183,7 +183,7 @@ public class MatchPlayerStats {
         return playerName;
     }
 
-    public Integer getRating() {
+    public Long getRating() {
         return rating;
     }
 

@@ -40,7 +40,7 @@ public class MatchPlayerStatsDO {
 
     /** 比赛评分 */
     @TableField("rating")
-    private Integer rating;
+    private Long rating;
 
     /** 是否MVP：1=是 */
     @TableField("is_mvp")
@@ -127,7 +127,7 @@ public class MatchPlayerStatsDO {
     }
 
     public MatchPlayerStatsDO(Long id, Long matchId, Integer teamType, String userName, String playerName,
-                            Integer rating, Boolean isMvp, Boolean isSvp, Integer score, Integer assist,
+                            Long rating, Boolean isMvp, Boolean isSvp, Integer score, Integer assist,
                             Integer rebound, Integer steal, Integer block, Integer turnover, Integer dunk,
                             Integer fgAttempt, Integer fgMade, Integer threeAttempt, Integer threeMade,
                             Integer midCount, Integer maxScoringRun, Long creator, Long modifier,
@@ -201,11 +201,11 @@ public class MatchPlayerStatsDO {
         this.playerName = playerName;
     }
 
-    public Integer getRating() {
+    public Long getRating() {
         return rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(Long rating) {
         this.rating = rating;
     }
 
