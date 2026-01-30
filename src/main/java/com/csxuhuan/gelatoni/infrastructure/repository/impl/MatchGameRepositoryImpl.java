@@ -15,6 +15,7 @@ import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchGameMapper;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -141,5 +142,21 @@ public class MatchGameRepositoryImpl implements MatchGameRepository {
         LambdaQueryWrapper<MatchGameDO> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
         return matchGameMapper.selectCount(wrapper).intValue();
+    }
+
+    @Override
+    public List<String> findDistinctSeasons() {
+        LambdaQueryWrapper<MatchGameDO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
+                .isNotNull(MatchGameDO::getSeason)
+                .ne(MatchGameDO::getSeason, "")
+                .select(MatchGameDO::getSeason)
+                .groupBy(MatchGameDO::getSeason)
+                .orderByDesc(MatchGameDO::getSeason);
+
+        return matchGameMapper.selectList(wrapper).stream()
+                .map(MatchGameDO::getSeason)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

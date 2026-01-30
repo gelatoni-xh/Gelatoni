@@ -24,22 +24,6 @@ public interface MatchPlayerStatsRepository {
     List<MatchPlayerStats> findByMatchId(Long matchId);
 
     /**
-     * 根据比赛ID查询我方球员统计数据
-     *
-     * @param matchId 比赛ID
-     * @return 我方球员统计数据列表（领域对象）
-     */
-    List<MatchPlayerStats> findMyPlayerStatsByMatchId(Long matchId);
-
-    /**
-     * 根据比赛ID查询对方球员统计数据
-     *
-     * @param matchId 比赛ID
-     * @return 对方球员统计数据列表（领域对象）
-     */
-    List<MatchPlayerStats> findOpponentPlayerStatsByMatchId(Long matchId);
-
-    /**
      * 查询我方球员统计明细（用于数据统计聚合）
      *
      * <p>只统计我方数据（team_type=1）。
@@ -60,15 +44,6 @@ public interface MatchPlayerStatsRepository {
     int batchCreate(List<MatchPlayerStats> playerStatsList, Long creator);
 
     /**
-     * 批量更新球员统计数据
-     *
-     * @param playerStatsList 更新的球员统计数据列表
-     * @param modifier 修改人ID
-     * @return 更新的记录数
-     */
-    int batchUpdate(List<MatchPlayerStats> playerStatsList, Long modifier);
-
-    /**
      * 根据比赛ID删除球员统计数据（软删除）
      *
      * @param matchId 比赛ID
@@ -78,12 +53,17 @@ public interface MatchPlayerStatsRepository {
     int deleteByMatchId(Long matchId, Long modifier);
 
     /**
-     * 根据比赛ID和队伍类型删除球员统计数据（软删除）
+     * 查询球员名称列表（去重）
      *
-     * @param matchId 比赛ID
-     * @param teamType 队伍类型
-     * @param modifier 修改人ID
-     * @return 受影响行数
+     * @param teamType 队伍类型：1=我方，2=对方
+     * @return 球员名称列表
      */
-    int deleteByMatchIdAndTeamType(Long matchId, Integer teamType, Long modifier);
+    List<String> findDistinctPlayerNames(Integer teamType);
+
+    /**
+     * 查询我方用户昵称列表（去重）
+     *
+     * @return 我方用户昵称列表
+     */
+    List<String> findDistinctMyUserNames();
 }

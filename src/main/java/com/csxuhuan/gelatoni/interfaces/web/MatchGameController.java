@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.interfaces.web;
 
 import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
@@ -172,6 +173,18 @@ public class MatchGameController {
     @PostMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<MatchGameStatsDTO> stats(@RequestBody MatchGameStatsRequest request) {
         MatchGameStatsDTO data = matchGameAppService.getMatchGameStats(request);
+        return BaseResponse.success(data);
+    }
+
+    /**
+     * 获取比赛基础数据接口
+     *
+     * @return 基础数据
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
+    @GetMapping(value = "/base-data", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<MatchGameBaseDataDTO> baseData() {
+        MatchGameBaseDataDTO data = matchGameAppService.getMatchGameBaseData();
         return BaseResponse.success(data);
     }
 }

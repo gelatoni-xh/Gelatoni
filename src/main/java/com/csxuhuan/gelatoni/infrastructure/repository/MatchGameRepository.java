@@ -71,4 +71,11 @@ public interface MatchGameRepository {
      * @return 比赛总数
      */
     int count();
+
+    /**
+     * 查询赛季列表（去重）
+     *
+     * @return 赛季列表
+     */
+    List<String> findDistinctSeasons();
 }

@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.application.service;
 
 import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
 import com.csxuhuan.gelatoni.application.exception.BizException;
@@ -72,14 +73,6 @@ public interface MatchGameAppService {
     boolean deleteMatchGame(Long id);
 
     /**
-     * 根据ID获取比赛
-     *
-     * @param id 比赛ID
-     * @return 比赛DTO
-     */
-    MatchGameDTO getMatchGameById(Long id);
-
-    /**
      * 分页查询比赛列表
      *
      * <p>按比赛时间排序，支持按赛季筛选。
@@ -88,13 +81,6 @@ public interface MatchGameAppService {
      * @return 比赛列表
      */
     List<MatchGameDTO> getMatchGamePage(MatchGamePageQuery query);
-
-    /**
-     * 获取比赛总数
-     *
-     * @return 比赛总数
-     */
-    int getMatchGameCount();
 
     /**
      * 获取比赛详情
@@ -115,6 +101,13 @@ public interface MatchGameAppService {
      * @return 统计结果
      */
     MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request);
+
+    /**
+     * 获取比赛基础数据
+     *
+     * @return 基础数据
+     */
+    MatchGameBaseDataDTO getMatchGameBaseData();
 
     /**
      * 校验比赛创建请求数据
