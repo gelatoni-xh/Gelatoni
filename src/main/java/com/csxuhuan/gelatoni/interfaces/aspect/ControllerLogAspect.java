@@ -21,11 +21,13 @@ import java.util.Arrays;
  *     <li>响应结果摘要</li>
  *     <li>链路追踪 ID（traceId/spanId）</li>
  *     <li>请求耗时</li>
+ *     <li>异常信息（当方法执行失败时）</li>
  * </ul>
  *
  * <p>日志格式示例：
  * <pre>
- * HTTP POST /api/notice/page | args=[...] | result=BaseResponse{...} | traceId=xxx | spanId=yyy | 25ms
+ * HTTP POST /api/match-game/create | args=[...] | result=BaseResponse{...} | traceId=xxx | spanId=yyy | 25ms
+ * HTTP POST /api/match-game/create | args=[...] | ERROR: exception message | traceId=xxx | spanId=yyy | 25ms
  * </pre>
  *
  * <p>日志输出到独立的 logger：com.csxuhuan.gelatoni.aspect.controller
@@ -41,7 +43,7 @@ public class ControllerLogAspect {
      * Controller 方法环绕通知
      *
      * <p>拦截所有 Controller 类的 public 方法，在方法执行前后记录日志。
-     * 切点表达式匹配 interfaces.web 包下所有以 Controller 结尾的类的所有方法。
+     * 如果目标方法抛出异常，会记录异常信息并重新抛出异常。
      *
      * @param joinPoint 切入点，包含目标方法的信息
      * @return 目标方法的返回值
@@ -50,7 +52,6 @@ public class ControllerLogAspect {
     @Around("execution(* com.csxuhuan.gelatoni.interfaces.web..*Controller.*(..))")
     public Object logDigest(ProceedingJoinPoint joinPoint) throws Throwable {
         long start = System.currentTimeMillis();
-        Object result;
 
         // 获取 HTTP 请求信息
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
@@ -61,20 +62,36 @@ public class ControllerLogAspect {
         Object[] args = joinPoint.getArgs();
         String argsStr = Arrays.toString(args);
 
-        // 执行目标方法
-        result = joinPoint.proceed();
+        Object result;
+        try {
+            // 执行目标方法
+            result = joinPoint.proceed();
+            
+            long duration = System.currentTimeMillis() - start;
 
-        long duration = System.currentTimeMillis() - start;
+            // 获取 Spring Cloud Sleuth 的链路追踪 ID
+            String traceId = org.slf4j.MDC.get("traceId");
+            String spanId = org.slf4j.MDC.get("spanId");
 
-        // 获取 Spring Cloud Sleuth 的链路追踪 ID
-        String traceId = org.slf4j.MDC.get("traceId");
-        String spanId = org.slf4j.MDC.get("spanId");
+            // 记录请求日志
+            log.info("HTTP {} {} | args={} | result={} | traceId={} | spanId={} | {}ms",
+                    method, uri, argsStr, summarize(result), traceId, spanId, duration);
 
-        // 记录请求日志
-        log.info("HTTP {} {} | args={} | result={} | traceId={} | spanId={} | {}ms",
-                method, uri, argsStr, summarize(result), traceId, spanId, duration);
-
-        return result;
+            return result;
+        } catch (Throwable throwable) {
+            // 记录异常信息
+            long duration = System.currentTimeMillis() - start;
+            
+            // 获取链路追踪 ID
+            String traceId = org.slf4j.MDC.get("traceId");
+            String spanId = org.slf4j.MDC.get("spanId");
+            
+            log.error("HTTP {} {} | args={} | ERROR: {} | traceId={} | spanId={} | {}ms",
+                     method, uri, argsStr, throwable.getMessage(), traceId, spanId, duration);
+            
+            // 重新抛出异常，让全局异常处理器处理
+            throw throwable;
+        }
     }
 
     /**
