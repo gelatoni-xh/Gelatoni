@@ -27,7 +27,7 @@ public class MatchPlayerStatsDTO {
     private String playerName;
 
     /** 比赛评分 */
-    private Long rating;
+    private Double rating;
 
     /** 是否MVP：1=是 */
     private Boolean isMvp;
@@ -117,11 +117,11 @@ public class MatchPlayerStatsDTO {
         this.playerName = playerName;
     }
 
-    public Long getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(Long rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 
