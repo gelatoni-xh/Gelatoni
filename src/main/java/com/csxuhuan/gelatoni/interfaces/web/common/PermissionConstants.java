@@ -43,6 +43,11 @@ public class PermissionConstants {
     public static final String PERM_USER_PERMISSION_MGMT = "PERM_USER_PERMISSION_MGMT";
 
     /**
+     * 比赛管理权限
+     */
+    public static final String PERM_MATCH = "PERM_MATCH";
+
+    /**
      * 私有构造函数，防止实例化
      */
     private PermissionConstants() {
