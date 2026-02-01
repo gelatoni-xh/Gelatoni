@@ -1,10 +1,12 @@
 package com.csxuhuan.gelatoni.infrastructure.redis;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Redis客户端工具类
@@ -17,7 +19,7 @@ import java.time.Duration;
 public class RedisClient {
 
     /** Redis模板实例，用于执行各种Redis操作 */
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final StringRedisTemplate redisTemplate;
 
     private final ObjectMapper objectMapper;
 
@@ -26,7 +28,7 @@ public class RedisClient {
      * 
      * @param redisTemplate Redis模板实例
      */
-    public RedisClient(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
+    public RedisClient(StringRedisTemplate redisTemplate, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
         this.objectMapper = objectMapper;
     }
@@ -41,11 +43,16 @@ public class RedisClient {
      * @param ttl 过期时间，null表示永不过期
      */
     public void set(String key, Object value, Duration ttl) {
-        if (ttl == null) {
-            redisTemplate.opsForValue().set(key, value);
-            return;
+        try {
+            String json = objectMapper.writeValueAsString(value);
+            if (ttl == null) {
+                redisTemplate.opsForValue().set(key, json);
+                return;
+            }
+            redisTemplate.opsForValue().set(key, json, ttl);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to serialize value for key='" + key + "'", e);
         }
-        redisTemplate.opsForValue().set(key, value, ttl);
     }
 
     /**
@@ -57,20 +64,15 @@ public class RedisClient {
      * @return 转换后的值，如果键不存在则返回null
      */
     public <T> T get(String key, Class<T> type) {
-        Object value = redisTemplate.opsForValue().get(key);
-        if (value == null) {
+        String json = redisTemplate.opsForValue().get(key);
+        if (json == null) {
             return null;
         }
 
-        if (type.isInstance(value)) {
-            return type.cast(value);
-        }
-
         try {
-            return objectMapper.convertValue(value, type);
-        } catch (IllegalArgumentException e) {
-            throw new ClassCastException("Redis value for key='" + key + "' cannot be converted from "
-                    + value.getClass().getName() + " to " + type.getName() + ": " + e.getMessage());
+            return objectMapper.readValue(json, type);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to deserialize JSON value for key='" + key + "' to type " + type.getName(), e);
         }
     }
 
@@ -82,6 +84,16 @@ public class RedisClient {
      */
     public Boolean delete(String key) {
         return redisTemplate.delete(key);
+    }
+
+    /**
+     * 根据模式删除键
+     * 
+     * @param pattern 键模式（支持通配符）
+     * @return 删除的键数量
+     */
+    public Long deleteByPattern(String pattern) {
+        return redisTemplate.delete(redisTemplate.keys(pattern));
     }
 
     /**

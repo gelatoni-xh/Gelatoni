@@ -6,6 +6,7 @@ import com.csxuhuan.gelatoni.infrastructure.redis.generator.GenericCacheKeyGener
 import com.csxuhuan.gelatoni.infrastructure.redis.generator.MatchGameStatsCacheKeyGenerator;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.time.Duration;
 
 /**
@@ -33,6 +34,14 @@ public class MatchGameStatsCacheManager {
         this.redisClient = redisClient;
         this.keyGenerator = keyGenerator;
         this.genericKeyGenerator = genericKeyGenerator;
+    }
+
+    /**
+     * 启动时清理旧格式缓存，避免反序列化错误
+     */
+    @PostConstruct
+    public void init() {
+        evictAllStats();
     }
 
     /**
@@ -70,11 +79,8 @@ public class MatchGameStatsCacheManager {
      * 在数据发生重大变更时调用
      */
     public void evictAllStats() {
-        // 注意：RedisTemplate的keys操作在生产环境中需要谨慎使用
-        // 这里简化处理，实际项目中建议使用scan命令或专门的缓存清理机制
         String pattern = keyGenerator.getAllStatsPattern();
-        // 实际实现可能需要遍历匹配的key并删除
-        // 这里先留空，后续可以根据具体Redis客户端实现
+        redisClient.deleteByPattern(pattern);
     }
 
     /**
