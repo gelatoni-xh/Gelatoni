@@ -1,7 +1,6 @@
 package com.csxuhuan.gelatoni.infrastructure.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -39,12 +38,9 @@ public class RedisConfig {
         Jackson2JsonRedisSerializer<Object> valueSerializer =
                 new Jackson2JsonRedisSerializer<>(Object.class);
 
-        // 配置ObjectMapper以支持类型信息的序列化和反序列化
+        // 配置ObjectMapper，禁用默认类型推断以减少存储开销和提高兼容性
         ObjectMapper mapper = new ObjectMapper();
-        mapper.activateDefaultTyping(
-                LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL
-        );
+        // 不激活默认类型推断，让Jackson根据实际类型自动处理
         valueSerializer.setObjectMapper(mapper);
 
         // 设置各种序列化器

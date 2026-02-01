@@ -1,5 +1,7 @@
 package com.csxuhuan.gelatoni.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.List;
 
 /**
@@ -12,6 +14,7 @@ import java.util.List;
  *     <li>命中率类榜单：使用 rate 表示（范围 0~1），同时返回 made/attempt 便于前端展示</li>
  * </ul>
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MatchGameStatsDTO {
 
     /** 赛季（为空表示全赛季） */
@@ -22,6 +25,10 @@ public class MatchGameStatsDTO {
 
     /** 各榜单结果 */
     private List<Leaderboard> leaderboards;
+
+    // Jackson反序列化需要无参构造函数
+    public MatchGameStatsDTO() {
+    }
 
     public MatchGameStatsDTO(String season, Dimension dimension, List<Leaderboard> leaderboards) {
         this.season = season;
@@ -88,9 +95,14 @@ public class MatchGameStatsDTO {
     /**
      * 单个榜单
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Leaderboard {
         private Metric metric;
         private List<RankItem> items;
+
+        // Jackson反序列化需要无参构造函数
+        public Leaderboard() {
+        }
 
         public Leaderboard(Metric metric, List<RankItem> items) {
             this.metric = metric;
@@ -117,6 +129,7 @@ public class MatchGameStatsDTO {
     /**
      * 榜单条目
      */
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class RankItem {
         /** 名称：球员名/用户名 */
         private String name;
@@ -132,6 +145,10 @@ public class MatchGameStatsDTO {
 
         /** 命中率榜单：命中率（0~1） */
         private Double rate;
+
+        // Jackson反序列化需要无参构造函数
+        public RankItem() {
+        }
 
         public RankItem(String name, Long value) {
             this.name = name;
