@@ -96,6 +96,7 @@ public interface MatchGameAppService {
      * 获取比赛数据统计（仅我方数据）
      *
      * <p>不做预计算/缓存/中间表；通过一次查询 + 内存聚合生成各榜单。
+     * 本方法已集成缓存机制，相同参数的请求会命中缓存。
      *
      * @param request 统计请求
      * @return 统计结果

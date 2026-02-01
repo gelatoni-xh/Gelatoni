@@ -14,6 +14,8 @@ import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGamePageQuery;
 import com.csxuhuan.gelatoni.domain.service.MatchGameDomainService;
 import com.csxuhuan.gelatoni.application.assembler.MatchGameAssembler;
+import com.csxuhuan.gelatoni.infrastructure.redis.generator.MatchGameStatsCacheKeyGenerator;
+import com.csxuhuan.gelatoni.infrastructure.redis.manager.MatchGameStatsCacheManager;
 import com.csxuhuan.gelatoni.infrastructure.repository.MatchGameRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.MatchPlayerStatsRepository;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
@@ -36,16 +38,22 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     private final MatchGameRepository matchGameRepository;
     private final MatchPlayerStatsRepository matchPlayerStatsRepository;
     private final MatchGameDataValidator dataValidator;
+    private final MatchGameStatsCacheManager cacheManager;
+    private final MatchGameStatsCacheKeyGenerator keyGenerator;
     private final MatchGameAssembler assembler = new MatchGameAssembler();
 
     public MatchGameAppServiceImpl(MatchGameDomainService matchGameDomainService,
                                   MatchGameRepository matchGameRepository,
                                   MatchPlayerStatsRepository matchPlayerStatsRepository,
-                                  MatchGameDataValidator dataValidator) {
+                                  MatchGameDataValidator dataValidator,
+                                  MatchGameStatsCacheManager cacheManager,
+                                  MatchGameStatsCacheKeyGenerator keyGenerator) {
         this.matchGameDomainService = matchGameDomainService;
         this.matchGameRepository = matchGameRepository;
         this.matchPlayerStatsRepository = matchPlayerStatsRepository;
         this.dataValidator = dataValidator;
+        this.cacheManager = cacheManager;
+        this.keyGenerator = keyGenerator;
     }
 
     /**
@@ -119,8 +127,17 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     @Override
     public MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request) {
         // 约束：只统计我方数据（team_type=1），由 Repository/SQL 保证。
-        // 约束：本期不做预计算/缓存/中间表，因此直接一次查询 + 内存聚合。
+        
+        // 1. 生成缓存键
+        String cacheKey = keyGenerator.generateKey(request);
+        
+        // 2. 尝试从缓存获取
+        MatchGameStatsDTO cachedStats = cacheManager.getStats(cacheKey);
+        if (cachedStats != null) {
+            return cachedStats;
+        }
 
+        // 3. 缓存未命中，执行数据库查询和计算
         String season = request == null ? null : request.getSeason();
         Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
         MatchGameStatsRequest.StatsDimension reqDim = request == null ? null : request.getDimension();
@@ -130,7 +147,12 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
                 : MatchGameStatsDTO.Dimension.PLAYER;
 
         List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot);
-        return MatchGameStatsCalculator.calculate(season, dim, myPlayerStats);
+        MatchGameStatsDTO calculatedStats = MatchGameStatsCalculator.calculate(season, dim, myPlayerStats);
+        
+        // 4. 将计算结果存入缓存
+        cacheManager.setStats(cacheKey, calculatedStats);
+        
+        return calculatedStats;
     }
 
     @Override

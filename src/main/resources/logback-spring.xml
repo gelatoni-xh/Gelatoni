@@ -69,6 +69,24 @@
         </encoder>
     </appender>
 
+    <!-- ================= Redis Digest ================= -->
+
+    <appender name="REDIS_DIGEST"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/digest/redis/digest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_HOME}/digest/redis/digest.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
     <!-- ================= Root（极简兜底） ================= -->
 
     <root level="INFO">
@@ -91,6 +109,14 @@
             level="INFO"
             additivity="false">
         <appender-ref ref="CONTROLLER_DIGEST"/>
+    </logger>
+
+    <!-- ================= Redis Digest Logger ================= -->
+
+    <logger name="com.csxuhuan.gelatoni.aspect.redis"
+            level="INFO"
+            additivity="false">
+        <appender-ref ref="REDIS_DIGEST"/>
     </logger>
 
 </configuration>
