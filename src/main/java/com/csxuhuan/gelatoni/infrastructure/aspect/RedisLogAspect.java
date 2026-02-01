@@ -5,6 +5,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
+import org.slf4j.MDC;
 
 import java.time.Duration;
 
@@ -88,26 +89,28 @@ public class RedisLogAspect {
      * @param duration 操作耗时（毫秒）
      */
     private void logRedisSuccess(String methodName, Object[] args, Object result, long duration) {
+        String traceId = MDC.get("traceId");
+        String spanId = MDC.get("spanId");
         switch (methodName) {
             case "set":
-                logSetOperation(args, duration);
+                logSetOperation(args, duration, traceId, spanId);
                 break;
             case "get":
-                logGetOperation(args, result, duration);
+                logGetOperation(args, result, duration, traceId, spanId);
                 break;
             case "delete":
-                logDeleteOperation(args, result, duration);
+                logDeleteOperation(args, result, duration, traceId, spanId);
                 break;
             case "exists":
-                logExistsOperation(args, result, duration);
+                logExistsOperation(args, result, duration, traceId, spanId);
                 break;
             case "increment":
-                logIncrementOperation(args, result, duration);
+                logIncrementOperation(args, result, duration, traceId, spanId);
                 break;
             default:
                 // 其他方法使用通用格式
-                log.info("REDIS {} | args={} | result={} | {}ms", 
-                        methodName.toUpperCase(), formatArgs(args), summarize(result), duration);
+                log.info("REDIS {} | args={} | result={} | traceId={} | spanId={} | {}ms", 
+                        methodName.toUpperCase(), formatArgs(args), summarize(result), traceId, spanId, duration);
         }
     }
 
@@ -120,70 +123,72 @@ public class RedisLogAspect {
      * @param duration 操作耗时（毫秒）
      */
     private void logRedisError(String methodName, Object[] args, Throwable throwable, long duration) {
-        log.error("REDIS {} | args={} | ERROR: {} | {}ms",
-                methodName.toUpperCase(), formatArgs(args), throwable.getMessage(), duration);
+        String traceId = MDC.get("traceId");
+        String spanId = MDC.get("spanId");
+        log.error("REDIS {} | args={} | ERROR: {} | traceId={} | spanId={} | {}ms",
+                methodName.toUpperCase(), formatArgs(args), throwable.getMessage(), traceId, spanId, duration);
     }
 
     /**
      * 记录 SET 操作日志
      */
-    private void logSetOperation(Object[] args, long duration) {
+    private void logSetOperation(Object[] args, long duration, String traceId, String spanId) {
         if (args.length >= 2) {
             String key = String.valueOf(args[0]);
             Object value = args[1];
             String ttlInfo = args.length > 2 && args[2] != null ? 
                 " | ttl=" + formatDuration((Duration) args[2]) : "";
             
-            log.info("REDIS SET key={} | value={}{} | {}ms", 
-                    key, summarize(value), ttlInfo, duration);
+            log.info("REDIS SET key={} | value={}{} | traceId={} | spanId={} | {}ms", 
+                    key, summarize(value), ttlInfo, traceId, spanId, duration);
         }
     }
 
     /**
      * 记录 GET 操作日志
      */
-    private void logGetOperation(Object[] args, Object result, long duration) {
+    private void logGetOperation(Object[] args, Object result, long duration, String traceId, String spanId) {
         if (args.length >= 1) {
             String key = String.valueOf(args[0]);
-            log.info("REDIS GET key={} | result={} | {}ms", 
-                    key, summarize(result), duration);
+            log.info("REDIS GET key={} | result={} | traceId={} | spanId={} | {}ms", 
+                    key, summarize(result), traceId, spanId, duration);
         }
     }
 
     /**
      * 记录 DELETE 操作日志
      */
-    private void logDeleteOperation(Object[] args, Object result, long duration) {
+    private void logDeleteOperation(Object[] args, Object result, long duration, String traceId, String spanId) {
         if (args.length >= 1) {
             String key = String.valueOf(args[0]);
-            log.info("REDIS DELETE key={} | result={} | {}ms", 
-                    key, result, duration);
+            log.info("REDIS DELETE key={} | result={} | traceId={} | spanId={} | {}ms", 
+                    key, result, traceId, spanId, duration);
         }
     }
 
     /**
      * 记录 EXISTS 操作日志
      */
-    private void logExistsOperation(Object[] args, Object result, long duration) {
+    private void logExistsOperation(Object[] args, Object result, long duration, String traceId, String spanId) {
         if (args.length >= 1) {
             String key = String.valueOf(args[0]);
-            log.info("REDIS EXISTS key={} | result={} | {}ms", 
-                    key, result, duration);
+            log.info("REDIS EXISTS key={} | result={} | traceId={} | spanId={} | {}ms", 
+                    key, result, traceId, spanId, duration);
         }
     }
 
     /**
      * 记录 INCREMENT 操作日志
      */
-    private void logIncrementOperation(Object[] args, Object result, long duration) {
+    private void logIncrementOperation(Object[] args, Object result, long duration, String traceId, String spanId) {
         if (args.length >= 2) {
             String key = String.valueOf(args[0]);
             long delta = (Long) args[1];
             String ttlInfo = args.length > 2 && args[2] != null ? 
                 " | ttl=" + formatDuration((Duration) args[2]) : "";
             
-            log.info("REDIS INCREMENT key={} | delta={}{} | result={} | {}ms", 
-                    key, delta, ttlInfo, result, duration);
+            log.info("REDIS INCREMENT key={} | delta={}{} | result={} | traceId={} | spanId={} | {}ms", 
+                    key, delta, ttlInfo, result, traceId, spanId, duration);
         }
     }
 

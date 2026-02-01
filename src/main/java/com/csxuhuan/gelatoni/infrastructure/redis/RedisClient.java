@@ -1,5 +1,6 @@
 package com.csxuhuan.gelatoni.infrastructure.redis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +19,16 @@ public class RedisClient {
     /** Redis模板实例，用于执行各种Redis操作 */
     private final RedisTemplate<String, Object> redisTemplate;
 
+    private final ObjectMapper objectMapper;
+
     /**
      * 构造函数
      * 
      * @param redisTemplate Redis模板实例
      */
-    public RedisClient(RedisTemplate<String, Object> redisTemplate) {
+    public RedisClient(RedisTemplate<String, Object> redisTemplate, ObjectMapper objectMapper) {
         this.redisTemplate = redisTemplate;
+        this.objectMapper = objectMapper;
     }
 
     /* ---------- 基础 KV 操作 ---------- */
@@ -37,6 +41,10 @@ public class RedisClient {
      * @param ttl 过期时间，null表示永不过期
      */
     public void set(String key, Object value, Duration ttl) {
+        if (ttl == null) {
+            redisTemplate.opsForValue().set(key, value);
+            return;
+        }
         redisTemplate.opsForValue().set(key, value, ttl);
     }
 
@@ -53,7 +61,17 @@ public class RedisClient {
         if (value == null) {
             return null;
         }
-        return type.cast(value);
+
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+
+        try {
+            return objectMapper.convertValue(value, type);
+        } catch (IllegalArgumentException e) {
+            throw new ClassCastException("Redis value for key='" + key + "' cannot be converted from "
+                    + value.getClass().getName() + " to " + type.getName() + ": " + e.getMessage());
+        }
     }
 
     /**
