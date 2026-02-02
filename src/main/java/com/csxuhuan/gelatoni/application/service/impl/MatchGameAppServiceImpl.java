@@ -127,7 +127,8 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     @Override
     public MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request) {
         // 约束：只统计我方数据（team_type=1），由 Repository/SQL 保证。
-        
+
+        /*
         // 1. 生成缓存键
         String cacheKey = keyGenerator.generateKey(request);
         
@@ -136,6 +137,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         if (cachedStats != null) {
             return cachedStats;
         }
+        */
 
         // 3. 缓存未命中，执行数据库查询和计算
         String season = request == null ? null : request.getSeason();
@@ -148,10 +150,12 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
 
         List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot);
         MatchGameStatsDTO calculatedStats = MatchGameStatsCalculator.calculate(season, dim, myPlayerStats);
-        
+
+        /*
         // 4. 将计算结果存入缓存
         cacheManager.setStats(cacheKey, calculatedStats);
-        
+        */
+
         return calculatedStats;
     }
 
