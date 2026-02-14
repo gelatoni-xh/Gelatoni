@@ -105,35 +105,45 @@ public class MatchGameStatsDTO {
          * 上场次数统计
          * <p>仅在PLAYER维度下有效，统计球员参赛场次
          */
-        APPEARANCES,
+        APPEARANCES("上场次数"),
         /** 得分统计 */
-        SCORE,
+        SCORE("得分"),
         /** 篮板统计 */
-        REBOUND,
+        REBOUND("篮板"),
         /** 助攻统计 */
-        ASSIST,
+        ASSIST("助攻"),
         /** 抢断统计 */
-        STEAL,
+        STEAL("抢断"),
         /** 盖帽统计 */
-        BLOCK,
+        BLOCK("盖帽"),
         /** 投篮出手次数 */
-        FG_ATTEMPT,
+        FG_ATTEMPT("投篮出手"),
         /** 投篮命中次数 */
-        FG_MADE,
+        FG_MADE("投篮命中"),
         /** 投篮命中率 */
-        FG_PCT,
+        FG_PCT("投篮命中率"),
         /** 三分球出手次数 */
-        THREE_ATTEMPT,
+        THREE_ATTEMPT("三分出手"),
         /** 三分球命中次数 */
-        THREE_MADE,
+        THREE_MADE("三分命中"),
         /** 三分球命中率 */
-        THREE_PCT,
+        THREE_PCT("三分命中率"),
         /** MVP次数统计 */
-        MVP,
+        MVP("MVP次数"),
         /** SVP次数统计 */
-        SVP,
+        SVP("SVP次数"),
         /** 失误统计 */
-        TURNOVER
+        TURNOVER("失误");
+        
+        private final String desc;
+        
+        Metric(String desc) {
+            this.desc = desc;
+        }
+        
+        public String getDesc() {
+            return desc;
+        }
     }
 
     /**
