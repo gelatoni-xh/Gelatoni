@@ -8,6 +8,7 @@ import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGamePageQuery;
+import com.csxuhuan.gelatoni.infrastructure.redis.manager.MatchGameStatsCacheManager;
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
@@ -40,15 +41,19 @@ import java.util.List;
 public class MatchGameController {
 
     private final MatchGameAppService matchGameAppService;
+    private final MatchGameStatsCacheManager cacheManager;
     private final MatchGameAssembler assembler = new MatchGameAssembler();
 
     /**
      * 构造函数，注入依赖服务
      *
      * @param matchGameAppService 比赛应用服务
+     * @param cacheManager 缓存管理器
      */
-    public MatchGameController(MatchGameAppService matchGameAppService) {
+    public MatchGameController(MatchGameAppService matchGameAppService,
+                               MatchGameStatsCacheManager cacheManager) {
         this.matchGameAppService = matchGameAppService;
+        this.cacheManager = cacheManager;
     }
 
     /**
@@ -73,6 +78,7 @@ public class MatchGameController {
         
         MatchGameCreateQuery query = assembler.toDomainQuery(request);
         Long matchId = matchGameAppService.createMatchGame(query);
+        cacheManager.evictAllStats();
         return BaseResponse.success(matchId);
     }
 
@@ -98,6 +104,7 @@ public class MatchGameController {
         
         MatchGameUpdateQuery query = assembler.toDomainQuery(request);
         Boolean result = matchGameAppService.updateMatchGame(query);
+        cacheManager.evictAllStats();
         return BaseResponse.success(result);
     }
 
@@ -114,6 +121,7 @@ public class MatchGameController {
     @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Boolean> delete(@PathVariable Long id) {
         Boolean result = matchGameAppService.deleteMatchGame(id);
+        cacheManager.evictAllStats();
         return BaseResponse.success(result);
     }
 

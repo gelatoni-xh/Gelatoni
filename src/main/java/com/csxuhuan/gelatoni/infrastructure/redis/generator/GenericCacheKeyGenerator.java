@@ -62,12 +62,13 @@ public class GenericCacheKeyGenerator {
     }
 
     /**
-     * 生成比赛统计缓存键（兼容旧方法）
+     * 生成比赛统计缓存键
      */
-    public String generateMatchStatsKey(String season, Boolean excludeRobot, String dimension) {
-        return generateKey("match", "stats", 
+    public String generateMatchStatsKey(String season, Boolean excludeRobot, String matchDate, String dimension) {
+        return generateKey("match", "stats",
             season == null || season.isEmpty() ? "all" : season,
             excludeRobot == null ? "true" : excludeRobot.toString(),
+            matchDate == null || matchDate.isEmpty() ? "all" : matchDate,
             dimension == null ? "user" : dimension.toLowerCase());
     }
 }

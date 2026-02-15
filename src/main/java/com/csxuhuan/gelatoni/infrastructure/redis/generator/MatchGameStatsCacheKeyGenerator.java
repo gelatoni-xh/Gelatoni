@@ -30,14 +30,15 @@ public class MatchGameStatsCacheKeyGenerator {
      */
     public String generateKey(MatchGameStatsRequest request) {
         if (request == null) {
-            return genericGenerator.generateMatchStatsKey(null, true, "user");
+            return genericGenerator.generateMatchStatsKey(null, true, null, "user");
         }
 
         String season = StringUtils.hasText(request.getSeason()) ? request.getSeason() : null;
         Boolean excludeRobot = request.getExcludeRobot();
+        String matchDate = StringUtils.hasText(request.getMatchDate()) ? request.getMatchDate() : null;
         String dimension = request.getDimension() != null ? request.getDimension().name() : null;
 
-        return genericGenerator.generateMatchStatsKey(season, excludeRobot, dimension);
+        return genericGenerator.generateMatchStatsKey(season, excludeRobot, matchDate, dimension);
     }
 
     /**
