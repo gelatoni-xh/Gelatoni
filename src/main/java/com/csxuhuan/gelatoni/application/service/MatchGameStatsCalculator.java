@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.application.service;
 
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameStatsMetric;
 import com.csxuhuan.gelatoni.domain.model.entity.MatchPlayerStats;
 
 import java.util.ArrayList;
@@ -108,48 +109,48 @@ public class MatchGameStatsCalculator {
 
         // PLAYER维度特有指标
         if (dimension == MatchGameStatsDTO.Dimension.PLAYER) {
-            leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.APPEARANCES, group, a -> a.appearances));
+            leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.APPEARANCES, group, a -> a.appearances));
         }
 
         // 基础数据榜单（数值越大排名越前）
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.SCORE, group, a -> a.score));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.SCORE_AVG, group, a -> a.score));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.REBOUND, group, a -> a.rebound));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.REBOUND_AVG, group, a -> a.rebound));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.ASSIST, group, a -> a.assist));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.ASSIST_AVG, group, a -> a.assist));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.STEAL, group, a -> a.steal));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.STEAL_AVG, group, a -> a.steal));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.BLOCK, group, a -> a.block));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.BLOCK_AVG, group, a -> a.block));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.SCORE, group, a -> a.score));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.SCORE_AVG, group, a -> a.score));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.REBOUND, group, a -> a.rebound));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.REBOUND_AVG, group, a -> a.rebound));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.ASSIST, group, a -> a.assist));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.ASSIST_AVG, group, a -> a.assist));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.STEAL, group, a -> a.steal));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.STEAL_AVG, group, a -> a.steal));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.BLOCK, group, a -> a.block));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.BLOCK_AVG, group, a -> a.block));
 
         // 投篮数据榜单
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.FG_ATTEMPT, group, a -> a.fgAttempt));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.FG_ATTEMPT_AVG, group, a -> a.fgAttempt));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.FG_MADE, group, a -> a.fgMade));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.FG_MADE_AVG, group, a -> a.fgMade));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.FG_ATTEMPT, group, a -> a.fgAttempt));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.FG_ATTEMPT_AVG, group, a -> a.fgAttempt));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.FG_MADE, group, a -> a.fgMade));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.FG_MADE_AVG, group, a -> a.fgMade));
         // 投篮命中率榜单（特殊处理：按命中率排序）
-        leaderboards.add(buildRateLeaderboard(MatchGameStatsDTO.Metric.FG_PCT, group, a -> a.fgMade, a -> a.fgAttempt));
-        leaderboards.add(buildAvgRateLeaderboard(MatchGameStatsDTO.Metric.FG_PCT_AVG, group, a -> a.fgMade, a -> a.fgAttempt));
+        leaderboards.add(buildRateLeaderboard(MatchGameStatsMetric.FG_PCT, group, a -> a.fgMade, a -> a.fgAttempt));
+        leaderboards.add(buildAvgRateLeaderboard(MatchGameStatsMetric.FG_PCT_AVG, group, a -> a.fgMade, a -> a.fgAttempt));
 
         // 三分球数据榜单
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.THREE_ATTEMPT, group, a -> a.threeAttempt));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.THREE_ATTEMPT_AVG, group, a -> a.threeAttempt));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.THREE_MADE, group, a -> a.threeMade));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.THREE_MADE_AVG, group, a -> a.threeMade));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.THREE_ATTEMPT, group, a -> a.threeAttempt));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.THREE_ATTEMPT_AVG, group, a -> a.threeAttempt));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.THREE_MADE, group, a -> a.threeMade));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.THREE_MADE_AVG, group, a -> a.threeMade));
         // 三分命中率榜单（特殊处理：按命中率排序）
-        leaderboards.add(buildRateLeaderboard(MatchGameStatsDTO.Metric.THREE_PCT, group, a -> a.threeMade, a -> a.threeAttempt));
-        leaderboards.add(buildAvgRateLeaderboard(MatchGameStatsDTO.Metric.THREE_PCT_AVG, group, a -> a.threeMade, a -> a.threeAttempt));
+        leaderboards.add(buildRateLeaderboard(MatchGameStatsMetric.THREE_PCT, group, a -> a.threeMade, a -> a.threeAttempt));
+        leaderboards.add(buildAvgRateLeaderboard(MatchGameStatsMetric.THREE_PCT_AVG, group, a -> a.threeMade, a -> a.threeAttempt));
 
         // 荣誉榜单
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.MVP, group, a -> a.mvp));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.MVP_AVG, group, a -> a.mvp));
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.SVP, group, a -> a.svp));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.SVP_AVG, group, a -> a.svp));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.MVP, group, a -> a.mvp));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.MVP_AVG, group, a -> a.mvp));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.SVP, group, a -> a.svp));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.SVP_AVG, group, a -> a.svp));
         
         // 失误榜单（数值越小越好，但按数值降序排列）
-        leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.TURNOVER, group, a -> a.turnover));
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.TURNOVER_AVG, group, a -> a.turnover));
+        leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.TURNOVER, group, a -> a.turnover));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.TURNOVER_AVG, group, a -> a.turnover));
 
         return new MatchGameStatsDTO(season, dimension, leaderboards);
     }
@@ -202,7 +203,7 @@ public class MatchGameStatsCalculator {
      * @param getter 数值获取器，用于从累加器中提取对应指标值
      * @return 构建完成的榜单对象
      */
-    private static MatchGameStatsDTO.Leaderboard buildValueLeaderboard(MatchGameStatsDTO.Metric metric,
+    private static MatchGameStatsDTO.Leaderboard buildValueLeaderboard(MatchGameStatsMetric metric,
                                                                        Map<String, Accumulator> group,
                                                                        LongGetter getter) {
         List<MatchGameStatsDTO.RankItem> items = group.entrySet().stream()
@@ -226,7 +227,7 @@ public class MatchGameStatsCalculator {
      * @param getter 数值获取器，用于从累加器中提取对应指标的总数值
      * @return 构建完成的场均榜单对象
      */
-    private static MatchGameStatsDTO.Leaderboard buildAvgLeaderboard(MatchGameStatsDTO.Metric metric,
+    private static MatchGameStatsDTO.Leaderboard buildAvgLeaderboard(MatchGameStatsMetric metric,
                                                                      Map<String, Accumulator> group,
                                                                      LongGetter getter) {
         List<MatchGameStatsDTO.RankItem> items = group.entrySet().stream()
@@ -267,7 +268,7 @@ public class MatchGameStatsCalculator {
      * @param attemptGetter 出手数获取器，用于从累加器中提取总出手数
      * @return 构建完成的场均命中率榜单对象
      */
-    private static MatchGameStatsDTO.Leaderboard buildAvgRateLeaderboard(MatchGameStatsDTO.Metric metric,
+    private static MatchGameStatsDTO.Leaderboard buildAvgRateLeaderboard(MatchGameStatsMetric metric,
                                                                          Map<String, Accumulator> group,
                                                                          LongGetter madeGetter,
                                                                          LongGetter attemptGetter) {
@@ -316,7 +317,7 @@ public class MatchGameStatsCalculator {
      * @param attemptGetter 出手数获取器
      * @return 构建完成的榜单对象
      */
-    private static MatchGameStatsDTO.Leaderboard buildRateLeaderboard(MatchGameStatsDTO.Metric metric,
+    private static MatchGameStatsDTO.Leaderboard buildRateLeaderboard(MatchGameStatsMetric metric,
                                                                       Map<String, Accumulator> group,
                                                                       LongGetter madeGetter,
                                                                       LongGetter attemptGetter) {

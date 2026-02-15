@@ -96,131 +96,6 @@ public class MatchGameStatsDTO {
         USER
     }
 
-    /**
-     * 榜单统计指标枚举
-     * <p>定义各种统计数据指标类型，用于不同维度的排名统计
-     */
-    public enum Metric {
-        /** 
-         * 上场次数统计
-         * <p>仅在PLAYER维度下有效，统计球员参赛场次
-         */
-        APPEARANCES("上场次数"),
-        /** 得分统计 */
-        SCORE("得分"),
-        /**
-         * 场均得分统计
-         * <p>计算公式：总得分 / 上场次数，保留一位小数
-         */
-        SCORE_AVG("场均得分"),
-        /** 篮板统计 */
-        REBOUND("篮板"),
-        /**
-         * 场均篮板统计
-         * <p>计算公式：总篮板 / 上场次数，保留一位小数
-         */
-        REBOUND_AVG("场均篮板"),
-        /** 助攻统计 */
-        ASSIST("助攻"),
-        /**
-         * 场均助攻统计
-         * <p>计算公式：总助攻 / 上场次数，保留一位小数
-         */
-        ASSIST_AVG("场均助攻"),
-        /** 抢断统计 */
-        STEAL("抢断"),
-        /**
-         * 场均抢断统计
-         * <p>计算公式：总抢断 / 上场次数，保留一位小数
-         */
-        STEAL_AVG("场均抢断"),
-        /** 盖帽统计 */
-        BLOCK("盖帽"),
-        /**
-         * 场均盖帽统计
-         * <p>计算公式：总盖帽 / 上场次数，保留一位小数
-         */
-        BLOCK_AVG("场均盖帽"),
-        /** 投篮出手次数 */
-        FG_ATTEMPT("投篮出手"),
-        /**
-         * 场均投篮出手
-         * <p>计算公式：总投篮出手 / 上场次数，保留一位小数
-         */
-        FG_ATTEMPT_AVG("场均投篮出手"),
-        /** 投篮命中次数 */
-        FG_MADE("投篮命中"),
-        /**
-         * 场均投篮命中
-         * <p>计算公式：总投篮命中 / 上场次数，保留一位小数
-         */
-        FG_MADE_AVG("场均投篮命中"),
-        /** 投篮命中率 */
-        FG_PCT("投篮命中率"),
-        /**
-         * 场均投篮命中率
-         * <p>返回场均出手、场均命中和整体命中率三个数据
-         * <p>整体命中率计算公式：总命中 / 总出手
-         * <p>场均出手计算公式：总出手 / 上场次数，保留一位小数
-         * <p>场均命中计算公式：总命中 / 上场次数，保留一位小数
-         */
-        FG_PCT_AVG("场均投篮命中率"),
-        /** 三分球出手次数 */
-        THREE_ATTEMPT("三分出手"),
-        /**
-         * 场均三分出手
-         * <p>计算公式：总三分出手 / 上场次数，保留一位小数
-         */
-        THREE_ATTEMPT_AVG("场均三分出手"),
-        /** 三分球命中次数 */
-        THREE_MADE("三分命中"),
-        /**
-         * 场均三分命中
-         * <p>计算公式：总三分命中 / 上场次数，保留一位小数
-         */
-        THREE_MADE_AVG("场均三分命中"),
-        /** 三分球命中率 */
-        THREE_PCT("三分命中率"),
-        /**
-         * 场均三分命中率
-         * <p>返回场均出手、场均命中和整体命中率三个数据
-         * <p>整体命中率计算公式：总命中 / 总出手
-         * <p>场均出手计算公式：总出手 / 上场次数，保留一位小数
-         * <p>场均命中计算公式：总命中 / 上场次数，保留一位小数
-         */
-        THREE_PCT_AVG("场均三分命中率"),
-        /** MVP次数统计 */
-        MVP("MVP次数"),
-        /**
-         * 场均MVP统计
-         * <p>计算公式：总MVP次数 / 上场次数，保留一位小数
-         */
-        MVP_AVG("场均MVP"),
-        /** SVP次数统计 */
-        SVP("SVP次数"),
-        /**
-         * 场均SVP统计
-         * <p>计算公式：总SVP次数 / 上场次数，保留一位小数
-         */
-        SVP_AVG("场均SVP"),
-        /** 失误统计 */
-        TURNOVER("失误"),
-        /**
-         * 场均失误统计
-         * <p>计算公式：总失误 / 上场次数，保留一位小数
-         */
-        TURNOVER_AVG("场均失误");
-        
-        private final String desc;
-        
-        Metric(String desc) {
-            this.desc = desc;
-        }
-        
-        public String getDesc() {
-            return desc;
-        }
-    }
 
     /**
      * 单个榜单数据结构
@@ -232,7 +107,7 @@ public class MatchGameStatsDTO {
          * 榜单对应的统计指标
          * <p>如SCORE、REBOUND等具体统计维度
          */
-        private Metric metric;
+        private MatchGameStatsMetric metric;
         /**
          * 榜单描述（带"榜"后缀）
          * <p>如"得分榜"、"篮板榜"等
@@ -248,17 +123,17 @@ public class MatchGameStatsDTO {
         public Leaderboard() {
         }
 
-        public Leaderboard(Metric metric, String metricDesc, List<RankItem> items) {
+        public Leaderboard(MatchGameStatsMetric metric, String metricDesc, List<RankItem> items) {
             this.metric = metric;
             this.metricDesc = metricDesc;
             this.items = items;
         }
 
-        public Metric getMetric() {
+        public MatchGameStatsMetric getMetric() {
             return metric;
         }
 
-        public void setMetric(Metric metric) {
+        public void setMetric(MatchGameStatsMetric metric) {
             this.metric = metric;
         }
 

@@ -4,6 +4,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameStatsMetric;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.application.service.MatchGameStatsCalculator;
 import com.csxuhuan.gelatoni.application.service.MatchGameDataValidator;
@@ -164,6 +165,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         dto.setOpponentPlayerNames(matchPlayerStatsRepository.findDistinctPlayerNames(2));
         dto.setMyUserNames(matchPlayerStatsRepository.findDistinctMyUserNames());
         dto.setMatchDatesBySeason(matchGameRepository.findMatchDatesBySeason());
+        dto.setMetricConfigs(MatchGameStatsMetric.getAllMetricConfigs());
         return dto;
     }
 

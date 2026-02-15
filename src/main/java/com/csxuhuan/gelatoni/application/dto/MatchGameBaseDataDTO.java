@@ -16,6 +16,9 @@ public class MatchGameBaseDataDTO {
     /** 按赛季分组的比赛日期，key=赛季，value=日期列表（倒序） */
     private Map<String, List<String>> matchDatesBySeason;
 
+    /** 统计指标配置列表 */
+    private List<MatchGameStatsMetric.MetricConfig> metricConfigs;
+
     public List<String> getSeasons() {
         return seasons;
     }
@@ -54,5 +57,13 @@ public class MatchGameBaseDataDTO {
 
     public void setMatchDatesBySeason(Map<String, List<String>> matchDatesBySeason) {
         this.matchDatesBySeason = matchDatesBySeason;
+    }
+
+    public List<MatchGameStatsMetric.MetricConfig> getMetricConfigs() {
+        return metricConfigs;
+    }
+
+    public void setMetricConfigs(List<MatchGameStatsMetric.MetricConfig> metricConfigs) {
+        this.metricConfigs = metricConfigs;
     }
 }
