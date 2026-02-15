@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -114,22 +113,33 @@ public class MatchGameStatsCalculator {
 
         // 基础数据榜单（数值越大排名越前）
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.SCORE, group, a -> a.score));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.SCORE_AVG, group, a -> a.score));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.REBOUND, group, a -> a.rebound));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.REBOUND_AVG, group, a -> a.rebound));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.ASSIST, group, a -> a.assist));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.ASSIST_AVG, group, a -> a.assist));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.STEAL, group, a -> a.steal));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.STEAL_AVG, group, a -> a.steal));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.BLOCK, group, a -> a.block));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.BLOCK_AVG, group, a -> a.block));
 
         // 投篮数据榜单
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.FG_ATTEMPT, group, a -> a.fgAttempt));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.FG_ATTEMPT_AVG, group, a -> a.fgAttempt));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.FG_MADE, group, a -> a.fgMade));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.FG_MADE_AVG, group, a -> a.fgMade));
         // 投篮命中率榜单（特殊处理：按命中率排序）
         leaderboards.add(buildRateLeaderboard(MatchGameStatsDTO.Metric.FG_PCT, group, a -> a.fgMade, a -> a.fgAttempt));
+        leaderboards.add(buildAvgRateLeaderboard(MatchGameStatsDTO.Metric.FG_PCT_AVG, group, a -> a.fgMade, a -> a.fgAttempt));
 
         // 三分球数据榜单
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.THREE_ATTEMPT, group, a -> a.threeAttempt));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.THREE_ATTEMPT_AVG, group, a -> a.threeAttempt));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.THREE_MADE, group, a -> a.threeMade));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.THREE_MADE_AVG, group, a -> a.threeMade));
         // 三分命中率榜单（特殊处理：按命中率排序）
         leaderboards.add(buildRateLeaderboard(MatchGameStatsDTO.Metric.THREE_PCT, group, a -> a.threeMade, a -> a.threeAttempt));
+        leaderboards.add(buildAvgRateLeaderboard(MatchGameStatsDTO.Metric.THREE_PCT_AVG, group, a -> a.threeMade, a -> a.threeAttempt));
 
         // 荣誉榜单
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.MVP, group, a -> a.mvp));
@@ -137,6 +147,7 @@ public class MatchGameStatsCalculator {
         
         // 失误榜单（数值越小越好，但按数值降序排列）
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.TURNOVER, group, a -> a.turnover));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.TURNOVER_AVG, group, a -> a.turnover));
 
         return new MatchGameStatsDTO(season, dimension, leaderboards);
     }
@@ -196,6 +207,96 @@ public class MatchGameStatsCalculator {
                 .map(e -> new MatchGameStatsDTO.RankItem(e.getKey(), getter.get(e.getValue())))
                 // 排序规则：按数值降序，相同数值按名称升序
                 .sorted(Comparator.comparing(MatchGameStatsDTO.RankItem::getValue, Comparator.nullsLast(Comparator.naturalOrder())).reversed()
+                        .thenComparing(MatchGameStatsDTO.RankItem::getName))
+                .collect(Collectors.toList());
+
+        return new MatchGameStatsDTO.Leaderboard(metric, metric.getDesc() + "榜", items);
+    }
+
+    /**
+     * 构建场均值型榜单
+     * <p>用于处理场均得分、场均篮板、场均助攻等场均类统计指标
+     * <p>计算逻辑：场均值 = 总数值 / 上场次数，保留一位小数
+     * <p>排序规则：按场均值降序排列，相同场均值按名称升序
+     *
+     * @param metric 统计指标类型（如SCORE_AVG、REBOUND_AVG等）
+     * @param group 分组后的统计数据映射（key为球员/用户名，value为累加器）
+     * @param getter 数值获取器，用于从累加器中提取对应指标的总数值
+     * @return 构建完成的场均榜单对象
+     */
+    private static MatchGameStatsDTO.Leaderboard buildAvgLeaderboard(MatchGameStatsDTO.Metric metric,
+                                                                     Map<String, Accumulator> group,
+                                                                     LongGetter getter) {
+        List<MatchGameStatsDTO.RankItem> items = group.entrySet().stream()
+                .map(e -> {
+                    // 获取该球员/用户的总数值（如总得分、总篮板等）
+                    long total = getter.get(e.getValue());
+                    // 获取上场次数
+                    long appearances = e.getValue().appearances;
+                    // 计算场均值：总数值 / 上场次数，保留一位小数
+                    // 使用 Math.round 进行四舍五入：先乘以10，四舍五入后再除以10
+                    double avg = appearances <= 0 ? 0D : Math.round((double) total / appearances * 10.0) / 10.0;
+                    // 创建榜单条目，只包含名称和场均值
+                    MatchGameStatsDTO.RankItem item = new MatchGameStatsDTO.RankItem(e.getKey(), avg);
+                    return item;
+                })
+                // 排序规则：按场均值降序（数值越大排名越前），相同场均值按名称升序
+                .sorted(Comparator.comparing((MatchGameStatsDTO.RankItem i) -> i.getAvg() != null ? i.getAvg() : 0D, Comparator.naturalOrder()).reversed()
+                        .thenComparing(MatchGameStatsDTO.RankItem::getName))
+                .collect(Collectors.toList());
+
+        return new MatchGameStatsDTO.Leaderboard(metric, metric.getDesc() + "榜", items);
+    }
+
+    /**
+     * 构建场均命中率型榜单
+     * <p>用于处理场均投篮命中率、场均三分命中率等场均比率类统计指标
+     * <p>计算逻辑：
+     * <ul>
+     *     <li>场均命中数 = 总命中数 / 上场次数，保留一位小数</li>
+     *     <li>场均出手数 = 总出手数 / 上场次数，保留一位小数</li>
+     *     <li>整体命中率 = 总命中数 / 总出手数（不是场均命中率）</li>
+     * </ul>
+     * <p>排序规则：按整体命中率降序，相同时按场均出手降序，再相同按场均命中降序，最后按名称升序
+     *
+     * @param metric 统计指标类型（如FG_PCT_AVG、THREE_PCT_AVG等）
+     * @param group 分组后的统计数据映射（key为球员/用户名，value为累加器）
+     * @param madeGetter 命中数获取器，用于从累加器中提取总命中数
+     * @param attemptGetter 出手数获取器，用于从累加器中提取总出手数
+     * @return 构建完成的场均命中率榜单对象
+     */
+    private static MatchGameStatsDTO.Leaderboard buildAvgRateLeaderboard(MatchGameStatsDTO.Metric metric,
+                                                                         Map<String, Accumulator> group,
+                                                                         LongGetter madeGetter,
+                                                                         LongGetter attemptGetter) {
+        List<MatchGameStatsDTO.RankItem> items = group.entrySet().stream()
+                .map(e -> {
+                    // 获取总命中数和总出手数
+                    long totalMade = madeGetter.get(e.getValue());
+                    long totalAttempt = attemptGetter.get(e.getValue());
+                    // 获取上场次数
+                    long appearances = e.getValue().appearances;
+                    // 计算场均命中数：总命中数 / 上场次数，保留一位小数
+                    double avgMade = appearances <= 0 ? 0D : Math.round((double) totalMade / appearances * 10.0) / 10.0;
+                    // 计算场均出手数：总出手数 / 上场次数，保留一位小数
+                    double avgAttempt = appearances <= 0 ? 0D : Math.round((double) totalAttempt / appearances * 10.0) / 10.0;
+                    // 计算整体命中率：总命中数 / 总出手数（注意：不是场均命中率）
+                    double rate = totalAttempt <= 0 ? 0D : (double) totalMade / (double) totalAttempt;
+                    // 创建榜单条目，包含场均命中、场均出手和整体命中率
+                    // 注意：made和attempt字段存储的是场均值（保留一位小数后转为long）
+                    MatchGameStatsDTO.RankItem item = new MatchGameStatsDTO.RankItem(e.getKey(), (long) avgMade, (long) avgAttempt, rate);
+                    return item;
+                })
+                // 复杂排序规则：
+                // 1. 按整体命中率降序（命中率越高排名越前）
+                // 2. 相同命中率时按场均出手次数降序（体现稳定性）
+                // 3. 相同场均出手时按场均命中数降序（体现绝对能力）
+                // 4. 最后按名称升序（保证排序一致性）
+                .sorted(Comparator
+                        .comparing((MatchGameStatsDTO.RankItem i) -> i.getRate() != null ? i.getRate() : 0D, Comparator.naturalOrder())
+                        .reversed()
+                        .thenComparing(i -> i.getAttempt() != null ? i.getAttempt() : 0L, Comparator.reverseOrder())
+                        .thenComparing(i -> i.getMade() != null ? i.getMade() : 0L, Comparator.reverseOrder())
                         .thenComparing(MatchGameStatsDTO.RankItem::getName))
                 .collect(Collectors.toList());
 

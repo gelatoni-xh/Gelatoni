@@ -108,32 +108,98 @@ public class MatchGameStatsDTO {
         APPEARANCES("上场次数"),
         /** 得分统计 */
         SCORE("得分"),
+        /**
+         * 场均得分统计
+         * <p>计算公式：总得分 / 上场次数，保留一位小数
+         */
+        SCORE_AVG("场均得分"),
         /** 篮板统计 */
         REBOUND("篮板"),
+        /**
+         * 场均篮板统计
+         * <p>计算公式：总篮板 / 上场次数，保留一位小数
+         */
+        REBOUND_AVG("场均篮板"),
         /** 助攻统计 */
         ASSIST("助攻"),
+        /**
+         * 场均助攻统计
+         * <p>计算公式：总助攻 / 上场次数，保留一位小数
+         */
+        ASSIST_AVG("场均助攻"),
         /** 抢断统计 */
         STEAL("抢断"),
+        /**
+         * 场均抢断统计
+         * <p>计算公式：总抢断 / 上场次数，保留一位小数
+         */
+        STEAL_AVG("场均抢断"),
         /** 盖帽统计 */
         BLOCK("盖帽"),
+        /**
+         * 场均盖帽统计
+         * <p>计算公式：总盖帽 / 上场次数，保留一位小数
+         */
+        BLOCK_AVG("场均盖帽"),
         /** 投篮出手次数 */
         FG_ATTEMPT("投篮出手"),
+        /**
+         * 场均投篮出手
+         * <p>计算公式：总投篮出手 / 上场次数，保留一位小数
+         */
+        FG_ATTEMPT_AVG("场均投篮出手"),
         /** 投篮命中次数 */
         FG_MADE("投篮命中"),
+        /**
+         * 场均投篮命中
+         * <p>计算公式：总投篮命中 / 上场次数，保留一位小数
+         */
+        FG_MADE_AVG("场均投篮命中"),
         /** 投篮命中率 */
         FG_PCT("投篮命中率"),
+        /**
+         * 场均投篮命中率
+         * <p>返回场均出手、场均命中和整体命中率三个数据
+         * <p>整体命中率计算公式：总命中 / 总出手
+         * <p>场均出手计算公式：总出手 / 上场次数，保留一位小数
+         * <p>场均命中计算公式：总命中 / 上场次数，保留一位小数
+         */
+        FG_PCT_AVG("场均投篮命中率"),
         /** 三分球出手次数 */
         THREE_ATTEMPT("三分出手"),
+        /**
+         * 场均三分出手
+         * <p>计算公式：总三分出手 / 上场次数，保留一位小数
+         */
+        THREE_ATTEMPT_AVG("场均三分出手"),
         /** 三分球命中次数 */
         THREE_MADE("三分命中"),
+        /**
+         * 场均三分命中
+         * <p>计算公式：总三分命中 / 上场次数，保留一位小数
+         */
+        THREE_MADE_AVG("场均三分命中"),
         /** 三分球命中率 */
         THREE_PCT("三分命中率"),
+        /**
+         * 场均三分命中率
+         * <p>返回场均出手、场均命中和整体命中率三个数据
+         * <p>整体命中率计算公式：总命中 / 总出手
+         * <p>场均出手计算公式：总出手 / 上场次数，保留一位小数
+         * <p>场均命中计算公式：总命中 / 上场次数，保留一位小数
+         */
+        THREE_PCT_AVG("场均三分命中率"),
         /** MVP次数统计 */
         MVP("MVP次数"),
         /** SVP次数统计 */
         SVP("SVP次数"),
         /** 失误统计 */
-        TURNOVER("失误");
+        TURNOVER("失误"),
+        /**
+         * 场均失误统计
+         * <p>计算公式：总失误 / 上场次数，保留一位小数
+         */
+        TURNOVER_AVG("场均失误");
         
         private final String desc;
         
@@ -209,31 +275,38 @@ public class MatchGameStatsDTO {
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class RankItem {
-        /** 
+        /**
          * 排名对象名称
          * <p>根据统计维度不同，可能是球员姓名或用户名
          */
         private String name;
 
-        /** 
+        /**
          * 数值型统计数据
          * <p>用于得分、篮板、助攻等直接数值类榜单，存储具体的统计数值
          */
         private Long value;
 
-        /** 
+        /**
+         * 场均值
+         * <p>用于场均类榜单，计算公式为：总数值 / 上场次数
+         * <p>保留一位小数，例如：场均得分 = 总得分 / 上场次数
+         */
+        private Double avg;
+
+        /**
          * 命中次数
          * <p>专门用于命中率类榜单，记录实际命中的次数
          */
         private Long made;
 
-        /** 
+        /**
          * 出手次数
          * <p>专门用于命中率类榜单，记录总出手尝试次数
          */
         private Long attempt;
 
-        /** 
+        /**
          * 命中率
          * <p>专门用于命中率类榜单，计算公式为 made/attempt，取值范围0-1
          */
@@ -246,6 +319,11 @@ public class MatchGameStatsDTO {
         public RankItem(String name, Long value) {
             this.name = name;
             this.value = value;
+        }
+
+        public RankItem(String name, Double avg) {
+            this.name = name;
+            this.avg = avg;
         }
 
         public RankItem(String name, Long made, Long attempt, Double rate) {
@@ -269,6 +347,14 @@ public class MatchGameStatsDTO {
 
         public void setValue(Long value) {
             this.value = value;
+        }
+
+        public Double getAvg() {
+            return avg;
+        }
+
+        public void setAvg(Double avg) {
+            this.avg = avg;
         }
 
         public Long getMade() {
