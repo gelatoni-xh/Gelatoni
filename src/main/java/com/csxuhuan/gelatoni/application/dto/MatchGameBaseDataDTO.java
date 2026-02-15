@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.application.dto;
 
 import java.util.List;
+import java.util.Map;
 
 public class MatchGameBaseDataDTO {
 
@@ -12,7 +13,8 @@ public class MatchGameBaseDataDTO {
 
     private List<String> myUserNames;
 
-    private List<String> matchDates;
+    /** 按赛季分组的比赛日期，key=赛季，value=日期列表（倒序） */
+    private Map<String, List<String>> matchDatesBySeason;
 
     public List<String> getSeasons() {
         return seasons;
@@ -46,11 +48,11 @@ public class MatchGameBaseDataDTO {
         this.myUserNames = myUserNames;
     }
 
-    public List<String> getMatchDates() {
-        return matchDates;
+    public Map<String, List<String>> getMatchDatesBySeason() {
+        return matchDatesBySeason;
     }
 
-    public void setMatchDates(List<String> matchDates) {
-        this.matchDates = matchDates;
+    public void setMatchDatesBySeason(Map<String, List<String>> matchDatesBySeason) {
+        this.matchDatesBySeason = matchDatesBySeason;
     }
 }

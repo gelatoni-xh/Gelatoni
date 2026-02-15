@@ -3,6 +3,7 @@ package com.csxuhuan.gelatoni.infrastructure.repository;
 import com.csxuhuan.gelatoni.domain.model.entity.MatchGame;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 比赛仓储接口
@@ -80,11 +81,11 @@ public interface MatchGameRepository {
     List<String> findDistinctSeasons();
 
     /**
-     * 查询比赛日期列表（去重，倒序）
+     * 查询按赛季分组的比赛日期
      *
      * <p>游戏时间8:00-2:00，如比赛时间为2.16 1:32，返回2.15
      *
-     * @return 比赛日期列表（格式：yyyy-MM-dd）
+     * @return Map<赛季, 日期列表>，日期倒序
      */
-    List<String> findDistinctMatchDates();
+    Map<String, List<String>> findMatchDatesBySeason();
 }

@@ -77,6 +77,7 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
         }
         
         // 如果提供了比赛日期，则按日期过滤（游戏时间8:00-次日2:00）
+        // 支持三种情况：1.全空 2.只选赛季 3.选赛季+日期
         if (matchDate != null && !matchDate.isEmpty()) {
             LocalDate date = LocalDate.parse(matchDate);
             LocalDateTime startTime = LocalDateTime.of(date, LocalTime.of(8, 0));
@@ -84,6 +85,7 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
             gameWrapper.ge(MatchGameDO::getMatchTime, startTime)
                        .le(MatchGameDO::getMatchTime, endTime);
         }
+        // 如果只提供了赛季没提供日期，已在上面的赛季过滤中处理
         
         // 查询符合条件的比赛ID
         List<Long> gameIds = matchGameMapper.selectList(gameWrapper).stream()

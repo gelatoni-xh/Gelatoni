@@ -167,7 +167,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         dto.setMyPlayerNames(matchPlayerStatsRepository.findDistinctPlayerNames(1));
         dto.setOpponentPlayerNames(matchPlayerStatsRepository.findDistinctPlayerNames(2));
         dto.setMyUserNames(matchPlayerStatsRepository.findDistinctMyUserNames());
-        dto.setMatchDates(matchGameRepository.findDistinctMatchDates());
+        dto.setMatchDatesBySeason(matchGameRepository.findMatchDatesBySeason());
         return dto;
     }
 

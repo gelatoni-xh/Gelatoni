@@ -10,9 +10,9 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.MatchGameDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchGameMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Objects;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -147,33 +147,59 @@ public class MatchGameRepositoryImpl implements MatchGameRepository {
                 .isNotNull(MatchGameDO::getSeason)
                 .ne(MatchGameDO::getSeason, "")
                 .select(MatchGameDO::getSeason)
-                .groupBy(MatchGameDO::getSeason)
-                .orderByDesc(MatchGameDO::getSeason);
+                .groupBy(MatchGameDO::getSeason);
 
         return matchGameMapper.selectList(wrapper).stream()
                 .map(MatchGameDO::getSeason)
                 .filter(Objects::nonNull)
+                .sorted((s1, s2) -> {
+                    Integer n1 = Integer.parseInt(s1.substring(1));
+                    Integer n2 = Integer.parseInt(s2.substring(1));
+                    return n2.compareTo(n1);
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<String> findDistinctMatchDates() {
+    public Map<String, List<String>> findMatchDatesBySeason() {
         LambdaQueryWrapper<MatchGameDO> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
+                .isNotNull(MatchGameDO::getSeason)
+                .ne(MatchGameDO::getSeason, "")
                 .isNotNull(MatchGameDO::getMatchTime)
                 .orderByDesc(MatchGameDO::getMatchTime);
 
-        return matchGameMapper.selectList(wrapper).stream()
-                .map(MatchGameDO::getMatchTime)
-                .filter(Objects::nonNull)
-                .map(matchTime -> {
-                    // 游戏时间8:00-2:00，如果时间在0:00-2:00之间，日期减1天
-                    if (matchTime.toLocalTime().isBefore(LocalTime.of(2, 0, 1))) {
-                        return matchTime.minusDays(1).toLocalDate().toString();
-                    }
-                    return matchTime.toLocalDate().toString();
+        Map<String, List<String>> result = matchGameMapper.selectList(wrapper).stream()
+                .collect(Collectors.groupingBy(
+                        MatchGameDO::getSeason,
+                        LinkedHashMap::new,
+                        Collectors.mapping(
+                                game -> {
+                                    LocalDateTime matchTime = game.getMatchTime();
+                                    if (matchTime.toLocalTime().isBefore(LocalTime.of(2, 0, 1))) {
+                                        return matchTime.minusDays(1).toLocalDate().toString();
+                                    }
+                                    return matchTime.toLocalDate().toString();
+                                },
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        list -> list.stream().distinct().collect(Collectors.toList())
+                                )
+                        )
+                ));
+
+        // 按赛季数字倒序排序
+        return result.entrySet().stream()
+                .sorted((e1, e2) -> {
+                    Integer n1 = Integer.parseInt(e1.getKey().substring(1));
+                    Integer n2 = Integer.parseInt(e2.getKey().substring(1));
+                    return n2.compareTo(n1);
                 })
-                .distinct()
-                .collect(Collectors.toList());
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 }
