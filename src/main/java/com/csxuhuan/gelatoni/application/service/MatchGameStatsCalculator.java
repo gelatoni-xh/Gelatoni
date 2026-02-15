@@ -235,9 +235,9 @@ public class MatchGameStatsCalculator {
                     long total = getter.get(e.getValue());
                     // 获取上场次数
                     long appearances = e.getValue().appearances;
-                    // 计算场均值：总数值 / 上场次数，保留一位小数
-                    // 使用 Math.round 进行四舍五入：先乘以10，四舍五入后再除以10
-                    double avg = appearances <= 0 ? 0D : Math.round((double) total / appearances * 10.0) / 10.0;
+                    // 计算场均值：总数值 / 上场次数，保留两位小数
+                    // 使用 Math.round 进行四舍五入：先乘以100，四舍五入后再除以100
+                    double avg = appearances <= 0 ? 0D : Math.round((double) total / appearances * 100.0) / 100.0;
                     // 创建榜单条目，只包含名称和场均值
                     MatchGameStatsDTO.RankItem item = new MatchGameStatsDTO.RankItem(e.getKey(), avg);
                     return item;
@@ -278,10 +278,10 @@ public class MatchGameStatsCalculator {
                     long totalAttempt = attemptGetter.get(e.getValue());
                     // 获取上场次数
                     long appearances = e.getValue().appearances;
-                    // 计算场均命中数：总命中数 / 上场次数，保留一位小数
-                    double avgMade = appearances <= 0 ? 0D : Math.round((double) totalMade / appearances * 10.0) / 10.0;
-                    // 计算场均出手数：总出手数 / 上场次数，保留一位小数
-                    double avgAttempt = appearances <= 0 ? 0D : Math.round((double) totalAttempt / appearances * 10.0) / 10.0;
+                    // 计算场均命中数：总命中数 / 上场次数，保留两位小数
+                    double avgMade = appearances <= 0 ? 0D : Math.round((double) totalMade / appearances * 100.0) / 100.0;
+                    // 计算场均出手数：总出手数 / 上场次数，保留两位小数
+                    double avgAttempt = appearances <= 0 ? 0D : Math.round((double) totalAttempt / appearances * 100.0) / 100.0;
                     // 计算整体命中率：总命中数 / 总出手数（注意：不是场均命中率）
                     double rate = totalAttempt <= 0 ? 0D : (double) totalMade / (double) totalAttempt;
                     // 创建榜单条目，包含场均命中、场均出手和整体命中率
