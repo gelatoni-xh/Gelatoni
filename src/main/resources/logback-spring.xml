@@ -87,6 +87,24 @@
         </encoder>
     </appender>
 
+    <!-- ================= Mapper Digest ================= -->
+
+    <appender name="MAPPER_DIGEST"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/digest/mapper/digest.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>
+                ${LOG_HOME}/digest/mapper/digest.%d{yyyy-MM-dd}.log
+            </fileNamePattern>
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
     <!-- ================= Root（极简兜底） ================= -->
 
     <root level="INFO">
@@ -117,6 +135,14 @@
             level="INFO"
             additivity="false">
         <appender-ref ref="REDIS_DIGEST"/>
+    </logger>
+
+    <!-- ================= Mapper Digest Logger ================= -->
+
+    <logger name="com.csxuhuan.gelatoni.aspect.mapper"
+            level="INFO"
+            additivity="false">
+        <appender-ref ref="MAPPER_DIGEST"/>
     </logger>
 
 </configuration>
