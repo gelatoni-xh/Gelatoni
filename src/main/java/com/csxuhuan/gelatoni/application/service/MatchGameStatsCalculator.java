@@ -283,8 +283,8 @@ public class MatchGameStatsCalculator {
                     // 计算整体命中率：总命中数 / 总出手数（注意：不是场均命中率）
                     double rate = totalAttempt <= 0 ? 0D : (double) totalMade / (double) totalAttempt;
                     // 创建榜单条目，包含场均命中、场均出手和整体命中率
-                    // 注意：made和attempt字段存储的是场均值（保留一位小数后转为long）
-                    MatchGameStatsDTO.RankItem item = new MatchGameStatsDTO.RankItem(e.getKey(), (long) avgMade, (long) avgAttempt, rate);
+                    // 注意：made和attempt字段存储的是场均值（Double类型，保留一位小数）
+                    MatchGameStatsDTO.RankItem item = new MatchGameStatsDTO.RankItem(e.getKey(), avgMade, avgAttempt, rate);
                     return item;
                 })
                 // 复杂排序规则：
@@ -324,7 +324,7 @@ public class MatchGameStatsCalculator {
                     long attempt = attemptGetter.get(e.getValue());
                     // 命中率计算：避免除零错误
                     double rate = attempt <= 0 ? 0D : (double) made / (double) attempt;
-                    return new MatchGameStatsDTO.RankItem(e.getKey(), made, attempt, rate);
+                    return new MatchGameStatsDTO.RankItem(e.getKey(), (double) made, (double) attempt, rate);
                 })
                 // 复杂排序规则：
                 // 1. 按命中率降序

@@ -296,15 +296,19 @@ public class MatchGameStatsDTO {
 
         /**
          * 命中次数
-         * <p>专门用于命中率类榜单，记录实际命中的次数
+         * <p>用于命中率类榜单，可以是总命中数或场均命中数
+         * <p>总榜单：存储总命中次数（Long类型）
+         * <p>场均榜单：存储场均命中数（Double类型，保留一位小数）
          */
-        private Long made;
+        private Double made;
 
         /**
          * 出手次数
-         * <p>专门用于命中率类榜单，记录总出手尝试次数
+         * <p>用于命中率类榜单，可以是总出手数或场均出手数
+         * <p>总榜单：存储总出手次数（Long类型）
+         * <p>场均榜单：存储场均出手数（Double类型，保留一位小数）
          */
-        private Long attempt;
+        private Double attempt;
 
         /**
          * 命中率
@@ -326,7 +330,7 @@ public class MatchGameStatsDTO {
             this.avg = avg;
         }
 
-        public RankItem(String name, Long made, Long attempt, Double rate) {
+        public RankItem(String name, Double made, Double attempt, Double rate) {
             this.name = name;
             this.made = made;
             this.attempt = attempt;
@@ -357,19 +361,19 @@ public class MatchGameStatsDTO {
             this.avg = avg;
         }
 
-        public Long getMade() {
+        public Double getMade() {
             return made;
         }
 
-        public void setMade(Long made) {
+        public void setMade(Double made) {
             this.made = made;
         }
 
-        public Long getAttempt() {
+        public Double getAttempt() {
             return attempt;
         }
 
-        public void setAttempt(Long attempt) {
+        public void setAttempt(Double attempt) {
             this.attempt = attempt;
         }
 
