@@ -142,13 +142,14 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         // 3. 缓存未命中，执行数据库查询和计算
         String season = request == null ? null : request.getSeason();
         Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
+        String matchDate = request == null ? null : request.getMatchDate();
         MatchGameStatsRequest.StatsDimension reqDim = request == null ? null : request.getDimension();
 
         MatchGameStatsDTO.Dimension dim = reqDim == MatchGameStatsRequest.StatsDimension.USER
                 ? MatchGameStatsDTO.Dimension.USER
                 : MatchGameStatsDTO.Dimension.PLAYER;
 
-        List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot);
+        List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot, matchDate);
         MatchGameStatsDTO calculatedStats = MatchGameStatsCalculator.calculate(season, dim, myPlayerStats);
 
         /*
@@ -166,6 +167,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         dto.setMyPlayerNames(matchPlayerStatsRepository.findDistinctPlayerNames(1));
         dto.setOpponentPlayerNames(matchPlayerStatsRepository.findDistinctPlayerNames(2));
         dto.setMyUserNames(matchPlayerStatsRepository.findDistinctMyUserNames());
+        dto.setMatchDates(matchGameRepository.findDistinctMatchDates());
         return dto;
     }
 

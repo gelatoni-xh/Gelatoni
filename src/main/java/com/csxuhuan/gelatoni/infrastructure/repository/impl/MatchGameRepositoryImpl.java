@@ -4,17 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.csxuhuan.gelatoni.domain.model.common.DeletedEnum;
 import com.csxuhuan.gelatoni.domain.model.entity.MatchGame;
-import com.csxuhuan.gelatoni.domain.model.entity.MatchTeamStats;
-import com.csxuhuan.gelatoni.domain.model.entity.MatchPlayerStats;
 import com.csxuhuan.gelatoni.domain.model.converter.MatchGameConverter;
 import com.csxuhuan.gelatoni.infrastructure.repository.MatchGameRepository;
-import com.csxuhuan.gelatoni.infrastructure.repository.MatchTeamStatsRepository;
-import com.csxuhuan.gelatoni.infrastructure.repository.MatchPlayerStatsRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.entity.MatchGameDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchGameMapper;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Objects;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -157,6 +153,27 @@ public class MatchGameRepositoryImpl implements MatchGameRepository {
         return matchGameMapper.selectList(wrapper).stream()
                 .map(MatchGameDO::getSeason)
                 .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<String> findDistinctMatchDates() {
+        LambdaQueryWrapper<MatchGameDO> wrapper = Wrappers.lambdaQuery();
+        wrapper.eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue())
+                .isNotNull(MatchGameDO::getMatchTime)
+                .orderByDesc(MatchGameDO::getMatchTime);
+
+        return matchGameMapper.selectList(wrapper).stream()
+                .map(MatchGameDO::getMatchTime)
+                .filter(Objects::nonNull)
+                .map(matchTime -> {
+                    // 游戏时间8:00-2:00，如果时间在0:00-2:00之间，日期减1天
+                    if (matchTime.toLocalTime().isBefore(LocalTime.of(2, 0, 1))) {
+                        return matchTime.minusDays(1).toLocalDate().toString();
+                    }
+                    return matchTime.toLocalDate().toString();
+                })
+                .distinct()
                 .collect(Collectors.toList());
     }
 }

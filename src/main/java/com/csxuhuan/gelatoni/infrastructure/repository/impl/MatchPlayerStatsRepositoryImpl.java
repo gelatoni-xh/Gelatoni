@@ -13,6 +13,9 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.MatchGameDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.MatchGameMapper;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -53,7 +56,7 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
      * {@inheritDoc}
      */
     @Override
-    public List<MatchPlayerStats> findMyPlayerStatsForStats(String season, Boolean excludeRobot) {
+    public List<MatchPlayerStats> findMyPlayerStatsForStats(String season, Boolean excludeRobot, String matchDate) {
         // 使用 QueryWrapper 构建复杂查询
         LambdaQueryWrapper<MatchPlayerStatsDO> playerStatsWrapper = Wrappers.lambdaQuery();
         playerStatsWrapper.eq(MatchPlayerStatsDO::getTeamType, 1) // 只查询我方球员 (team_type = 1)
@@ -71,6 +74,15 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
         // 如果excludeRobot = true，则排除机器人比赛(is_robot = 1)
         if (Boolean.TRUE.equals(excludeRobot)) {
             gameWrapper.eq(MatchGameDO::getIsRobot, false);
+        }
+        
+        // 如果提供了比赛日期，则按日期过滤（游戏时间8:00-次日2:00）
+        if (matchDate != null && !matchDate.isEmpty()) {
+            LocalDate date = LocalDate.parse(matchDate);
+            LocalDateTime startTime = LocalDateTime.of(date, LocalTime.of(8, 0));
+            LocalDateTime endTime = LocalDateTime.of(date.plusDays(1), LocalTime.of(2, 0));
+            gameWrapper.ge(MatchGameDO::getMatchTime, startTime)
+                       .le(MatchGameDO::getMatchTime, endTime);
         }
         
         // 查询符合条件的比赛ID

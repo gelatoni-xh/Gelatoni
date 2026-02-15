@@ -78,4 +78,13 @@ public interface MatchGameRepository {
      * @return 赛季列表
      */
     List<String> findDistinctSeasons();
+
+    /**
+     * 查询比赛日期列表（去重，倒序）
+     *
+     * <p>游戏时间8:00-2:00，如比赛时间为2.16 1:32，返回2.15
+     *
+     * @return 比赛日期列表（格式：yyyy-MM-dd）
+     */
+    List<String> findDistinctMatchDates();
 }

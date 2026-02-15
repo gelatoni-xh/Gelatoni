@@ -23,6 +23,9 @@ public class MatchGameStatsRequest {
     /** 是否去除机器人 */
     private Boolean excludeRobot = true;
 
+    /** 比赛日期（可选）。格式：yyyy-MM-dd，如2026-02-15。游戏时间为8:00-2:00 */
+    private String matchDate;
+
     /** 统计维度（必填）：PLAYER=球员维度，USER=用户维度 */
     @NotNull(message = "统计维度不能为空")
     private StatsDimension dimension;
@@ -41,6 +44,14 @@ public class MatchGameStatsRequest {
 
     public void setExcludeRobot(Boolean excludeRobot) {
         this.excludeRobot = excludeRobot;
+    }
+
+    public String getMatchDate() {
+        return matchDate;
+    }
+
+    public void setMatchDate(String matchDate) {
+        this.matchDate = matchDate;
     }
 
     public StatsDimension getDimension() {

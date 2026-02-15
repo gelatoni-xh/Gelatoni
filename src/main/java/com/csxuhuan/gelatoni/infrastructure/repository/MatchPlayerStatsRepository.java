@@ -30,9 +30,11 @@ public interface MatchPlayerStatsRepository {
      * season 为空/空字符串时表示全赛季。
      *
      * @param season 赛季（可选）
+     * @param excludeRobot 是否排除机器人
+     * @param matchDate 比赛日期（可选），格式：yyyy-MM-dd，游戏时间8:00-2:00
      * @return 我方球员统计明细列表
      */
-    List<MatchPlayerStats> findMyPlayerStatsForStats(String season, Boolean excludeRobot);
+    List<MatchPlayerStats> findMyPlayerStatsForStats(String season, Boolean excludeRobot, String matchDate);
 
     /**
      * 批量新增球员统计数据

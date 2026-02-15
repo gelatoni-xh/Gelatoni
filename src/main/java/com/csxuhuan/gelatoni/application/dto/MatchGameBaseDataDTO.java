@@ -12,6 +12,8 @@ public class MatchGameBaseDataDTO {
 
     private List<String> myUserNames;
 
+    private List<String> matchDates;
+
     public List<String> getSeasons() {
         return seasons;
     }
@@ -42,5 +44,13 @@ public class MatchGameBaseDataDTO {
 
     public void setMyUserNames(List<String> myUserNames) {
         this.myUserNames = myUserNames;
+    }
+
+    public List<String> getMatchDates() {
+        return matchDates;
+    }
+
+    public void setMatchDates(List<String> matchDates) {
+        this.matchDates = matchDates;
     }
 }
