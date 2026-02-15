@@ -195,4 +195,16 @@ public class MatchGameController {
         MatchGameBaseDataDTO data = matchGameAppService.getMatchGameBaseData();
         return BaseResponse.success(data);
     }
+
+    /**
+     * 清除比赛统计缓存接口
+     *
+     * @return 清除成功标志
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
+    @PostMapping(value = "/clear-cache", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<Boolean> clearCache() {
+        cacheManager.evictAllStats();
+        return BaseResponse.success(true);
+    }
 }
