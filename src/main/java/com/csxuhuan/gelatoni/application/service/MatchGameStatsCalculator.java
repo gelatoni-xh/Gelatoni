@@ -143,7 +143,9 @@ public class MatchGameStatsCalculator {
 
         // 荣誉榜单
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.MVP, group, a -> a.mvp));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.MVP_AVG, group, a -> a.mvp));
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.SVP, group, a -> a.svp));
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsDTO.Metric.SVP_AVG, group, a -> a.svp));
         
         // 失误榜单（数值越小越好，但按数值降序排列）
         leaderboards.add(buildValueLeaderboard(MatchGameStatsDTO.Metric.TURNOVER, group, a -> a.turnover));

@@ -191,8 +191,18 @@ public class MatchGameStatsDTO {
         THREE_PCT_AVG("场均三分命中率"),
         /** MVP次数统计 */
         MVP("MVP次数"),
+        /**
+         * 场均MVP统计
+         * <p>计算公式：总MVP次数 / 上场次数，保留一位小数
+         */
+        MVP_AVG("场均MVP"),
         /** SVP次数统计 */
         SVP("SVP次数"),
+        /**
+         * 场均SVP统计
+         * <p>计算公式：总SVP次数 / 上场次数，保留一位小数
+         */
+        SVP_AVG("场均SVP"),
         /** 失误统计 */
         TURNOVER("失误"),
         /**
