@@ -152,12 +152,17 @@ public class MatchGameStatsDTO {
      */
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Leaderboard {
-        /** 
+        /**
          * 榜单对应的统计指标
          * <p>如SCORE、REBOUND等具体统计维度
          */
         private Metric metric;
-        /** 
+        /**
+         * 榜单描述（带"榜"后缀）
+         * <p>如"得分榜"、"篮板榜"等
+         */
+        private String metricDesc;
+        /**
          * 排名条目列表
          * <p>按指定规则排序的具体排名数据
          */
@@ -167,8 +172,9 @@ public class MatchGameStatsDTO {
         public Leaderboard() {
         }
 
-        public Leaderboard(Metric metric, List<RankItem> items) {
+        public Leaderboard(Metric metric, String metricDesc, List<RankItem> items) {
             this.metric = metric;
+            this.metricDesc = metricDesc;
             this.items = items;
         }
 
@@ -178,6 +184,14 @@ public class MatchGameStatsDTO {
 
         public void setMetric(Metric metric) {
             this.metric = metric;
+        }
+
+        public String getMetricDesc() {
+            return metricDesc;
+        }
+
+        public void setMetricDesc(String metricDesc) {
+            this.metricDesc = metricDesc;
         }
 
         public List<RankItem> getItems() {

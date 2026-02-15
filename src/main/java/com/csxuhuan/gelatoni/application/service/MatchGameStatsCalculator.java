@@ -199,7 +199,7 @@ public class MatchGameStatsCalculator {
                         .thenComparing(MatchGameStatsDTO.RankItem::getName))
                 .collect(Collectors.toList());
 
-        return new MatchGameStatsDTO.Leaderboard(metric, items);
+        return new MatchGameStatsDTO.Leaderboard(metric, metric.getDesc() + "榜", items);
     }
 
     /**
@@ -238,7 +238,7 @@ public class MatchGameStatsCalculator {
                         .thenComparing(MatchGameStatsDTO.RankItem::getName))
                 .collect(Collectors.toList());
 
-        return new MatchGameStatsDTO.Leaderboard(metric, items);
+        return new MatchGameStatsDTO.Leaderboard(metric, metric.getDesc() + "榜", items);
     }
 
     /**
