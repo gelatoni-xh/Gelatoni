@@ -200,22 +200,24 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
                     int losses = totalGames - wins;
                     double winRate = totalGames > 0 ? (double) wins / totalGames : 0;
                     
-                    // 计算净胜分
-                    int pointDifferential = playerMatches.stream()
+                    // 计算场均净胜分
+                    int totalPointDifferential = playerMatches.stream()
                             .mapToInt(p -> {
                                 MatchGame match = matchMap.get(p.getMatchId());
                                 if (match == null) return 0;
                                 return match.getMyScore() - match.getOppScore();
                             })
                             .sum();
+                    double avgPointDifferential = totalGames > 0 ? (double) totalPointDifferential / totalGames : 0;
                     
-                    return new OpponentStatsDTO.OpponentRecord(playerName, totalGames, wins, losses, winRate, pointDifferential);
+                    return new OpponentStatsDTO.OpponentRecord(playerName, totalGames, wins, losses, winRate, avgPointDifferential);
                 })
                 .filter(r -> r.getTotalGames() >= minGamesValue)
                 .sorted((a, b) -> {
                     // 按胜率升序排列（最难的对手在前）
                     int cmp = Double.compare(a.getWinRate(), b.getWinRate());
-                    return cmp != 0 ? cmp : Integer.compare(b.getTotalGames(), a.getTotalGames());
+                    // 胜率相同时，按场均净胜分升序排列（越低越难对战）
+                    return cmp != 0 ? cmp : Double.compare(a.getAvgPointDifferential(), b.getAvgPointDifferential());
                 })
                 .collect(Collectors.toList());
         

@@ -73,19 +73,19 @@ public class OpponentStatsDTO {
         /** 胜率（0-1） */
         private Double winRate;
 
-        /** 净胜分 */
-        private Integer pointDifferential;
+        /** 场均净胜分 */
+        private Double avgPointDifferential;
 
         public OpponentRecord() {
         }
 
-        public OpponentRecord(String playerName, Integer totalGames, Integer wins, Integer losses, Double winRate, Integer pointDifferential) {
+        public OpponentRecord(String playerName, Integer totalGames, Integer wins, Integer losses, Double winRate, Double avgPointDifferential) {
             this.playerName = playerName;
             this.totalGames = totalGames;
             this.wins = wins;
             this.losses = losses;
             this.winRate = winRate;
-            this.pointDifferential = pointDifferential;
+            this.avgPointDifferential = avgPointDifferential;
         }
 
         public String getPlayerName() {
@@ -128,12 +128,12 @@ public class OpponentStatsDTO {
             this.winRate = winRate;
         }
 
-        public Integer getPointDifferential() {
-            return pointDifferential;
+        public Double getAvgPointDifferential() {
+            return avgPointDifferential;
         }
 
-        public void setPointDifferential(Integer pointDifferential) {
-            this.pointDifferential = pointDifferential;
+        public void setAvgPointDifferential(Double avgPointDifferential) {
+            this.avgPointDifferential = avgPointDifferential;
         }
     }
 
