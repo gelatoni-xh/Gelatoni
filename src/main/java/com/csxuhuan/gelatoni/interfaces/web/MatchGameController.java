@@ -4,6 +4,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.dto.OpponentStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
@@ -181,6 +182,21 @@ public class MatchGameController {
     @PostMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<MatchGameStatsDTO> stats(@RequestBody MatchGameStatsRequest request) {
         MatchGameStatsDTO data = matchGameAppService.getMatchGameStats(request);
+        return BaseResponse.success(data);
+    }
+
+    /**
+     * 获取对手统计数据接口
+     *
+     * <p>统计对阵各个对手的胜负情况和胜率，排除机器人比赛。
+     *
+     * @param season 赛季（可选）
+     * @return 对手统计结果
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
+    @GetMapping(value = "/opponent-stats", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<OpponentStatsDTO> opponentStats(@RequestParam(required = false) String season) {
+        OpponentStatsDTO data = matchGameAppService.getOpponentStats(season);
         return BaseResponse.success(data);
     }
 

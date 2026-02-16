@@ -4,6 +4,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.dto.OpponentStatsDTO;
 import com.csxuhuan.gelatoni.application.exception.BizException;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
@@ -102,6 +103,16 @@ public interface MatchGameAppService {
      * @return 统计结果
      */
     MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request);
+
+    /**
+     * 获取对手统计数据
+     *
+     * <p>统计对阵各个对手的胜负情况，排除机器人比赛。
+     *
+     * @param season 赛季（可选，为空表示全赛季）
+     * @return 对手统计结果
+     */
+    OpponentStatsDTO getOpponentStats(String season);
 
     /**
      * 获取比赛基础数据

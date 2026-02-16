@@ -68,4 +68,16 @@ public interface MatchPlayerStatsRepository {
      * @return 我方用户昵称列表
      */
     List<String> findDistinctMyUserNames();
+
+    /**
+     * 查询对方球员统计明细（用于对手统计）
+     *
+     * <p>只统计对方数据（team_type=2）。
+     * season 为空/空字符串时表示全赛季。
+     *
+     * @param season 赛季（可选）
+     * @param excludeRobot 是否排除机器人
+     * @return 对方球员统计明细列表
+     */
+    List<MatchPlayerStats> findOpponentPlayerStatsForStats(String season, Boolean excludeRobot);
 }

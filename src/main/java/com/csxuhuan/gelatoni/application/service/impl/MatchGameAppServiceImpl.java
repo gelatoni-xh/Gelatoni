@@ -5,6 +5,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsMetric;
+import com.csxuhuan.gelatoni.application.dto.OpponentStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.application.service.MatchGameStatsCalculator;
 import com.csxuhuan.gelatoni.application.service.MatchGameDataValidator;
@@ -24,6 +25,8 @@ import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -155,6 +158,65 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         cacheManager.setStats(cacheKey, calculatedStats);
 
         return calculatedStats;
+    }
+
+    @Override
+    public OpponentStatsDTO getOpponentStats(String season) {
+        // 查询对方球员数据（team_type=2），排除机器人
+        List<MatchPlayerStats> opponentStats = matchPlayerStatsRepository.findOpponentPlayerStatsForStats(season, true);
+        
+        // 获取所有比赛ID并查询结果
+        java.util.Set<Long> matchIds = opponentStats.stream()
+                .map(MatchPlayerStats::getMatchId)
+                .collect(java.util.stream.Collectors.toSet());
+        Map<Long, Boolean> matchResults = new java.util.HashMap<>();
+        if (!matchIds.isEmpty()) {
+            for (Long matchId : matchIds) {
+                MatchGame match = matchGameRepository.findById(matchId);
+                if (match != null) {
+                    matchResults.put(matchId, match.getResult());
+                }
+            }
+        }
+        
+        // 按对手球员名称分组统计
+        Map<String, List<MatchPlayerStats>> groupedByPlayer = opponentStats.stream()
+                .collect(Collectors.groupingBy(MatchPlayerStats::getPlayerName));
+        
+        List<OpponentStatsDTO.OpponentRecord> records = groupedByPlayer.entrySet().stream()
+                .map(entry -> {
+                    String playerName = entry.getKey();
+                    List<MatchPlayerStats> playerMatches = entry.getValue();
+                    
+                    int totalGames = playerMatches.size();
+                    int wins = (int) playerMatches.stream()
+                            .filter(p -> matchResults.getOrDefault(p.getMatchId(), false))
+                            .count();
+                    int losses = totalGames - wins;
+                    double winRate = totalGames > 0 ? (double) wins / totalGames : 0;
+                    
+                    // 难度等级：0=新手(1-2场), 1=散点(3-5场), 2=常客(6-10场), 3=老对手(11+场)
+                    int difficulty = totalGames <= 2 ? 0 : (totalGames <= 5 ? 1 : (totalGames <= 10 ? 2 : 3));
+                    
+                    return new OpponentStatsDTO.OpponentRecord(playerName, totalGames, wins, losses, winRate, difficulty);
+                })
+                .sorted((a, b) -> {
+                    // 按胜率升序排列（最难的对手在前）
+                    int cmp = Double.compare(a.getWinRate(), b.getWinRate());
+                    return cmp != 0 ? cmp : Integer.compare(b.getTotalGames(), a.getTotalGames());
+                })
+                .collect(Collectors.toList());
+        
+        // 计算摘要
+        int maxLosses = records.stream().mapToInt(OpponentStatsDTO.OpponentRecord::getLosses).max().orElse(0);
+        double avgWinRate = records.isEmpty() ? 0 : records.stream()
+                .mapToDouble(OpponentStatsDTO.OpponentRecord::getWinRate)
+                .average()
+                .orElse(0);
+        
+        OpponentStatsDTO.Summary summary = new OpponentStatsDTO.Summary(records.size(), maxLosses, avgWinRate);
+        
+        return new OpponentStatsDTO(season, records, summary);
     }
 
     @Override

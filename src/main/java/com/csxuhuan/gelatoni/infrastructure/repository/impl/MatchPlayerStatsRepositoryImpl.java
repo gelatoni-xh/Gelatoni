@@ -175,4 +175,37 @@ public class MatchPlayerStatsRepositoryImpl implements MatchPlayerStatsRepositor
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<MatchPlayerStats> findOpponentPlayerStatsForStats(String season, Boolean excludeRobot) {
+        LambdaQueryWrapper<MatchPlayerStatsDO> playerStatsWrapper = Wrappers.lambdaQuery();
+        playerStatsWrapper.eq(MatchPlayerStatsDO::getTeamType, 2)
+                .eq(MatchPlayerStatsDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+
+        LambdaQueryWrapper<MatchGameDO> gameWrapper = Wrappers.lambdaQuery();
+        gameWrapper.eq(MatchGameDO::getIsDeleted, DeletedEnum.NOT_DELETED.getValue());
+        
+        if (season != null && !season.isEmpty()) {
+            gameWrapper.eq(MatchGameDO::getSeason, season);
+        }
+        
+        if (Boolean.TRUE.equals(excludeRobot)) {
+            gameWrapper.eq(MatchGameDO::getIsRobot, false);
+        }
+        
+        List<Long> gameIds = matchGameMapper.selectList(gameWrapper).stream()
+                .map(MatchGameDO::getId)
+                .collect(Collectors.toList());
+        
+        if (gameIds.isEmpty()) {
+            return Collections.emptyList();
+        }
+        
+        playerStatsWrapper.in(MatchPlayerStatsDO::getMatchId, gameIds);
+        
+        List<MatchPlayerStatsDO> matchPlayerStatsDOList = matchPlayerStatsMapper.selectList(playerStatsWrapper);
+        return matchPlayerStatsDOList.stream()
+                .map(MatchPlayerStatsConverter::toDomain)
+                .collect(Collectors.toList());
+    }
 }
