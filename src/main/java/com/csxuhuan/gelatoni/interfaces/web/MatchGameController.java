@@ -195,8 +195,9 @@ public class MatchGameController {
      */
     @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
     @GetMapping(value = "/opponent-stats", produces = MediaType.APPLICATION_JSON_VALUE)
-    public BaseResponse<OpponentStatsDTO> opponentStats(@RequestParam(required = false) String season) {
-        OpponentStatsDTO data = matchGameAppService.getOpponentStats(season);
+    public BaseResponse<OpponentStatsDTO> opponentStats(@RequestParam(required = false) String season,
+                                                        @RequestParam(required = false) Integer minGames) {
+        OpponentStatsDTO data = matchGameAppService.getOpponentStats(season, minGames);
         return BaseResponse.success(data);
     }
 

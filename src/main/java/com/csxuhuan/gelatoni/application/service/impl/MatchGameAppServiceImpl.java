@@ -161,20 +161,22 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     }
 
     @Override
-    public OpponentStatsDTO getOpponentStats(String season) {
+    public OpponentStatsDTO getOpponentStats(String season, Integer minGames) {
+        final int minGamesValue = minGames != null ? minGames : 3;
+        
         // 查询对方球员数据（team_type=2），排除机器人
         List<MatchPlayerStats> opponentStats = matchPlayerStatsRepository.findOpponentPlayerStatsForStats(season, true);
         
-        // 获取所有比赛ID并查询结果
+        // 获取所有比赛ID并查询结果和得分
         java.util.Set<Long> matchIds = opponentStats.stream()
                 .map(MatchPlayerStats::getMatchId)
                 .collect(java.util.stream.Collectors.toSet());
-        Map<Long, Boolean> matchResults = new java.util.HashMap<>();
+        Map<Long, MatchGame> matchMap = new java.util.HashMap<>();
         if (!matchIds.isEmpty()) {
             for (Long matchId : matchIds) {
                 MatchGame match = matchGameRepository.findById(matchId);
                 if (match != null) {
-                    matchResults.put(matchId, match.getResult());
+                    matchMap.put(matchId, match);
                 }
             }
         }
@@ -190,16 +192,26 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
                     
                     int totalGames = playerMatches.size();
                     int wins = (int) playerMatches.stream()
-                            .filter(p -> matchResults.getOrDefault(p.getMatchId(), false))
+                            .filter(p -> {
+                                MatchGame match = matchMap.get(p.getMatchId());
+                                return match != null && match.getResult();
+                            })
                             .count();
                     int losses = totalGames - wins;
                     double winRate = totalGames > 0 ? (double) wins / totalGames : 0;
                     
-                    // 难度等级：0=新手(1-2场), 1=散点(3-5场), 2=常客(6-10场), 3=老对手(11+场)
-                    int difficulty = totalGames <= 2 ? 0 : (totalGames <= 5 ? 1 : (totalGames <= 10 ? 2 : 3));
+                    // 计算净胜分
+                    int pointDifferential = playerMatches.stream()
+                            .mapToInt(p -> {
+                                MatchGame match = matchMap.get(p.getMatchId());
+                                if (match == null) return 0;
+                                return match.getMyScore() - match.getOppScore();
+                            })
+                            .sum();
                     
-                    return new OpponentStatsDTO.OpponentRecord(playerName, totalGames, wins, losses, winRate, difficulty);
+                    return new OpponentStatsDTO.OpponentRecord(playerName, totalGames, wins, losses, winRate, pointDifferential);
                 })
+                .filter(r -> r.getTotalGames() >= minGamesValue)
                 .sorted((a, b) -> {
                     // 按胜率升序排列（最难的对手在前）
                     int cmp = Double.compare(a.getWinRate(), b.getWinRate());

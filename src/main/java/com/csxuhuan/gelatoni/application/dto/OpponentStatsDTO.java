@@ -73,19 +73,19 @@ public class OpponentStatsDTO {
         /** 胜率（0-1） */
         private Double winRate;
 
-        /** 难度等级：0=新手(1-2场), 1=散点(3-5场), 2=常客(6-10场), 3=老对手(11+场) */
-        private Integer difficulty;
+        /** 净胜分 */
+        private Integer pointDifferential;
 
         public OpponentRecord() {
         }
 
-        public OpponentRecord(String playerName, Integer totalGames, Integer wins, Integer losses, Double winRate, Integer difficulty) {
+        public OpponentRecord(String playerName, Integer totalGames, Integer wins, Integer losses, Double winRate, Integer pointDifferential) {
             this.playerName = playerName;
             this.totalGames = totalGames;
             this.wins = wins;
             this.losses = losses;
             this.winRate = winRate;
-            this.difficulty = difficulty;
+            this.pointDifferential = pointDifferential;
         }
 
         public String getPlayerName() {
@@ -128,12 +128,12 @@ public class OpponentStatsDTO {
             this.winRate = winRate;
         }
 
-        public Integer getDifficulty() {
-            return difficulty;
+        public Integer getPointDifferential() {
+            return pointDifferential;
         }
 
-        public void setDifficulty(Integer difficulty) {
-            this.difficulty = difficulty;
+        public void setPointDifferential(Integer pointDifferential) {
+            this.pointDifferential = pointDifferential;
         }
     }
 
