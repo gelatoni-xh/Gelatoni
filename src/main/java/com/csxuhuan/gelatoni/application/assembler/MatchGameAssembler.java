@@ -36,7 +36,6 @@ public class MatchGameAssembler {
     public MatchGameCreateQuery toDomainQuery(MatchGameCreateRequest request) {
         return new MatchGameCreateQuery(
                 request.getSeason(),
-                request.getSeasonMatchNo(),
                 request.getMatchTime(),
                 request.getIsRobot(),
                 request.getMyScore(),
@@ -86,7 +85,6 @@ public class MatchGameAssembler {
         return new MatchGameUpdateQuery(
                 request.getId(),
                 request.getSeason(),
-                request.getSeasonMatchNo(),
                 request.getMatchTime(),
                 request.getIsRobot(),
                 request.getMyScore(),
@@ -149,7 +147,6 @@ public class MatchGameAssembler {
         MatchGameDTO dto = new MatchGameDTO();
         dto.setId(game.getId());
         dto.setSeason(game.getSeason());
-        dto.setSeasonMatchNo(game.getSeasonMatchNo());
         dto.setMatchTime(game.getMatchTime());
         dto.setIsRobot(game.getIsRobot());
         dto.setMyScore(game.getMyScore());

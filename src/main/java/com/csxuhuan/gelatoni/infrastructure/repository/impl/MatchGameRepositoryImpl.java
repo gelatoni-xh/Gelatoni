@@ -98,7 +98,6 @@ public class MatchGameRepositoryImpl implements MatchGameRepository {
         MatchGameDO matchGameDO = new MatchGameDO();
         matchGameDO.setId(game.getId());
         matchGameDO.setSeason(game.getSeason());
-        matchGameDO.setSeasonMatchNo(game.getSeasonMatchNo());
         matchGameDO.setMatchTime(game.getMatchTime());
         matchGameDO.setIsRobot(game.getIsRobot());
         matchGameDO.setMyScore(game.getMyScore());

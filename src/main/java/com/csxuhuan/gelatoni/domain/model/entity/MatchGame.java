@@ -33,9 +33,6 @@ public class MatchGame {
     /** 赛季标识，例如 S1、2026Q1 */
     private final String season;
 
-    /** 该赛季第几场比赛 */
-    private final Integer seasonMatchNo;
-
     /** 比赛开始时间 */
     private final LocalDateTime matchTime;
 
@@ -71,7 +68,6 @@ public class MatchGame {
      *
      * @param id             比赛 ID，新建时可为 null
      * @param season         赛季标识
-     * @param seasonMatchNo  赛季第几场比赛
      * @param matchTime      比赛开始时间
      * @param isRobot        是否为机器人对局
      * @param myScore        我方最终得分
@@ -83,13 +79,12 @@ public class MatchGame {
      * @param createTime     创建时间，新建时可为 null（由数据库填充）
      * @param modifiedTime   修改时间，新建时可为 null（由数据库填充）
      */
-    public MatchGame(Long id, String season, Integer seasonMatchNo, LocalDateTime matchTime,
+    public MatchGame(Long id, String season, LocalDateTime matchTime,
                      Boolean isRobot, Integer myScore, Integer oppScore, Boolean result,
                      String remark, Long creator, Long modifier, LocalDateTime createTime,
                      LocalDateTime modifiedTime) {
         this.id = id;
         this.season = season;
-        this.seasonMatchNo = seasonMatchNo;
         this.matchTime = matchTime;
         this.isRobot = isRobot;
         this.myScore = myScore;
@@ -108,10 +103,6 @@ public class MatchGame {
 
     public String getSeason() {
         return season;
-    }
-
-    public Integer getSeasonMatchNo() {
-        return seasonMatchNo;
     }
 
     public LocalDateTime getMatchTime() {

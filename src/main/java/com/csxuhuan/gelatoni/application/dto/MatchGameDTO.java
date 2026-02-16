@@ -17,9 +17,6 @@ public class MatchGameDTO {
     /** 赛季标识，例如 S1、2026Q1 */
     private String season;
 
-    /** 该赛季第几场比赛 */
-    private Integer seasonMatchNo;
-
     /** 比赛开始时间 */
     private LocalDateTime matchTime;
 
@@ -55,14 +52,6 @@ public class MatchGameDTO {
 
     public void setSeason(String season) {
         this.season = season;
-    }
-
-    public Integer getSeasonMatchNo() {
-        return seasonMatchNo;
-    }
-
-    public void setSeasonMatchNo(Integer seasonMatchNo) {
-        this.seasonMatchNo = seasonMatchNo;
     }
 
     public LocalDateTime getMatchTime() {

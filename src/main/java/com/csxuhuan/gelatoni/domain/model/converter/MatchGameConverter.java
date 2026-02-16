@@ -46,7 +46,6 @@ public class MatchGameConverter {
         return new MatchGame(
                 gameDO.getId(),
                 gameDO.getSeason(),
-                gameDO.getSeasonMatchNo(),
                 gameDO.getMatchTime(),
                 gameDO.getIsRobot(),
                 gameDO.getMyScore(),
@@ -75,7 +74,6 @@ public class MatchGameConverter {
         MatchGameDO gameDO = new MatchGameDO();
         gameDO.setId(game.getId());
         gameDO.setSeason(game.getSeason());
-        gameDO.setSeasonMatchNo(game.getSeasonMatchNo());
         gameDO.setMatchTime(game.getMatchTime());
         gameDO.setIsRobot(game.getIsRobot());
         gameDO.setMyScore(game.getMyScore());

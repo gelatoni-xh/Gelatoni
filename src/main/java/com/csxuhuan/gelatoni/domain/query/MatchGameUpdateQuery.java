@@ -25,7 +25,6 @@ public class MatchGameUpdateQuery {
 
     // 比赛基础信息
     private String season;
-    private Integer seasonMatchNo;
     private LocalDateTime matchTime;
     private Boolean isRobot;
     private Integer myScore;
@@ -40,13 +39,12 @@ public class MatchGameUpdateQuery {
     // 球员统计数据（可选，如果提供则必须包含全部球员数据）
     private List<MatchPlayerStats> playerStatsList;
 
-    public MatchGameUpdateQuery(Long id, String season, Integer seasonMatchNo, LocalDateTime matchTime, 
-                               Boolean isRobot, Integer myScore, Integer oppScore, Boolean result, 
-                               String remark, Long modifier, List<MatchTeamStats> teamStatsList, 
+    public MatchGameUpdateQuery(Long id, String season, LocalDateTime matchTime,
+                               Boolean isRobot, Integer myScore, Integer oppScore, Boolean result,
+                               String remark, Long modifier, List<MatchTeamStats> teamStatsList,
                                List<MatchPlayerStats> playerStatsList) {
         this.id = id;
         this.season = season;
-        this.seasonMatchNo = seasonMatchNo;
         this.matchTime = matchTime;
         this.isRobot = isRobot;
         this.myScore = myScore;
@@ -62,7 +60,7 @@ public class MatchGameUpdateQuery {
      * 转换为比赛领域实体
      */
     public MatchGame toMatchGame() {
-        return new MatchGame(id, season, seasonMatchNo, matchTime, isRobot, myScore, oppScore, 
+        return new MatchGame(id, season, matchTime, isRobot, myScore, oppScore,
                 result, remark, null, modifier, null, null);
     }
 
@@ -80,14 +78,6 @@ public class MatchGameUpdateQuery {
 
     public void setSeason(String season) {
         this.season = season;
-    }
-
-    public Integer getSeasonMatchNo() {
-        return seasonMatchNo;
-    }
-
-    public void setSeasonMatchNo(Integer seasonMatchNo) {
-        this.seasonMatchNo = seasonMatchNo;
     }
 
     public LocalDateTime getMatchTime() {

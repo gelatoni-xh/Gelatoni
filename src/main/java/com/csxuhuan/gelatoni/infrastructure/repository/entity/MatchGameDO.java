@@ -26,10 +26,6 @@ public class MatchGameDO {
     @TableField("season")
     private String season;
 
-    /** 该赛季第几场比赛 */
-    @TableField("season_match_no")
-    private Integer seasonMatchNo;
-
     /** 比赛开始时间 */
     @TableField("match_time")
     private LocalDateTime matchTime;
@@ -78,13 +74,12 @@ public class MatchGameDO {
     public MatchGameDO() {
     }
 
-    public MatchGameDO(Long id, String season, Integer seasonMatchNo, LocalDateTime matchTime, 
-                      Boolean isRobot, Integer myScore, Integer oppScore, Boolean result, 
-                      String remark, Long creator, Long modifier, LocalDateTime createTime, 
+    public MatchGameDO(Long id, String season, LocalDateTime matchTime,
+                      Boolean isRobot, Integer myScore, Integer oppScore, Boolean result,
+                      String remark, Long creator, Long modifier, LocalDateTime createTime,
                       LocalDateTime modifiedTime, Boolean isDeleted) {
         this.id = id;
         this.season = season;
-        this.seasonMatchNo = seasonMatchNo;
         this.matchTime = matchTime;
         this.isRobot = isRobot;
         this.myScore = myScore;
@@ -113,14 +108,6 @@ public class MatchGameDO {
 
     public void setSeason(String season) {
         this.season = season;
-    }
-
-    public Integer getSeasonMatchNo() {
-        return seasonMatchNo;
-    }
-
-    public void setSeasonMatchNo(Integer seasonMatchNo) {
-        this.seasonMatchNo = seasonMatchNo;
     }
 
     public LocalDateTime getMatchTime() {

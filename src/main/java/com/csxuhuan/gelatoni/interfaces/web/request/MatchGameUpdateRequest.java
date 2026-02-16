@@ -29,10 +29,6 @@ public class MatchGameUpdateRequest {
     @NotNull(message = "赛季不能为空")
     private String season;
 
-    /** 该赛季第几场比赛 */
-    @NotNull(message = "赛季比赛号不能为空")
-    private Integer seasonMatchNo;
-
     /** 比赛开始时间 */
     @NotNull(message = "比赛时间不能为空")
     private LocalDateTime matchTime;
@@ -80,14 +76,6 @@ public class MatchGameUpdateRequest {
 
     public void setSeason(String season) {
         this.season = season;
-    }
-
-    public Integer getSeasonMatchNo() {
-        return seasonMatchNo;
-    }
-
-    public void setSeasonMatchNo(Integer seasonMatchNo) {
-        this.seasonMatchNo = seasonMatchNo;
     }
 
     public LocalDateTime getMatchTime() {
