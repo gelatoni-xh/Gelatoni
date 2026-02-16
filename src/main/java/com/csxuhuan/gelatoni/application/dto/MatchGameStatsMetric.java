@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
  */
 public enum MatchGameStatsMetric {
     APPEARANCES("上场次数", true, false),
+    RATING_AVG("场均评价", true, true),
     SCORE("得分", false, false),
     SCORE_AVG("场均得分", true, true),
     REBOUND("篮板", false, false),

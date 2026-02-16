@@ -88,6 +88,7 @@ public class MatchGameStatsCalculator {
             acc.steal += safeInt(stat.getSteal()); // 抢断
             acc.block += safeInt(stat.getBlock()); // 盖帽
             acc.turnover += safeInt(stat.getTurnover()); // 失误
+            acc.ratingSum += stat.getRating() == null ? 0D : stat.getRating(); // 评价
 
             // 投篮相关统计累加
             acc.fgAttempt += safeInt(stat.getFgAttempt()); // 投篮出手
@@ -111,6 +112,9 @@ public class MatchGameStatsCalculator {
         if (dimension == MatchGameStatsDTO.Dimension.PLAYER) {
             leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.APPEARANCES, group, a -> a.appearances));
         }
+
+        // 场均评价榜单
+        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.RATING_AVG, group, a -> (long) a.ratingSum));
 
         // 基础数据榜单（数值越大排名越前）
         leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.SCORE, group, a -> a.score));
@@ -375,5 +379,8 @@ public class MatchGameStatsCalculator {
 
         /** 失误统计 */
         long turnover; // 失误次数
+
+        /** 评价统计 */
+        double ratingSum; // 评价总分
     }
 }
