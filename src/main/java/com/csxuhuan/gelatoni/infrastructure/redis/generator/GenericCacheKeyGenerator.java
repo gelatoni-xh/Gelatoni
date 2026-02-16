@@ -50,13 +50,12 @@ public class GenericCacheKeyGenerator {
         StringJoiner joiner = new StringJoiner(":");
         joiner.add(businessType).add(subType);
         
-        if (partialParams != null) {
+        if (partialParams != null && partialParams.length > 0) {
             Arrays.stream(partialParams)
                   .map(param -> param == null ? "*" : param.toString())
                   .forEach(joiner::add);
-        } else {
-            joiner.add("*");
         }
+        joiner.add("*");
         
         return joiner.toString();
     }
