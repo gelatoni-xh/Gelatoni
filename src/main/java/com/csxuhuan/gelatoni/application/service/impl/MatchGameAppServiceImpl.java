@@ -221,16 +221,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
                 })
                 .collect(Collectors.toList());
         
-        // 计算摘要
-        int maxLosses = records.stream().mapToInt(OpponentStatsDTO.OpponentRecord::getLosses).max().orElse(0);
-        double avgWinRate = records.isEmpty() ? 0 : records.stream()
-                .mapToDouble(OpponentStatsDTO.OpponentRecord::getWinRate)
-                .average()
-                .orElse(0);
-        
-        OpponentStatsDTO.Summary summary = new OpponentStatsDTO.Summary(records.size(), maxLosses, avgWinRate);
-        
-        return new OpponentStatsDTO(season, records, summary);
+        return new OpponentStatsDTO(season, records);
     }
 
     @Override

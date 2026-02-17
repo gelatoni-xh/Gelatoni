@@ -17,16 +17,12 @@ public class OpponentStatsDTO {
     /** 对手统计列表 */
     private List<OpponentRecord> opponents;
 
-    /** 统计摘要 */
-    private Summary summary;
-
     public OpponentStatsDTO() {
     }
 
-    public OpponentStatsDTO(String season, List<OpponentRecord> opponents, Summary summary) {
+    public OpponentStatsDTO(String season, List<OpponentRecord> opponents) {
         this.season = season;
         this.opponents = opponents;
-        this.summary = summary;
     }
 
     public String getSeason() {
@@ -43,14 +39,6 @@ public class OpponentStatsDTO {
 
     public void setOpponents(List<OpponentRecord> opponents) {
         this.opponents = opponents;
-    }
-
-    public Summary getSummary() {
-        return summary;
-    }
-
-    public void setSummary(Summary summary) {
-        this.summary = summary;
     }
 
     /**
@@ -137,51 +125,4 @@ public class OpponentStatsDTO {
         }
     }
 
-    /**
-     * 统计摘要
-     */
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Summary {
-        /** 对手总数 */
-        private Integer totalOpponents;
-
-        /** 最难对手的负场数 */
-        private Integer maxLosses;
-
-        /** 平均胜率 */
-        private Double avgWinRate;
-
-        public Summary() {
-        }
-
-        public Summary(Integer totalOpponents, Integer maxLosses, Double avgWinRate) {
-            this.totalOpponents = totalOpponents;
-            this.maxLosses = maxLosses;
-            this.avgWinRate = avgWinRate;
-        }
-
-        public Integer getTotalOpponents() {
-            return totalOpponents;
-        }
-
-        public void setTotalOpponents(Integer totalOpponents) {
-            this.totalOpponents = totalOpponents;
-        }
-
-        public Integer getMaxLosses() {
-            return maxLosses;
-        }
-
-        public void setMaxLosses(Integer maxLosses) {
-            this.maxLosses = maxLosses;
-        }
-
-        public Double getAvgWinRate() {
-            return avgWinRate;
-        }
-
-        public void setAvgWinRate(Double avgWinRate) {
-            this.avgWinRate = avgWinRate;
-        }
-    }
 }
