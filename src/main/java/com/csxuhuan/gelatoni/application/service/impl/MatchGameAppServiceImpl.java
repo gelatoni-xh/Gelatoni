@@ -201,7 +201,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     				.filter(m -> m != null && Boolean.TRUE.equals(m.getResult()))
     				.count();
     		double winRate = (double) wins / matchIds.size();
-    		winRates.add(winRate);
+    		winRates.add(Math.round(winRate * 1000.0) / 1000.0);
     	}
     	
     	// 过滤掉没有数据的日期
@@ -254,12 +254,12 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     			
     			// 计算场均
     			if (gameCount > 0) {
-    				ratings.add(ratingSum / gameCount);
-    				scores.add((double) scoreSum / gameCount);
-    				rebounds.add((double) reboundSum / gameCount);
-    				assists.add((double) assistSum / gameCount);
-    				steals.add((double) stealSum / gameCount);
-    				blocks.add((double) blockSum / gameCount);
+    				ratings.add(Math.round(ratingSum / gameCount * 10.0) / 10.0);
+    				scores.add(Math.round((double) scoreSum / gameCount * 10.0) / 10.0);
+    				rebounds.add(Math.round((double) reboundSum / gameCount * 10.0) / 10.0);
+    				assists.add(Math.round((double) assistSum / gameCount * 10.0) / 10.0);
+    				steals.add(Math.round((double) stealSum / gameCount * 10.0) / 10.0);
+    				blocks.add(Math.round((double) blockSum / gameCount * 10.0) / 10.0);
     			} else {
     				ratings.add(0.0);
     				scores.add(0.0);
