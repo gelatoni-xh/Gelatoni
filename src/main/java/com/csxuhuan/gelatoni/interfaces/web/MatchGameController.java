@@ -4,6 +4,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameTrendDTO;
 import com.csxuhuan.gelatoni.application.dto.OpponentStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
@@ -17,6 +18,7 @@ import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGamePageRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameTrendRequest;
 import com.csxuhuan.gelatoni.application.assembler.MatchGameAssembler;
 
 import org.springframework.http.MediaType;
@@ -182,6 +184,21 @@ public class MatchGameController {
     @PostMapping(value = "/stats", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<MatchGameStatsDTO> stats(@RequestBody MatchGameStatsRequest request) {
         MatchGameStatsDTO data = matchGameAppService.getMatchGameStats(request);
+        return BaseResponse.success(data);
+    }
+
+    /**
+     * 比赛趋势统计接口
+     *
+     * <p>按日期统计比赛平均胜率、球员平均评分、得分、篮板、助攻、抢断、盖帽。
+     *
+     * @param request 趋势统计请求
+     * @return 趋势统计结果
+     */
+    @AuthCheck(permissionCode = PermissionConstants.PERM_MATCH)
+    @PostMapping(value = "/trend", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<MatchGameTrendDTO> trend(@RequestBody MatchGameTrendRequest request) {
+        MatchGameTrendDTO data = matchGameAppService.getMatchGameTrend(request);
         return BaseResponse.success(data);
     }
 

@@ -5,6 +5,7 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsMetric;
+import com.csxuhuan.gelatoni.application.dto.MatchGameTrendDTO;
 import com.csxuhuan.gelatoni.application.dto.OpponentStatsDTO;
 import com.csxuhuan.gelatoni.application.service.MatchGameAppService;
 import com.csxuhuan.gelatoni.application.service.MatchGameStatsCalculator;
@@ -23,9 +24,14 @@ import com.csxuhuan.gelatoni.infrastructure.repository.MatchPlayerStatsRepositor
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameTrendRequest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -158,6 +164,90 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
         cacheManager.setStats(cacheKey, calculatedStats);
 
         return calculatedStats;
+    }
+
+    @Override
+    public MatchGameTrendDTO getMatchGameTrend(MatchGameTrendRequest request) {
+        String season = request == null ? null : request.getSeason();
+        Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
+
+        List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot, null);
+        
+        // 按日期分组
+        Map<String, List<MatchPlayerStats>> groupedByDate = new HashMap<>();
+        Map<String, Set<Long>> dateToMatchIds = new HashMap<>();
+        
+        for (MatchPlayerStats stat : myPlayerStats) {
+            MatchGame match = matchGameRepository.findById(stat.getMatchId());
+            if (match != null && match.getMatchTime() != null) {
+                String date = match.getMatchTime().toLocalDate().toString();
+                groupedByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(stat);
+                dateToMatchIds.computeIfAbsent(date, k -> new java.util.HashSet<>()).add(stat.getMatchId());
+            }
+        }
+
+        List<String> sortedDates = groupedByDate.keySet().stream().sorted().collect(Collectors.toList());
+
+        Map<String, List<Double>> metrics = new LinkedHashMap<>();
+        List<Double> winRates = new ArrayList<>();
+        List<Double> avgRatings = new ArrayList<>();
+        List<Double> avgScores = new ArrayList<>();
+        List<Double> avgRebounds = new ArrayList<>();
+        List<Double> avgAssists = new ArrayList<>();
+        List<Double> avgSteals = new ArrayList<>();
+        List<Double> avgBlocks = new ArrayList<>();
+
+        for (String date : sortedDates) {
+            List<MatchPlayerStats> dayStats = groupedByDate.get(date);
+            Set<Long> matchIds = dateToMatchIds.get(date);
+            
+            int wins = (int) matchIds.stream()
+                    .map(matchGameRepository::findById)
+                    .filter(m -> m != null && Boolean.TRUE.equals(m.getResult()))
+                    .count();
+            double winRate = matchIds.size() > 0 ? (double) wins / matchIds.size() : 0;
+            winRates.add(winRate);
+
+            double avgRating = dayStats.stream()
+                    .mapToDouble(s -> s.getRating() != null ? s.getRating() : 0)
+                    .average().orElse(0);
+            avgRatings.add(avgRating);
+
+            double avgScore = dayStats.stream()
+                    .mapToDouble(s -> s.getScore() != null ? s.getScore() : 0)
+                    .average().orElse(0);
+            avgScores.add(avgScore);
+
+            double avgRebound = dayStats.stream()
+                    .mapToDouble(s -> s.getRebound() != null ? s.getRebound() : 0)
+                    .average().orElse(0);
+            avgRebounds.add(avgRebound);
+
+            double avgAssist = dayStats.stream()
+                    .mapToDouble(s -> s.getAssist() != null ? s.getAssist() : 0)
+                    .average().orElse(0);
+            avgAssists.add(avgAssist);
+
+            double avgSteal = dayStats.stream()
+                    .mapToDouble(s -> s.getSteal() != null ? s.getSteal() : 0)
+                    .average().orElse(0);
+            avgSteals.add(avgSteal);
+
+            double avgBlock = dayStats.stream()
+                    .mapToDouble(s -> s.getBlock() != null ? s.getBlock() : 0)
+                    .average().orElse(0);
+            avgBlocks.add(avgBlock);
+        }
+
+        metrics.put("winRate", winRates);
+        metrics.put("rating", avgRatings);
+        metrics.put("score", avgScores);
+        metrics.put("rebound", avgRebounds);
+        metrics.put("assist", avgAssists);
+        metrics.put("steal", avgSteals);
+        metrics.put("block", avgBlocks);
+
+        return new MatchGameTrendDTO(sortedDates, metrics);
     }
 
     @Override

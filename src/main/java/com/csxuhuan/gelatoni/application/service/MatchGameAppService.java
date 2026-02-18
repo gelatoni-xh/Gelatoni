@@ -4,11 +4,13 @@ import com.csxuhuan.gelatoni.application.dto.MatchGameDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameBaseDataDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameDetailDTO;
 import com.csxuhuan.gelatoni.application.dto.MatchGameStatsDTO;
+import com.csxuhuan.gelatoni.application.dto.MatchGameTrendDTO;
 import com.csxuhuan.gelatoni.application.dto.OpponentStatsDTO;
 import com.csxuhuan.gelatoni.application.exception.BizException;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameCreateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameUpdateRequest;
 import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameStatsRequest;
+import com.csxuhuan.gelatoni.interfaces.web.request.MatchGameTrendRequest;
 import com.csxuhuan.gelatoni.domain.query.MatchGameCreateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGameUpdateQuery;
 import com.csxuhuan.gelatoni.domain.query.MatchGamePageQuery;
@@ -103,6 +105,16 @@ public interface MatchGameAppService {
      * @return 统计结果
      */
     MatchGameStatsDTO getMatchGameStats(MatchGameStatsRequest request);
+
+    /**
+     * 获取比赛趋势数据（按日期分组统计）
+     *
+     * <p>按日期统计比赛平均胜率、球员平均评分、得分、篮板、助攻、抢断、盖帽。
+     *
+     * @param request 趋势统计请求
+     * @return 趋势统计结果
+     */
+    MatchGameTrendDTO getMatchGameTrend(MatchGameTrendRequest request);
 
     /**
      * 获取对手统计数据
