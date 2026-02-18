@@ -170,14 +170,16 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     public MatchGameTrendDTO getMatchGameTrend(MatchGameTrendRequest request) {
     	String season = request == null ? null : request.getSeason();
     	Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
+    	String dimension = request == null ? null : request.getDimension();
    
-    	List<MatchPlayerStats> myPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot, null);
+    	// 获取所有日期的数据（按日期维度 groupby）
+    	List<MatchPlayerStats> allPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot, null);
     	
     	// 按日期分组
     	Map<String, List<MatchPlayerStats>> groupedByDate = new HashMap<>();
     	Map<String, Set<Long>> dateToMatchIds = new HashMap<>();
     	
-    	for (MatchPlayerStats stat : myPlayerStats) {
+    	for (MatchPlayerStats stat : allPlayerStats) {
     		MatchGame match = matchGameRepository.findById(stat.getMatchId());
     		if (match != null && match.getMatchTime() != null) {
     			String date = match.getMatchTime().toLocalDate().toString();
@@ -185,10 +187,10 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     			dateToMatchIds.computeIfAbsent(date, k -> new java.util.HashSet<>()).add(stat.getMatchId());
     		}
     	}
-   
+    	
     	List<String> sortedDates = groupedByDate.keySet().stream().sorted().collect(Collectors.toList());
-   
-    	// 计算胜率
+    	
+    	// 计算每日胜率
     	List<Double> winRates = new ArrayList<>();
     	for (String date : sortedDates) {
     		Set<Long> matchIds = dateToMatchIds.get(date);
@@ -199,14 +201,14 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     		double winRate = matchIds.size() > 0 ? (double) wins / matchIds.size() : 0;
     		winRates.add(winRate);
     	}
-   
-    	// 按球员分组统计各指标
+    	
+    	// 按日期+球员维度累加各指标，计算场均
     	Map<String, Map<String, List<Double>>> playerMetrics = new LinkedHashMap<>();
     	Set<String> allPlayers = new java.util.HashSet<>();
     	for (List<MatchPlayerStats> dayStats : groupedByDate.values()) {
     		dayStats.forEach(s -> allPlayers.add(s.getPlayerName()));
     	}
-   
+    	
     	for (String playerName : allPlayers) {
     		Map<String, List<Double>> metrics = new LinkedHashMap<>();
     		List<Double> ratings = new ArrayList<>();
@@ -215,21 +217,38 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     		List<Double> assists = new ArrayList<>();
     		List<Double> steals = new ArrayList<>();
     		List<Double> blocks = new ArrayList<>();
-   
+    		
     		for (String date : sortedDates) {
     			List<MatchPlayerStats> dayStats = groupedByDate.get(date);
-    			MatchPlayerStats playerStat = dayStats.stream()
-    					.filter(s -> playerName.equals(s.getPlayerName()))
-    					.findFirst()
-    					.orElse(null);
-   
-    			if (playerStat != null) {
-    				ratings.add(playerStat.getRating() != null ? playerStat.getRating() : 0);
-    				scores.add((double) (playerStat.getScore() != null ? playerStat.getScore() : 0));
-    				rebounds.add((double) (playerStat.getRebound() != null ? playerStat.getRebound() : 0));
-    				assists.add((double) (playerStat.getAssist() != null ? playerStat.getAssist() : 0));
-    				steals.add((double) (playerStat.getSteal() != null ? playerStat.getSteal() : 0));
-    				blocks.add((double) (playerStat.getBlock() != null ? playerStat.getBlock() : 0));
+    			// 按日期+球员维度累加各指标
+    			double ratingSum = 0;
+    			int scoreSum = 0;
+    			int reboundSum = 0;
+    			int assistSum = 0;
+    			int stealSum = 0;
+    			int blockSum = 0;
+    			int gameCount = 0;
+    			
+    			for (MatchPlayerStats stat : dayStats) {
+    				if (playerName.equals(stat.getPlayerName())) {
+    					ratingSum += stat.getRating() != null ? stat.getRating() : 0;
+    					scoreSum += stat.getScore() != null ? stat.getScore() : 0;
+    					reboundSum += stat.getRebound() != null ? stat.getRebound() : 0;
+    					assistSum += stat.getAssist() != null ? stat.getAssist() : 0;
+    					stealSum += stat.getSteal() != null ? stat.getSteal() : 0;
+    					blockSum += stat.getBlock() != null ? stat.getBlock() : 0;
+    					gameCount++;
+    				}
+    			}
+    			
+    			// 计算场均
+    			if (gameCount > 0) {
+    				ratings.add(ratingSum / gameCount);
+    				scores.add((double) scoreSum / gameCount);
+    				rebounds.add((double) reboundSum / gameCount);
+    				assists.add((double) assistSum / gameCount);
+    				steals.add((double) stealSum / gameCount);
+    				blocks.add((double) blockSum / gameCount);
     			} else {
     				ratings.add(0.0);
     				scores.add(0.0);
@@ -239,7 +258,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     				blocks.add(0.0);
     			}
     		}
-   
+    		
     		metrics.put("rating", ratings);
     		metrics.put("score", scores);
     		metrics.put("rebound", rebounds);
@@ -248,7 +267,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     		metrics.put("block", blocks);
     		playerMetrics.put(playerName, metrics);
     	}
-   
+    	
     	return new MatchGameTrendDTO(sortedDates, winRates, playerMetrics);
     }
 
