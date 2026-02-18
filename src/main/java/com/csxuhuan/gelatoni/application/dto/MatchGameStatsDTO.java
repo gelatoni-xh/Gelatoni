@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.application.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.List;
 
@@ -177,6 +178,7 @@ public class MatchGameStatsDTO {
          * <p>用于场均类榜单，计算公式为：总数值 / 上场次数
          * <p>保留一位小数，例如：场均得分 = 总得分 / 上场次数
          */
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER, pattern = "0.00")
         private Double avg;
 
         /**
@@ -185,6 +187,7 @@ public class MatchGameStatsDTO {
          * <p>总榜单：存储总命中次数（Long类型）
          * <p>场均榜单：存储场均命中数（Double类型，保留一位小数）
          */
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER, pattern = "0.00")
         private Double made;
 
         /**
@@ -193,12 +196,14 @@ public class MatchGameStatsDTO {
          * <p>总榜单：存储总出手次数（Long类型）
          * <p>场均榜单：存储场均出手数（Double类型，保留一位小数）
          */
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER, pattern = "0.00")
         private Double attempt;
 
         /**
          * 命中率
          * <p>专门用于命中率类榜单，计算公式为 made/attempt，取值范围0-1
          */
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER, pattern = "0.00")
         private Double rate;
 
         // Jackson反序列化需要无参构造函数
