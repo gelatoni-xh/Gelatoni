@@ -170,7 +170,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     public MatchGameTrendDTO getMatchGameTrend(MatchGameTrendRequest request) {
     	String season = request == null ? null : request.getSeason();
     	Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
-   
+       
     	// 获取所有数据
     	List<MatchPlayerStats> allPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot, null);
     	
@@ -181,16 +181,7 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     	for (MatchPlayerStats stat : allPlayerStats) {
     		MatchGame match = matchGameRepository.findById(stat.getMatchId());
     		if (match != null && match.getMatchTime() != null) {
-    			java.time.LocalDateTime matchTime = match.getMatchTime();
-    			java.time.LocalDate matchDate = matchTime.toLocalDate();
-    			java.time.LocalTime matchTimeOfDay = matchTime.toLocalTime();
-    			
-    			// 游戏日期定义：8:00-次日2:00。0:00-8:00 的比赛属于前一天
-    			if (matchTimeOfDay.isBefore(java.time.LocalTime.of(8, 0))) {
-    				matchDate = matchDate.minusDays(1);
-    			}
-    			
-    			String dateStr = matchDate.toString();
+    			String dateStr = getGameDate(match.getMatchTime());
     			groupedByDate.computeIfAbsent(dateStr, k -> new ArrayList<>()).add(stat);
     			dateToMatchIds.computeIfAbsent(dateStr, k -> new java.util.HashSet<>()).add(stat.getMatchId());
     		}
@@ -202,13 +193,25 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     	List<Double> winRates = new ArrayList<>();
     	for (String date : sortedDates) {
     		Set<Long> matchIds = dateToMatchIds.get(date);
+    		if (matchIds == null || matchIds.isEmpty()) {
+    			continue;
+    		}
     		int wins = (int) matchIds.stream()
     				.map(matchGameRepository::findById)
     				.filter(m -> m != null && Boolean.TRUE.equals(m.getResult()))
     				.count();
-    		double winRate = matchIds.size() > 0 ? (double) wins / matchIds.size() : 0;
+    		double winRate = (double) wins / matchIds.size();
     		winRates.add(winRate);
     	}
+    	
+    	// 过滤掉没有数据的日期
+    	List<String> validDates = new ArrayList<>();
+    	for (String date : sortedDates) {
+    		if (dateToMatchIds.get(date) != null && !dateToMatchIds.get(date).isEmpty()) {
+    			validDates.add(date);
+    		}
+    	}
+    	sortedDates = validDates;
     	
     	// 按日期+球员维度累加各指标，计算场均
     	Map<String, Map<String, List<Double>>> playerMetrics = new LinkedHashMap<>();
@@ -365,5 +368,15 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     public void validateUpdateRequest(MatchGameUpdateRequest request) {
         MatchGameUpdateQuery query = assembler.toDomainQuery(request);
         dataValidator.validateUpdateData(query);
+    }
+
+    private String getGameDate(java.time.LocalDateTime matchTime) {
+        java.time.LocalDate date = matchTime.toLocalDate();
+        java.time.LocalTime timeOfDay = matchTime.toLocalTime();
+        // 游戏日期范围：8:00-次日2:00。0:00-8:00 的比赛属于前一天
+        if (timeOfDay.isBefore(java.time.LocalTime.of(8, 0))) {
+            date = date.minusDays(1);
+        }
+        return date.toString();
     }
 }
