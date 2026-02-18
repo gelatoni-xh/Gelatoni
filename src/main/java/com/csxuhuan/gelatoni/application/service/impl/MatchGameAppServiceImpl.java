@@ -170,21 +170,29 @@ public class MatchGameAppServiceImpl implements MatchGameAppService {
     public MatchGameTrendDTO getMatchGameTrend(MatchGameTrendRequest request) {
     	String season = request == null ? null : request.getSeason();
     	Boolean excludeRobot = request == null ? null : request.getExcludeRobot();
-    	String dimension = request == null ? null : request.getDimension();
    
-    	// 获取所有日期的数据（按日期维度 groupby）
+    	// 获取所有数据
     	List<MatchPlayerStats> allPlayerStats = matchPlayerStatsRepository.findMyPlayerStatsForStats(season, excludeRobot, null);
     	
-    	// 按日期分组
+    	// 按游戏日期分组（游戏日期范围：8:00-次日2:00）
     	Map<String, List<MatchPlayerStats>> groupedByDate = new HashMap<>();
     	Map<String, Set<Long>> dateToMatchIds = new HashMap<>();
     	
     	for (MatchPlayerStats stat : allPlayerStats) {
     		MatchGame match = matchGameRepository.findById(stat.getMatchId());
     		if (match != null && match.getMatchTime() != null) {
-    			String date = match.getMatchTime().toLocalDate().toString();
-    			groupedByDate.computeIfAbsent(date, k -> new ArrayList<>()).add(stat);
-    			dateToMatchIds.computeIfAbsent(date, k -> new java.util.HashSet<>()).add(stat.getMatchId());
+    			java.time.LocalDateTime matchTime = match.getMatchTime();
+    			java.time.LocalDate matchDate = matchTime.toLocalDate();
+    			java.time.LocalTime matchTimeOfDay = matchTime.toLocalTime();
+    			
+    			// 游戏日期定义：8:00-次日2:00。0:00-8:00 的比赛属于前一天
+    			if (matchTimeOfDay.isBefore(java.time.LocalTime.of(8, 0))) {
+    				matchDate = matchDate.minusDays(1);
+    			}
+    			
+    			String dateStr = matchDate.toString();
+    			groupedByDate.computeIfAbsent(dateStr, k -> new ArrayList<>()).add(stat);
+    			dateToMatchIds.computeIfAbsent(dateStr, k -> new java.util.HashSet<>()).add(stat.getMatchId());
     		}
     	}
     	
