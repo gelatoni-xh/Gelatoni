@@ -13,15 +13,19 @@ public class MatchGameTrendDTO {
     /** 日期列表 */
     private List<String> dates;
 
-    /** 各指标的趋势数据 */
-    private Map<String, List<Double>> metrics;
+    /** 胜率趋势数据 */
+    private List<Double> winRate;
+
+    /** 各球员的各指标趋势数据：{playerName: {metric: [values]}} */
+    private Map<String, Map<String, List<Double>>> playerMetrics;
 
     public MatchGameTrendDTO() {
     }
 
-    public MatchGameTrendDTO(List<String> dates, Map<String, List<Double>> metrics) {
+    public MatchGameTrendDTO(List<String> dates, List<Double> winRate, Map<String, Map<String, List<Double>>> playerMetrics) {
         this.dates = dates;
-        this.metrics = metrics;
+        this.winRate = winRate;
+        this.playerMetrics = playerMetrics;
     }
 
     public List<String> getDates() {
@@ -32,11 +36,19 @@ public class MatchGameTrendDTO {
         this.dates = dates;
     }
 
-    public Map<String, List<Double>> getMetrics() {
-        return metrics;
+    public List<Double> getWinRate() {
+        return winRate;
     }
 
-    public void setMetrics(Map<String, List<Double>> metrics) {
-        this.metrics = metrics;
+    public void setWinRate(List<Double> winRate) {
+        this.winRate = winRate;
+    }
+
+    public Map<String, Map<String, List<Double>>> getPlayerMetrics() {
+        return playerMetrics;
+    }
+
+    public void setPlayerMetrics(Map<String, Map<String, List<Double>>> playerMetrics) {
+        this.playerMetrics = playerMetrics;
     }
 }
