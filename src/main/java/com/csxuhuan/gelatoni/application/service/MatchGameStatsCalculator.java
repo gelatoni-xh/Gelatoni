@@ -114,7 +114,7 @@ public class MatchGameStatsCalculator {
         }
 
         // 场均评价榜单
-        leaderboards.add(buildAvgLeaderboard(MatchGameStatsMetric.RATING_AVG, group, a -> (long) a.ratingSum));
+        leaderboards.add(buildAvgDoubleLeaderboard(MatchGameStatsMetric.RATING_AVG, group, a -> a.ratingSum));
 
         // 基础数据榜单（数值越大排名越前）
         leaderboards.add(buildValueLeaderboard(MatchGameStatsMetric.SCORE, group, a -> a.score));
@@ -199,6 +199,19 @@ public class MatchGameStatsCalculator {
     }
 
     /**
+     * Double类型获取器函数式接口
+     * <p>用于从累加器中提取Double类型指标的数值
+     */
+    private interface DoubleGetter {
+        /**
+         * 从累加器中获取Double类型数值
+         * @param acc 累加器对象
+         * @return 对应指标的数值
+         */
+        double get(Accumulator acc);
+    }
+
+    /**
      * 构建数值型榜单
      * <p>用于处理得分、篮板、助攻等直接数值类统计指标
      *
@@ -248,6 +261,32 @@ public class MatchGameStatsCalculator {
                     return item;
                 })
                 // 排序规则：按场均值降序（数值越大排名越前），相同场均值按名称升序
+                .sorted(Comparator.comparing((MatchGameStatsDTO.RankItem i) -> i.getAvg() != null ? i.getAvg() : 0D, Comparator.naturalOrder()).reversed()
+                        .thenComparing(MatchGameStatsDTO.RankItem::getName))
+                .collect(Collectors.toList());
+
+        return new MatchGameStatsDTO.Leaderboard(metric, metric.getDesc() + "榜", items);
+    }
+
+    /**
+     * 构建Double类型场均值型榜单
+     * <p>用于处理评价等Double类型的场均统计指标
+     *
+     * @param metric 统计指标类型
+     * @param group 分组后的统计数据映射
+     * @param getter Double类型数值获取器
+     * @return 构建完成的场均榜单对象
+     */
+    private static MatchGameStatsDTO.Leaderboard buildAvgDoubleLeaderboard(MatchGameStatsMetric metric,
+                                                                           Map<String, Accumulator> group,
+                                                                           DoubleGetter getter) {
+        List<MatchGameStatsDTO.RankItem> items = group.entrySet().stream()
+                .map(e -> {
+                    double total = getter.get(e.getValue());
+                    long appearances = e.getValue().appearances;
+                    double avg = appearances <= 0 ? 0D : Math.round(total / appearances * 100.0) / 100.0;
+                    return new MatchGameStatsDTO.RankItem(e.getKey(), avg);
+                })
                 .sorted(Comparator.comparing((MatchGameStatsDTO.RankItem i) -> i.getAvg() != null ? i.getAvg() : 0D, Comparator.naturalOrder()).reversed()
                         .thenComparing(MatchGameStatsDTO.RankItem::getName))
                 .collect(Collectors.toList());
