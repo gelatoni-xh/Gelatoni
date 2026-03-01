@@ -48,6 +48,11 @@ public class PermissionConstants {
     public static final String PERM_MATCH = "PERM_MATCH";
 
     /**
+     * 简历管理权限
+     */
+    public static final String PERM_RESUME = "PERM_RESUME";
+
+    /**
      * 私有构造函数，防止实例化
      */
     private PermissionConstants() {
