@@ -1,15 +1,24 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.time.LocalDateTime;
 
 /**
  * 简历数据对象
  *
+ * 数据库表 resume 的直接映射对象
+ * 只用于持久化层，不包含任何业务语义
+ *
  * @author csxuhuan
  */
+@TableName("resume")
 public class ResumeDO {
 
     /** 主键ID */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /** 版本号 */
