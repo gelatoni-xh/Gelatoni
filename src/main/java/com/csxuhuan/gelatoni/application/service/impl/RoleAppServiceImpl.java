@@ -8,6 +8,7 @@ import com.csxuhuan.gelatoni.domain.service.RoleDomainService;
 import com.csxuhuan.gelatoni.infrastructure.repository.PermissionRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.RolePermissionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,6 +46,7 @@ public class RoleAppServiceImpl implements RoleAppService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int assignPermissions(Long roleId, List<Long> permissionIds, Long operator) {
         rolePermissionRepository.deleteByRoleId(roleId, operator);
         return rolePermissionRepository.createBatch(roleId, permissionIds, operator);

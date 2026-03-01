@@ -76,13 +76,28 @@ public class RolePermissionRepositoryImpl implements RolePermissionRepository {
         }
         int count = 0;
         for (Long permissionId : permissionIds) {
-            RolePermissionDO record = new RolePermissionDO();
-            record.setRoleId(roleId);
-            record.setPermissionId(permissionId);
-            record.setCreator(creator);
-            record.setModifier(creator);
-            record.setIsDeleted(DeletedEnum.NOT_DELETED.getValue());
-            count += rolePermissionMapper.insert(record);
+            // 先查询是否存在已删除的记录
+            LambdaQueryWrapper<RolePermissionDO> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.eq(RolePermissionDO::getRoleId, roleId)
+                       .eq(RolePermissionDO::getPermissionId, permissionId);
+            
+            RolePermissionDO existingRecord = rolePermissionMapper.selectOne(queryWrapper);
+            
+            if (existingRecord != null) {
+                // 如果记录存在，更新为未删除状态
+                existingRecord.setIsDeleted(DeletedEnum.NOT_DELETED.getValue());
+                existingRecord.setModifier(creator);
+                count += rolePermissionMapper.updateById(existingRecord);
+            } else {
+                // 如果记录不存在，插入新记录
+                RolePermissionDO record = new RolePermissionDO();
+                record.setRoleId(roleId);
+                record.setPermissionId(permissionId);
+                record.setCreator(creator);
+                record.setModifier(creator);
+                record.setIsDeleted(DeletedEnum.NOT_DELETED.getValue());
+                count += rolePermissionMapper.insert(record);
+            }
         }
         return count;
     }
