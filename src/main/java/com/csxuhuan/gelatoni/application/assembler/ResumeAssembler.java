@@ -25,6 +25,7 @@ public class ResumeAssembler {
                 resume.getVersion(),
                 resume.getName(),
                 resume.getResumeData(),
+                resume.getChangelog(),
                 resume.getCreateTime(),
                 resume.getUpdateTime()
         );

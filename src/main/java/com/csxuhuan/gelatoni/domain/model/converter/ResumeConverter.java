@@ -23,6 +23,7 @@ public class ResumeConverter {
         resume.setVersion(resumeDO.getVersion());
         resume.setName(resumeDO.getName());
         resume.setResumeData(resumeDO.getResumeData());
+        resume.setChangelog(resumeDO.getChangelog());
         resume.setDeleted(resumeDO.getDeleted() == 0 ? DeletedEnum.NOT_DELETED : DeletedEnum.DELETED);
         resume.setCreateTime(resumeDO.getCreateTime());
         resume.setUpdateTime(resumeDO.getUpdateTime());
@@ -41,6 +42,7 @@ public class ResumeConverter {
         resumeDO.setVersion(resume.getVersion());
         resumeDO.setName(resume.getName());
         resumeDO.setResumeData(resume.getResumeData());
+        resumeDO.setChangelog(resume.getChangelog());
         resumeDO.setDeleted(resume.getDeleted() == DeletedEnum.NOT_DELETED ? 0 : 1);
         resumeDO.setCreateTime(resume.getCreateTime());
         resumeDO.setUpdateTime(resume.getUpdateTime());

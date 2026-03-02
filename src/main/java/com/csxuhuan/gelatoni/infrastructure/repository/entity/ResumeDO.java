@@ -30,6 +30,9 @@ public class ResumeDO {
     /** 简历数据（JSON格式） */
     private String resumeData;
 
+    /** 版本变更点（支持Markdown格式） */
+    private String changelog;
+
     /** 删除标识：0-未删除，1-已删除 */
     private Integer deleted;
 
@@ -75,6 +78,14 @@ public class ResumeDO {
         this.resumeData = resumeData;
     }
 
+    public String getChangelog() {
+        return changelog;
+    }
+
+    public void setChangelog(String changelog) {
+        this.changelog = changelog;
+    }
+
     public Integer getDeleted() {
         return deleted;
     }
@@ -106,6 +117,7 @@ public class ResumeDO {
                 ", version=" + version +
                 ", name='" + name + '\'' +
                 ", resumeData='" + resumeData + '\'' +
+                ", changelog='" + changelog + '\'' +
                 ", deleted=" + deleted +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
