@@ -53,6 +53,11 @@ public class PermissionConstants {
     public static final String PERM_RESUME = "PERM_RESUME";
 
     /**
+     * 博客查看权限
+     */
+    public static final String PERM_BLOG_VIEW = "PERM_BLOG_VIEW";
+
+    /**
      * 私有构造函数，防止实例化
      */
     private PermissionConstants() {
