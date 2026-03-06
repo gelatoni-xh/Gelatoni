@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -21,7 +22,10 @@ public class ChatController {
     @AuthCheck(permissionCode = PermissionConstants.PERM_AI_CHAT)
     @PostMapping
     public BaseResponse<Map<String, String>> chat(@RequestBody Map<String, String> body) {
-        Map<String, String> botResp = restTemplate.postForObject(botChatUrl, body, Map.class);
+        Map<String, String> payload = new HashMap<>();
+        payload.put("message", body.get("message"));
+        payload.put("session_id", body.getOrDefault("sessionId", "default"));
+        Map<String, String> botResp = restTemplate.postForObject(botChatUrl, payload, Map.class);
         return BaseResponse.success(botResp);
     }
 }
