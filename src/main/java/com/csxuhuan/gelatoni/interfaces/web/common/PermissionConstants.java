@@ -28,6 +28,11 @@ public class PermissionConstants {
     public static final String PERM_NOTICE_CREATE = "PERM_NOTICE_CREATE";
 
     /**
+     * AI_CHAT
+     */
+    public static final String PERM_AI_CHAT = "PERM_AI_CHAT";
+
+    /**
      * TODO 权限（用于所有 TODO 相关的操作）
      */
     public static final String PERM_TODO = "PERM_TODO";

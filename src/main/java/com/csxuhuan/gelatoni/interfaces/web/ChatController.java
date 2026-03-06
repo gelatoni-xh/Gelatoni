@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.interfaces.web;
 
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
+import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -17,7 +18,7 @@ public class ChatController {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    @AuthCheck
+    @AuthCheck(permissionCode = PermissionConstants.PERM_AI_CHAT)
     @PostMapping
     public BaseResponse<Map<String, String>> chat(@RequestBody Map<String, String> body) {
         Map<String, String> botResp = restTemplate.postForObject(botChatUrl, body, Map.class);
