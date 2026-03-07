@@ -27,6 +27,7 @@ public class ChatSessionDO {
     private LocalDateTime createTime;
     private LocalDateTime modifiedTime;
     private Boolean isDeleted;
+    private Integer roundCount;
 
     public ChatSessionDO() {}
 
@@ -50,4 +51,6 @@ public class ChatSessionDO {
     public void setModifiedTime(LocalDateTime modifiedTime) { this.modifiedTime = modifiedTime; }
     public Boolean getIsDeleted() { return isDeleted; }
     public void setIsDeleted(Boolean isDeleted) { this.isDeleted = isDeleted; }
+    public Integer getRoundCount() { return roundCount; }
+    public void setRoundCount(Integer roundCount) { this.roundCount = roundCount; }
 }

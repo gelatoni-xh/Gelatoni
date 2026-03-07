@@ -27,6 +27,7 @@ public class ChatHistoryDomainServiceImpl implements ChatHistoryDomainService {
     public void saveChat(Long userId, String sessionUuid, String sessionId, String message, String answer,
                          String intent, String intentModel, String answerModel) {
         chatSessionRepository.saveIfAbsent(userId, sessionUuid, sessionId, message);
+        chatSessionRepository.incrementRoundCount(sessionId);
         chatMessageRepository.save(sessionId, userId, message, answer, intent, intentModel, answerModel);
     }
 }

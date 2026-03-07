@@ -28,4 +28,11 @@ public interface ChatSessionRepository {
      * @return 分页结果
      */
     IPage<ChatSession> pageByUserId(Long userId, int pageNo, int pageSize);
+
+    /**
+     * 增加会话的轮数
+     *
+     * @param sessionId 完整会话ID（userId:sessionUuid）
+     */
+    void incrementRoundCount(String sessionId);
 }

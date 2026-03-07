@@ -9,6 +9,6 @@ import com.csxuhuan.gelatoni.infrastructure.repository.entity.ChatSessionDO;
 public class ChatSessionConverter {
     public static ChatSession toDomain(ChatSessionDO d) {
         if (d == null) return null;
-        return new ChatSession(d.getId(), d.getUserId(), d.getSessionUuid(), d.getSessionId(), d.getTitle(), d.getCreateTime());
+        return new ChatSession(d.getId(), d.getUserId(), d.getSessionUuid(), d.getSessionId(), d.getTitle(), d.getCreateTime(), d.getModifiedTime(), d.getRoundCount());
     }
 }

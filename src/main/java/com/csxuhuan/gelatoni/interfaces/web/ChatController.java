@@ -101,6 +101,8 @@ public class ChatController {
             dto.setSessionUuid(session.getSessionUuid());
             dto.setTitle(session.getTitle());
             dto.setCreateTime(session.getCreateTime());
+            dto.setModifiedTime(session.getModifiedTime());
+            dto.setRoundCount(session.getRoundCount());
             return dto;
         }).collect(Collectors.toList());
         PageData<ChatSessionDTO> result = new PageData<>(dtoList, page.getTotal(), (int) page.getCurrent(), (int) page.getSize());

@@ -18,14 +18,18 @@ public class ChatSession {
     /** 会话标题，取首条消息前 50 字 */
     private final String title;
     private final LocalDateTime createTime;
+    private final LocalDateTime modifiedTime;
+    private final Integer roundCount;
 
-    public ChatSession(Long id, Long userId, String sessionUuid, String sessionId, String title, LocalDateTime createTime) {
+    public ChatSession(Long id, Long userId, String sessionUuid, String sessionId, String title, LocalDateTime createTime, LocalDateTime modifiedTime, Integer roundCount) {
         this.id = id;
         this.userId = userId;
         this.sessionUuid = sessionUuid;
         this.sessionId = sessionId;
         this.title = title;
         this.createTime = createTime;
+        this.modifiedTime = modifiedTime;
+        this.roundCount = roundCount;
     }
 
     public Long getId() { return id; }
@@ -34,4 +38,6 @@ public class ChatSession {
     public String getSessionId() { return sessionId; }
     public String getTitle() { return title; }
     public LocalDateTime getCreateTime() { return createTime; }
+    public LocalDateTime getModifiedTime() { return modifiedTime; }
+    public Integer getRoundCount() { return roundCount; }
 }

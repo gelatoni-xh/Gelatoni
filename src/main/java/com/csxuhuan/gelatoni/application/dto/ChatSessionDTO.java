@@ -7,6 +7,8 @@ public class ChatSessionDTO {
     private String sessionUuid;
     private String title;
     private LocalDateTime createTime;
+    private LocalDateTime modifiedTime;
+    private Integer roundCount;
 
     public String getSessionUuid() {
         return sessionUuid;
@@ -30,5 +32,21 @@ public class ChatSessionDTO {
 
     public void setCreateTime(LocalDateTime createTime) {
         this.createTime = createTime;
+    }
+
+    public LocalDateTime getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(LocalDateTime modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public Integer getRoundCount() {
+        return roundCount;
+    }
+
+    public void setRoundCount(Integer roundCount) {
+        this.roundCount = roundCount;
     }
 }

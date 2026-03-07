@@ -1,6 +1,7 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.csxuhuan.gelatoni.domain.model.converter.ChatSessionConverter;
@@ -55,5 +56,14 @@ public class ChatSessionRepositoryImpl implements ChatSessionRepository {
                 .orderByDesc(ChatSessionDO::getModifiedTime);
         IPage<ChatSessionDO> page = chatSessionMapper.selectPage(new Page<>(pageNo, pageSize), wrapper);
         return page.convert(ChatSessionConverter::toDomain);
+    }
+
+    @Override
+    public void incrementRoundCount(String sessionId) {
+        LambdaUpdateWrapper<ChatSessionDO> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(ChatSessionDO::getSessionId, sessionId)
+                .eq(ChatSessionDO::getIsDeleted, false)
+                .setSql("round_count = round_count + 1");
+        chatSessionMapper.update(null, wrapper);
     }
 }
