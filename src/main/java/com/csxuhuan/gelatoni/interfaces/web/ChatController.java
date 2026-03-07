@@ -21,10 +21,15 @@ public class ChatController {
 
     @AuthCheck(permissionCode = PermissionConstants.PERM_AI_CHAT)
     @PostMapping
-    public BaseResponse<Map<String, String>> chat(@RequestBody Map<String, String> body) {
+    public BaseResponse<Map<String, String>> chat(
+            @RequestBody Map<String, String> body,
+            @RequestAttribute("userId") String userId) {
+        String sessionUuid = body.getOrDefault("sessionUuid", "default");
+        String sessionId = userId + ":" + sessionUuid;
+        
         Map<String, String> payload = new HashMap<>();
         payload.put("message", body.get("message"));
-        payload.put("session_id", body.getOrDefault("sessionId", "default"));
+        payload.put("session_id", sessionId);
         Map<String, String> botResp = restTemplate.postForObject(botChatUrl, payload, Map.class);
         return BaseResponse.success(botResp);
     }
