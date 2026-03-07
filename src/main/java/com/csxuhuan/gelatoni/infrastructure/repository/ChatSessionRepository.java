@@ -1,5 +1,8 @@
 package com.csxuhuan.gelatoni.infrastructure.repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.csxuhuan.gelatoni.domain.model.entity.ChatSession;
+
 /**
  * 会话仓储接口
  *
@@ -15,4 +18,14 @@ public interface ChatSessionRepository {
      * @param title       会话标题（取首条消息）
      */
     void saveIfAbsent(Long userId, String sessionUuid, String sessionId, String title);
+
+    /**
+     * 分页查询用户会话，按修改时间倒序
+     *
+     * @param userId   用户ID
+     * @param pageNo   页码（从1开始）
+     * @param pageSize 每页大小
+     * @return 分页结果
+     */
+    IPage<ChatSession> pageByUserId(Long userId, int pageNo, int pageSize);
 }

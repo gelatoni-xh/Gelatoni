@@ -1,6 +1,10 @@
 package com.csxuhuan.gelatoni.infrastructure.repository.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.csxuhuan.gelatoni.domain.model.converter.ChatSessionConverter;
+import com.csxuhuan.gelatoni.domain.model.entity.ChatSession;
 import com.csxuhuan.gelatoni.infrastructure.repository.ChatSessionRepository;
 import com.csxuhuan.gelatoni.infrastructure.repository.entity.ChatSessionDO;
 import com.csxuhuan.gelatoni.infrastructure.repository.mapper.ChatSessionMapper;
@@ -41,5 +45,15 @@ public class ChatSessionRepositoryImpl implements ChatSessionRepository {
         d.setModifier(userId);
         d.setIsDeleted(false);
         chatSessionMapper.insert(d);
+    }
+
+    @Override
+    public IPage<ChatSession> pageByUserId(Long userId, int pageNo, int pageSize) {
+        LambdaQueryWrapper<ChatSessionDO> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ChatSessionDO::getUserId, userId)
+                .eq(ChatSessionDO::getIsDeleted, false)
+                .orderByDesc(ChatSessionDO::getModifiedTime);
+        IPage<ChatSessionDO> page = chatSessionMapper.selectPage(new Page<>(pageNo, pageSize), wrapper);
+        return page.convert(ChatSessionConverter::toDomain);
     }
 }

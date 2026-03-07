@@ -1,5 +1,8 @@
 package com.csxuhuan.gelatoni.infrastructure.repository;
 
+import com.csxuhuan.gelatoni.domain.model.entity.ChatMessage;
+import java.util.List;
+
 /**
  * 会话消息仓储接口
  *
@@ -18,4 +21,12 @@ public interface ChatMessageRepository {
      * @param answerModel 实际回答使用的模型
      */
     void save(String sessionId, Long userId, String message, String answer, String intent, String intentModel, String answerModel);
+
+    /**
+     * 查询会话的所有消息，按创建时间倒序
+     *
+     * @param sessionId 会话ID
+     * @return 消息列表
+     */
+    List<ChatMessage> findBySessionIdDesc(String sessionId);
 }
