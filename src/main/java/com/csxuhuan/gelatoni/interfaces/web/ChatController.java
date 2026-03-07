@@ -110,12 +110,14 @@ public class ChatController {
     /**
      * 查询会话的所有消息
      *
-     * <p>查询参数：sessionId（会话ID）
+     * <p>查询参数：sessionUuid（会话UUID）
      * <p>响应体：消息列表，按创建时间倒序
      */
     @AuthCheck(permissionCode = PermissionConstants.PERM_AI_CHAT)
     @GetMapping("/messages")
-    public BaseResponse<List<ChatMessageDTO>> getMessages(@RequestParam String sessionId) {
+    public BaseResponse<List<ChatMessageDTO>> getMessages(@RequestParam String sessionUuid) {
+        Long userId = UserHolder.getUserId();
+        String sessionId = userId + ":" + sessionUuid;
         List<ChatMessage> messages = chatMessageRepository.findBySessionIdDesc(sessionId);
         List<ChatMessageDTO> dtoList = messages.stream().map(msg -> {
             ChatMessageDTO dto = new ChatMessageDTO();
