@@ -34,7 +34,7 @@ public class ChatController {
         try {
             Map<String, String> botResp = restTemplate.postForObject(botChatUrl, payload, Map.class);
             Map<String, String> result = new HashMap<>();
-            result.put("answer", botResp != null ? botResp.getOrDefault("message", "") : "");
+            result.put("answer", botResp != null ? botResp.getOrDefault("answer", "") : "");
             return BaseResponse.success(result);
         } catch (Exception e) {
             return BaseResponse.error(ResultCode.SYSTEM_ERROR, "Bot service error: " + e.getMessage());
