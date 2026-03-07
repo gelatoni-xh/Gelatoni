@@ -4,6 +4,7 @@ import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
+import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -22,9 +23,8 @@ public class ChatController {
 
     @AuthCheck(permissionCode = PermissionConstants.PERM_AI_CHAT)
     @PostMapping
-    public BaseResponse<Map<String, String>> chat(
-            @RequestBody Map<String, String> body,
-            @RequestAttribute("userId") String userId) {
+    public BaseResponse<Map<String, String>> chat(@RequestBody Map<String, String> body) {
+        Long userId = UserHolder.getUserId();
         String sessionUuid = body.getOrDefault("sessionUuid", "default");
         String sessionId = userId + ":" + sessionUuid;
         
