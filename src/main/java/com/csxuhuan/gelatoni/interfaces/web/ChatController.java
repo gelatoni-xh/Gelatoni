@@ -16,6 +16,7 @@ import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
 import com.csxuhuan.gelatoni.interfaces.web.common.UserHolder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
@@ -129,5 +130,39 @@ public class ChatController {
             return dto;
         }).collect(Collectors.toList());
         return BaseResponse.success(dtoList);
+    }
+
+    /**
+     * 内部持久化接口（供 Python Bot 调用，仅限本机访问）
+     */
+    @PostMapping("/internal/persist")
+    public BaseResponse<Map<String, Boolean>> persistChat(
+            HttpServletRequest request,
+            @RequestBody Map<String, Object> body) {
+        if (!"127.0.0.1".equals(request.getRemoteAddr()) && !"0:0:0:0:0:0:0:1".equals(request.getRemoteAddr())) {
+            return BaseResponse.error(ResultCode.UNAUTHORIZED, "Access denied");
+        }
+        try {
+            Long userId = Long.valueOf(body.get("userId").toString());
+            String sessionUuid = (String) body.get("sessionUuid");
+            String sessionId = (String) body.get("sessionId");
+            String message = (String) body.get("message");
+            String answer = (String) body.get("answer");
+            String intent = (String) body.get("intent");
+            String intentModel = (String) body.get("intentModel");
+            String answerModel = (String) body.get("answerModel");
+
+            // 异步持久化
+            chatHistoryAppService.saveChatAsync(
+                    userId, sessionUuid, sessionId, message, answer,
+                    intent, intentModel, answerModel
+            );
+
+            Map<String, Boolean> result = new HashMap<>();
+            result.put("success", true);
+            return BaseResponse.success(result);
+        } catch (Exception e) {
+            return BaseResponse.error(ResultCode.SYSTEM_ERROR, "Persist failed: " + e.getMessage());
+        }
     }
 }
