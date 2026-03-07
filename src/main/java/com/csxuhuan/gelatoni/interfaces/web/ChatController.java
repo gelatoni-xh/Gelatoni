@@ -3,6 +3,7 @@ package com.csxuhuan.gelatoni.interfaces.web;
 import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +31,13 @@ public class ChatController {
         Map<String, String> payload = new HashMap<>();
         payload.put("message", body.get("message"));
         payload.put("session_id", sessionId);
-        Map<String, String> botResp = restTemplate.postForObject(botChatUrl, payload, Map.class);
-        return BaseResponse.success(botResp);
+        try {
+            Map<String, String> botResp = restTemplate.postForObject(botChatUrl, payload, Map.class);
+            Map<String, String> result = new HashMap<>();
+            result.put("answer", botResp != null ? botResp.getOrDefault("message", "") : "");
+            return BaseResponse.success(result);
+        } catch (Exception e) {
+            return BaseResponse.error(ResultCode.SYSTEM_ERROR, "Bot service error: " + e.getMessage());
+        }
     }
 }
