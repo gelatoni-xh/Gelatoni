@@ -1,6 +1,5 @@
 package com.csxuhuan.gelatoni.bootstrap;
 
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -23,10 +22,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *     <li>Spring Cloud Sleuth - 链路追踪</li>
  * </ul>
  *
+ * <p>数据源配置见：
+ * <ul>
+ *     <li>GelatoniDataSourceConfig - 主数据源（gelatoni）</li>
+ *     <li>EkidenDataSourceConfig - 第二数据源（ekiden_db）</li>
+ * </ul>
+ *
  * @author csxuhuan
  */
 @SpringBootApplication(scanBasePackages = "com.csxuhuan.gelatoni")
-@MapperScan("com.csxuhuan.gelatoni.infrastructure.repository.mapper")
 public class GelatoniApplication {
 
     /**
