@@ -23,6 +23,7 @@ jobs:
           env-slug: prod
           secret-path: /shared
           export-type: env
+          include-imports: true
 
       - name: Set up Java
         uses: actions/setup-java@v3
