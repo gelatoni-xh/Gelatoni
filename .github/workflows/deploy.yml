@@ -25,6 +25,17 @@ jobs:
           export-type: env
           include-imports: true
 
+      - name: Fetch gelatoni secrets from Infisical
+        uses: Infisical/secrets-action@v1.0.7
+        with:
+          client-id: ${{ secrets.INFISICAL_CLIENT_ID }}
+          client-secret: ${{ secrets.INFISICAL_CLIENT_SECRET }}
+          project-slug: ${{ secrets.INFISICAL_PROJECT_ID }}
+          env-slug: prod
+          secret-path: /gelatoni
+          export-type: env
+          include-imports: true
+
       - name: Verify Infisical secrets
         run: |
           if [ -z "$SERVER_HOST" ]; then
@@ -39,6 +50,18 @@ jobs:
             echo "❌ SERVER_PEM not found"
             exit 1
           fi
+          if [ -z "$DB_USER" ]; then
+            echo "❌ DB_USER not found"
+            exit 1
+          fi
+          if [ -z "$DB_PASSWORD" ]; then
+            echo "❌ DB_PASSWORD not found"
+            exit 1
+          fi
+          if [ -z "$JWT_SECRET" ]; then
+            echo "❌ JWT_SECRET not found"
+            exit 1
+          fi
           echo "✅ All secrets retrieved successfully"
 
       - name: Set up Java
@@ -49,6 +72,11 @@ jobs:
 
       - name: Build with Maven
         run: ./mvnw clean package
+        env:
+          SPRING_PROFILES_ACTIVE: prod
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          JWT_SECRET: ${{ env.JWT_SECRET }}
 
       - name: Upload Jar to Server
         uses: appleboy/scp-action@v0.1.3
