@@ -89,7 +89,41 @@ jobs:
           target: ${{ vars.JAR_TARGET_PATH }}
           strip_components: 1
 
-      - name: Restart Gelatoni Service
+      - name: Create startup script and env file
+        uses: appleboy/ssh-action@v0.1.7
+        env:
+          DB_USER: ${{ env.DB_USER }}
+          DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          JWT_SECRET: ${{ env.JWT_SECRET }}
+        with:
+          host: ${{ env.SERVER_HOST }}
+          username: ${{ env.SERVER_USER }}
+          key: ${{ env.SERVER_PEM }}
+          port: 22
+          envs: DB_USER,DB_PASSWORD,JWT_SECRET
+          script: |
+            # Create .env file with secrets
+            cat > /home/ubuntu/gelatoni/.env << EOF
+            DB_USER=$DB_USER
+            DB_PASSWORD=$DB_PASSWORD
+            JWT_SECRET=$JWT_SECRET
+            EOF
+            chmod 600 /home/ubuntu/gelatoni/.env
+
+            # Create startup script
+            cat > /home/ubuntu/gelatoni/start.sh << 'SCRIPT'
+            #!/bin/bash
+            source /home/ubuntu/gelatoni/.env
+            cd /home/ubuntu/gelatoni
+            java -jar gelatoni-0.0.1-SNAPSHOT.jar \
+              --spring.profiles.active=prod \
+              --spring.datasource.gelatoni.username=$DB_USER \
+              --spring.datasource.gelatoni.password=$DB_PASSWORD \
+              --jwt.secret=$JWT_SECRET
+            SCRIPT
+            chmod +x /home/ubuntu/gelatoni/start.sh
+
+      - name: Update systemd service and restart
         uses: appleboy/ssh-action@v0.1.7
         with:
           host: ${{ env.SERVER_HOST }}
@@ -97,5 +131,6 @@ jobs:
           key: ${{ env.SERVER_PEM }}
           port: 22
           script: |
+            sudo systemctl daemon-reload
             sudo systemctl restart ${{ vars.SERVICE_NAME }}
             sudo systemctl status ${{ vars.SERVICE_NAME }} --no-pager
