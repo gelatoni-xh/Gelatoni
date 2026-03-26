@@ -1,0 +1,12 @@
+{
+  "enableAllProjectMcpServers": true,
+  "permissions": {
+    "allow": [
+      "mcp__git__git_log",
+      "mcp__git__git_diff",
+      "mcp__git__git_blame",
+      "mcp__git__git_status",
+      "mcp__git__git_show"
+    ]
+  }
+}
