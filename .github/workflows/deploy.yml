@@ -116,10 +116,7 @@ jobs:
             source /home/ubuntu/gelatoni/.env
             cd /home/ubuntu/gelatoni
             java -jar gelatoni-0.0.1-SNAPSHOT.jar \
-              --spring.profiles.active=prod \
-              --spring.datasource.gelatoni.username=$DB_USER \
-              --spring.datasource.gelatoni.password=$DB_PASSWORD \
-              --jwt.secret=$JWT_SECRET
+              --spring.profiles.active=prod
             SCRIPT
             chmod +x /home/ubuntu/gelatoni/start.sh
 
