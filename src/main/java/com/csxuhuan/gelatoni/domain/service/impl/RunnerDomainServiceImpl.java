@@ -2,6 +2,7 @@ package com.csxuhuan.gelatoni.domain.service.impl;
 
 import com.csxuhuan.gelatoni.domain.model.entity.Runner;
 import com.csxuhuan.gelatoni.domain.query.RunnerPageQuery;
+import com.csxuhuan.gelatoni.domain.result.PageResult;
 import com.csxuhuan.gelatoni.domain.service.RunnerDomainService;
 import com.csxuhuan.gelatoni.infrastructure.repository.ekiden.RunnerRepository;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,9 @@ public class RunnerDomainServiceImpl implements RunnerDomainService {
     }
 
     @Override
-    public List<Runner> getRunnerPage(RunnerPageQuery query) {
-        return runnerRepository.findPage(query);
-    }
-
-    @Override
-    public long count() {
-        return runnerRepository.count();
+    public PageResult<Runner> pageQuery(RunnerPageQuery query) {
+        List<Runner> records = runnerRepository.findPage(query);
+        long total = runnerRepository.count();
+        return new PageResult<>(records, query.getPageNo(), query.getPageSize(), total);
     }
 }

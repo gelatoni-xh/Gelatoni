@@ -1,8 +1,8 @@
 package com.csxuhuan.gelatoni.application.service;
 
-import com.csxuhuan.gelatoni.application.dto.RunnerDTO;
-
-import java.util.List;
+import com.csxuhuan.gelatoni.domain.model.entity.Runner;
+import com.csxuhuan.gelatoni.domain.query.RunnerPageQuery;
+import com.csxuhuan.gelatoni.domain.result.PageResult;
 
 /**
  * Runner 应用服务
@@ -12,10 +12,5 @@ public interface RunnerAppService {
     /**
      * 分页查询选手
      */
-    List<RunnerDTO> getRunnerPage(Integer pageNum, Integer pageSize);
-
-    /**
-     * 查询总数
-     */
-    long count();
+    PageResult<Runner> pageQuery(RunnerPageQuery query);
 }

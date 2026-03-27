@@ -2,8 +2,9 @@ package com.csxuhuan.gelatoni.application.assembler;
 
 import com.csxuhuan.gelatoni.application.dto.RunnerDTO;
 import com.csxuhuan.gelatoni.domain.model.entity.Runner;
+import com.csxuhuan.gelatoni.domain.result.PageResult;
+import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -27,9 +28,12 @@ public class RunnerAssembler {
         return dto;
     }
 
-    public List<RunnerDTO> toDTOList(List<Runner> runners) {
-        return runners.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public PageData<RunnerDTO> toPageData(PageResult<Runner> pageResult) {
+        return new PageData<>(
+                pageResult.getRecords().stream().map(this::toDTO).collect(Collectors.toList()),
+                pageResult.getTotal(),
+                pageResult.getPageNo(),
+                pageResult.getPageSize()
+        );
     }
 }
