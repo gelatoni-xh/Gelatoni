@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
@@ -24,8 +25,13 @@ public class EkidenDataSourceConfig {
 
     @Bean("ekidenDataSource")
     @ConfigurationProperties(prefix = "spring.datasource.ekiden")
-    public DataSource ekidenDataSource() {
-        return DataSourceBuilder.create().build();
+    public DataSource ekidenDataSource(Environment env) {
+        return DataSourceBuilder.create()
+                .driverClassName(env.getProperty("spring.datasource.ekiden.driver-class-name"))
+                .url(env.getProperty("spring.datasource.ekiden.jdbc-url"))
+                .username(env.getProperty("spring.datasource.ekiden.username"))
+                .password(env.getProperty("spring.datasource.ekiden.password"))
+                .build();
     }
 
     @Bean("ekidenSqlSessionFactory")

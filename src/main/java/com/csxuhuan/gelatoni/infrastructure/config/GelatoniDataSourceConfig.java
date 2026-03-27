@@ -10,6 +10,7 @@ import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.core.env.Environment;
 
 import javax.sql.DataSource;
 
@@ -24,16 +25,21 @@ import javax.sql.DataSource;
 public class GelatoniDataSourceConfig {
 
     @Primary
-    @Bean("gelatoniDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.gelatoni")
-    public DataSource gelatoniDataSource() {
-        return DataSourceBuilder.create().build();
+    @Bean(\"gelatoniDataSource\")
+    @ConfigurationProperties(prefix = \"spring.datasource.gelatoni\")
+    public DataSource gelatoniDataSource(Environment env) {
+        return DataSourceBuilder.create()
+                .driverClassName(env.getProperty(\"spring.datasource.gelatoni.driver-class-name\"))
+                .url(env.getProperty(\"spring.datasource.gelatoni.jdbc-url\"))
+                .username(env.getProperty(\"spring.datasource.gelatoni.username\"))
+                .password(env.getProperty(\"spring.datasource.gelatoni.password\"))
+                .build();
     }
 
     @Primary
-    @Bean("gelatoniSqlSessionFactory")
+    @Bean(\"gelatoniSqlSessionFactory\")
     public SqlSessionFactory gelatoniSqlSessionFactory(
-            @Qualifier("gelatoniDataSource") DataSource dataSource) throws Exception {
+            @Qualifier(\"gelatoniDataSource\") DataSource dataSource) throws Exception {
         MybatisSqlSessionFactoryBean factory = new MybatisSqlSessionFactoryBean();
         factory.setDataSource(dataSource);
         factory.getObject().getConfiguration().setMapUnderscoreToCamelCase(true);
@@ -41,9 +47,9 @@ public class GelatoniDataSourceConfig {
     }
 
     @Primary
-    @Bean("gelatoniSqlSessionTemplate")
+    @Bean(\"gelatoniSqlSessionTemplate\")
     public SqlSessionTemplate gelatoniSqlSessionTemplate(
-            @Qualifier("gelatoniSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+            @Qualifier(\"gelatoniSqlSessionFactory\") SqlSessionFactory sqlSessionFactory) {
         return new SqlSessionTemplate(sqlSessionFactory);
     }
 }
