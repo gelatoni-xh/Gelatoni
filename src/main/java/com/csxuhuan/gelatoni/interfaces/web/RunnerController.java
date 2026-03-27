@@ -3,6 +3,7 @@ package com.csxuhuan.gelatoni.interfaces.web;
 import com.csxuhuan.gelatoni.application.assembler.RunnerAssembler;
 import com.csxuhuan.gelatoni.application.dto.RunnerDTO;
 import com.csxuhuan.gelatoni.application.service.RunnerAppService;
+import com.csxuhuan.gelatoni.application.service.WikipediaService;
 import com.csxuhuan.gelatoni.domain.model.entity.Runner;
 import com.csxuhuan.gelatoni.domain.query.RunnerPageQuery;
 import com.csxuhuan.gelatoni.domain.result.PageResult;
@@ -10,11 +11,13 @@ import com.csxuhuan.gelatoni.interfaces.config.AuthCheck;
 import com.csxuhuan.gelatoni.interfaces.web.common.BaseResponse;
 import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
+import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
 import com.csxuhuan.gelatoni.interfaces.web.request.RunnerPageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Map;
 
 /**
  * Runner 控制器
@@ -24,10 +27,12 @@ import javax.validation.Valid;
 public class RunnerController {
 
     private final RunnerAppService runnerAppService;
+    private final WikipediaService wikipediaService;
     private final RunnerAssembler assembler = new RunnerAssembler();
 
-    public RunnerController(RunnerAppService runnerAppService) {
+    public RunnerController(RunnerAppService runnerAppService, WikipediaService wikipediaService) {
         this.runnerAppService = runnerAppService;
+        this.wikipediaService = wikipediaService;
     }
 
     @PostMapping(value = "/page",
@@ -41,5 +46,14 @@ public class RunnerController {
         PageData<RunnerDTO> pageData = assembler.toPageData(pageResult);
 
         return BaseResponse.success(pageData);
+    }
+
+    @GetMapping(value = "/fetch-wiki", produces = MediaType.APPLICATION_JSON_VALUE)
+    public BaseResponse<Map<String, String>> fetchWiki(@RequestParam String name) {
+        Map<String, String> data = wikipediaService.fetchRunnerData(name);
+        if (data == null) {
+            return BaseResponse.error(ResultCode.BIZ_ERROR,"Not found on Wikipedia");
+        }
+        return BaseResponse.success(data);
     }
 }
