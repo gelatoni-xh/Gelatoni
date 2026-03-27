@@ -5,7 +5,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,11 +23,27 @@ import javax.sql.DataSource;
 )
 public class GelatoniDataSourceConfig {
 
+    @Value("${spring.datasource.gelatoni.driver-class-name}")
+    private String driverClassName;
+
+    @Value("${spring.datasource.gelatoni.jdbc-url}")
+    private String jdbcUrl;
+
+    @Value("${spring.datasource.gelatoni.username}")
+    private String username;
+
+    @Value("${spring.datasource.gelatoni.password}")
+    private String password;
+
     @Primary
     @Bean("gelatoniDataSource")
-    @ConfigurationProperties(prefix = "spring.datasource.gelatoni")
     public DataSource gelatoniDataSource() {
-        return DataSourceBuilder.create().build();
+        return DataSourceBuilder.create()
+                .driverClassName(driverClassName)
+                .url(jdbcUrl)
+                .username(username)
+                .password(password)
+                .build();
     }
 
     @Primary
