@@ -1,12 +1,20 @@
 package com.csxuhuan.gelatoni.infrastructure.client.wiki;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Service
+import java.util.Map;
+
+@Component
 public class WikipediaClient {
+
+    private static final Logger logger = LoggerFactory.getLogger(WikipediaClient.class);
 
     private final RestTemplate restTemplate;
 
@@ -21,19 +29,45 @@ public class WikipediaClient {
      * 根据选手名字获取日文 Wikipedia 页面内容
      */
     public WikiPageResult fetchPage(String name) {
-        String url = apiUrl + "?action=query&titles={title}&prop=extracts&explaintext=true&format=json";
+        try {
+            String url = apiUrl + "?action=query&format=json&titles=" +
+                    java.net.URLEncoder.encode(name, "UTF-8") +
+                    "&prop=extracts&explaintext=true";
 
-        JsonNode root = restTemplate.getForObject(url, JsonNode.class, name);
-        JsonNode pages = root.path("query").path("pages");
-        JsonNode page = pages.elements().next();
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("User-Agent", "Gelatoni/1.0 (https://github.com/csxuhuan/gelatoni)");
+            HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        if (page.has("missing")) {
+            Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
+
+            if (response == null) {
+                logger.error("[Wiki] Response is null for: {}", name);
+                return null;
+            }
+
+            Map<String, Object> query = (Map<String, Object>) response.get("query");
+            Map<String, Object> pages = (Map<String, Object>) query.get("pages");
+            String pageId = (String) pages.keySet().iterator().next();
+
+            if ("-1".equals(pageId)) {
+                logger.warn("[Wiki] Not found: {}", name);
+                return null;
+            }
+
+            Map<String, Object> page = (Map<String, Object>) pages.get(pageId);
+            String title = (String) page.get("title");
+            String content = (String) page.get("extract");
+
+            logger.info("[Wiki] Found: {} -> {}", name, title);
+
+            WikiPageResult result = new WikiPageResult();
+            result.setTitle(title);
+            result.setContent(content);
+            return result;
+
+        } catch (Exception e) {
+            logger.error("[Wiki] Error for {}: {}", name, e.getMessage());
             return null;
         }
-
-        WikiPageResult result = new WikiPageResult();
-        result.setTitle(page.path("title").asText());
-        result.setContent(page.path("extract").asText());
-        return result;
     }
 }
