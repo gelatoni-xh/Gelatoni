@@ -19,12 +19,12 @@ spring:
   datasource:
     gelatoni:
       driver-class-name: ${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
-      url: ${DB_URL:jdbc:mysql://localhost:3306/gelatoni}
+      jdbc-url: ${DB_URL:jdbc:mysql://localhost:3306/gelatoni}
       username: ${DB_USER}
       password: ${DB_PASSWORD}
     ekiden:
       driver-class-name: ${EKIDEN_DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
-      url: ${EKIDEN_DB_URL:jdbc:mysql://localhost:3306/ekiden_db}
+      jdbc-url: ${EKIDEN_DB_URL:jdbc:mysql://localhost:3306/ekiden_db}
       username: ${DB_USER}
       password: ${DB_PASSWORD}
 
