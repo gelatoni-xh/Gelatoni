@@ -3,9 +3,6 @@ package com.csxuhuan.gelatoni.infrastructure.client.wiki;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -34,11 +31,7 @@ public class WikipediaClient {
                     java.net.URLEncoder.encode(name, "UTF-8") +
                     "&prop=extracts&explaintext=true";
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("User-Agent", "Gelatoni/1.0 (https://github.com/csxuhuan/gelatoni)");
-            HttpEntity<String> entity = new HttpEntity<>(headers);
-
-            Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class).getBody();
+            Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
             if (response == null) {
                 logger.error("[Wiki] Response is null for: {}", name);
