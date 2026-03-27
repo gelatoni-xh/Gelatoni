@@ -23,16 +23,16 @@ import javax.sql.DataSource;
 )
 public class GelatoniDataSourceConfig {
 
-    @Value("${spring.datasource.gelatoni.driver-class-name}")
+    @Value("${DB_DRIVER_CLASS_NAME}")
     private String driverClassName;
 
-    @Value("${spring.datasource.gelatoni.url}")
+    @Value("${DB_URL}")
     private String url;
 
-    @Value("${spring.datasource.gelatoni.username}")
+    @Value("${DB_USER}")
     private String username;
 
-    @Value("${spring.datasource.gelatoni.password}")
+    @Value("${DB_PASSWORD}")
     private String password;
 
     @Primary
