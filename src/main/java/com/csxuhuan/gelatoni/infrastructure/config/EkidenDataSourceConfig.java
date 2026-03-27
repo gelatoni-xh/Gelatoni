@@ -26,8 +26,8 @@ public class EkidenDataSourceConfig {
     @Value("${spring.datasource.ekiden.driver-class-name}")
     private String driverClassName;
 
-    @Value("${spring.datasource.ekiden.jdbc-url}")
-    private String jdbcUrl;
+    @Value("${spring.datasource.ekiden.url}")
+    private String url;
 
     @Value("${spring.datasource.ekiden.username}")
     private String username;
@@ -39,7 +39,7 @@ public class EkidenDataSourceConfig {
     public DataSource ekidenDataSource() {
         return DataSourceBuilder.create()
                 .driverClassName(driverClassName)
-                .url(jdbcUrl)
+                .url(url)
                 .username(username)
                 .password(password)
                 .build();

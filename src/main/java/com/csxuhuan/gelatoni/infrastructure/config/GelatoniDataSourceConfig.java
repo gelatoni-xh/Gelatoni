@@ -26,8 +26,8 @@ public class GelatoniDataSourceConfig {
     @Value("${spring.datasource.gelatoni.driver-class-name}")
     private String driverClassName;
 
-    @Value("${spring.datasource.gelatoni.jdbc-url}")
-    private String jdbcUrl;
+    @Value("${spring.datasource.gelatoni.url}")
+    private String url;
 
     @Value("${spring.datasource.gelatoni.username}")
     private String username;
@@ -40,13 +40,12 @@ public class GelatoniDataSourceConfig {
     public DataSource gelatoniDataSource() {
         return DataSourceBuilder.create()
                 .driverClassName(driverClassName)
-                .url(jdbcUrl)
+                .url(url)
                 .username(username)
                 .password(password)
                 .build();
     }
 
-    @Primary
     @Bean("gelatoniSqlSessionFactory")
     public SqlSessionFactory gelatoniSqlSessionFactory(
             @Qualifier("gelatoniDataSource") DataSource dataSource) throws Exception {
@@ -56,7 +55,6 @@ public class GelatoniDataSourceConfig {
         return factory.getObject();
     }
 
-    @Primary
     @Bean("gelatoniSqlSessionTemplate")
     public SqlSessionTemplate gelatoniSqlSessionTemplate(
             @Qualifier("gelatoniSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
