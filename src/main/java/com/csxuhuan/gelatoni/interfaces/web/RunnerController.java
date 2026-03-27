@@ -13,6 +13,8 @@ import com.csxuhuan.gelatoni.interfaces.web.common.PageData;
 import com.csxuhuan.gelatoni.interfaces.web.common.PermissionConstants;
 import com.csxuhuan.gelatoni.interfaces.web.common.ResultCode;
 import com.csxuhuan.gelatoni.interfaces.web.request.RunnerPageRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +27,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/runners")
 public class RunnerController {
+
+    private static final Logger logger = LoggerFactory.getLogger(RunnerController.class);
 
     private final RunnerAppService runnerAppService;
     private final WikipediaService wikipediaService;
@@ -50,6 +54,7 @@ public class RunnerController {
 
     @GetMapping(value = "/fetch-wiki", produces = MediaType.APPLICATION_JSON_VALUE)
     public BaseResponse<Map<String, String>> fetchWiki(@RequestParam String name) {
+        logger.info("[Wiki] Fetching: {}", name);
         Map<String, String> data = wikipediaService.fetchRunnerData(name);
         if (data == null) {
             return BaseResponse.error(ResultCode.BIZ_ERROR,"Not found on Wikipedia");

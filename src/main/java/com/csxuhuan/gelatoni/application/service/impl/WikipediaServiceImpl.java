@@ -1,6 +1,8 @@
 package com.csxuhuan.gelatoni.application.service.impl;
 
 import com.csxuhuan.gelatoni.application.service.WikipediaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -12,6 +14,8 @@ import java.util.Map;
  */
 @Service
 public class WikipediaServiceImpl implements WikipediaService {
+
+    private static final Logger logger = LoggerFactory.getLogger(WikipediaServiceImpl.class);
 
     private final RestTemplate restTemplate;
 
@@ -29,35 +33,36 @@ public class WikipediaServiceImpl implements WikipediaService {
             Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 
             if (response == null) {
+                logger.error("[Wiki] Response is null for: {}", name);
                 return null;
             }
 
             Map<String, Object> query = (Map<String, Object>) response.get("query");
-            if (query == null) {
-                return null;
-            }
-
             Map<String, Object> pages = (Map<String, Object>) query.get("pages");
-            if (pages == null || pages.isEmpty()) {
-                return null;
-            }
-
-            Map<String, Object> page = (Map<String, Object>) pages.values().iterator().next();
             String pageId = (String) pages.keySet().iterator().next();
 
-            if ("-1".equals(pageId) || !page.containsKey("extract")) {
+            if ("-1".equals(pageId)) {
+                logger.warn("[Wiki] Not found: {}", name);
                 return null;
             }
 
+            Map<String, Object> page = (Map<String, Object>) pages.get(pageId);
+            String title = (String) page.get("title");
+            String content = (String) page.get("extract");
+
+            logger.info("[Wiki] Found: {} -> {}", name, title);
+
             Map<String, String> result = new HashMap<>();
-            result.put("title", (String) page.get("title"));
-            result.put("content", (String) page.get("extract"));
+            result.put("title", title);
+            result.put("content", content);
 
             return result;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[Wiki] Error for {}: {}", name, e.getMessage());
             return null;
         }
     }
 }
+
+
