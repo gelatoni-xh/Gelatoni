@@ -1,0 +1,45 @@
+app:
+  env: production
+
+logging:
+  level:
+    root: INFO
+    com:
+      csxuhuan:
+        gelatoni: DEBUG
+
+spring:
+  sleuth:
+    sampler:
+      probability: 1
+  logging:
+    pattern:
+      level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+  datasource:
+    gelatoni:
+      driver-class-name: ${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+      url: ${DB_URL}
+      username: ${DB_USER}
+      password: ${DB_PASSWORD}
+
+  datasource:
+    ekiden:
+      driver-class-name: ${EKIDEN_DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+      url: ${EKIDEN_DB_URL}
+      username: ${EKIDEN_DB_USER}
+      password: ${EKIDEN_DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-time: 604800000
+
+bot:
+  chat-url: http://127.0.0.1:8081/internal/chat
+
+wiki:
+  api-url: https://ja.wikipedia.org/w/api.php

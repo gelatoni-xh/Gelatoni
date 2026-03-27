@@ -1,0 +1,38 @@
+app:
+  env: dev
+
+logging:
+  level:
+    root: DEBUG
+    com:
+      csxuhuan:
+        gelatoni: DEBUG
+
+spring:
+  sleuth:
+    sampler:
+      probability: 1
+  logging:
+    pattern:
+      level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
+
+  datasource:
+    gelatoni:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3307/gelatoni?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      username: ${DB_USER:gelatoni}
+      password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-time: 604800000
+
+bot:
+  chat-url: http://127.0.0.1:8081/internal/chat
+
+wiki:
+  api-url: https://ja.wikipedia.org/w/api.php
