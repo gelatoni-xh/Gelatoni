@@ -5,7 +5,6 @@ import org.apache.ibatis.session.SqlSessionFactory;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
@@ -23,26 +22,10 @@ import javax.sql.DataSource;
 )
 public class EkidenDataSourceConfig {
 
-    @Value("${EKIDEN_DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}")
-    private String driverClassName;
-
-    @Value("${EKIDEN_DB_URL:jdbc:mysql://localhost:3306/ekiden_db}")
-    private String url;
-
-    @Value("${DB_USER}")
-    private String username;
-
-    @Value("${DB_PASSWORD}")
-    private String password;
-
     @Bean("ekidenDataSource")
+    @ConfigurationProperties(prefix = "spring.datasource.ekiden")
     public DataSource ekidenDataSource() {
-        return DataSourceBuilder.create()
-                .driverClassName(driverClassName)
-                .url(url)
-                .username(username)
-                .password(password)
-                .build();
+        return DataSourceBuilder.create().build();
     }
 
     @Bean("ekidenSqlSessionFactory")
