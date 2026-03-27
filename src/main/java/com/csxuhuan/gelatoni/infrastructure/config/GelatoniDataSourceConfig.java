@@ -23,10 +23,10 @@ import javax.sql.DataSource;
 )
 public class GelatoniDataSourceConfig {
 
-    @Value("${DB_DRIVER_CLASS_NAME}")
+    @Value("${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}")
     private String driverClassName;
 
-    @Value("${DB_URL}")
+    @Value("${DB_URL:jdbc:mysql://localhost:3306/gelatoni}")
     private String url;
 
     @Value("${DB_USER}")

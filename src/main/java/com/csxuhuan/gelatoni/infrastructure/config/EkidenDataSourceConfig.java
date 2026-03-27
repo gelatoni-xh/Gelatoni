@@ -23,16 +23,16 @@ import javax.sql.DataSource;
 )
 public class EkidenDataSourceConfig {
 
-    @Value("${EKIDEN_DB_DRIVER_CLASS_NAME}")
+    @Value("${EKIDEN_DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}")
     private String driverClassName;
 
-    @Value("${EKIDEN_DB_URL}")
+    @Value("${EKIDEN_DB_URL:jdbc:mysql://localhost:3306/ekiden_db}")
     private String url;
 
-    @Value("${EKIDEN_DB_USER}")
+    @Value("${DB_USER}")
     private String username;
 
-    @Value("${EKIDEN_DB_PASSWORD}")
+    @Value("${DB_PASSWORD}")
     private String password;
 
     @Bean("ekidenDataSource")
