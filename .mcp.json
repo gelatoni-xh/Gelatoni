@@ -3,6 +3,10 @@
     "git": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-git"]
+    },
+    "http-client": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-http-client"]
     }
   }
 }

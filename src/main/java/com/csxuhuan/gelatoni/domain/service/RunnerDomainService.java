@@ -1,4 +1,4 @@
-package com.csxuhuan.gelatoni.infrastructure.repository.ekiden;
+package com.csxuhuan.gelatoni.domain.service;
 
 import com.csxuhuan.gelatoni.domain.model.entity.Runner;
 import com.csxuhuan.gelatoni.domain.query.RunnerPageQuery;
@@ -6,14 +6,14 @@ import com.csxuhuan.gelatoni.domain.query.RunnerPageQuery;
 import java.util.List;
 
 /**
- * RunnerRepository
+ * Runner 领域服务
  */
-public interface RunnerRepository {
+public interface RunnerDomainService {
 
     /**
      * 分页查询选手
      */
-    List<Runner> findPage(RunnerPageQuery query);
+    List<Runner> getRunnerPage(RunnerPageQuery query);
 
     /**
      * 查询总数
