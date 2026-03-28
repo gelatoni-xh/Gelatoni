@@ -42,6 +42,8 @@ public class WikipediaClient {
             Map<String, Object> pages = (Map<String, Object>) query.get("pages");
             String pageId = (String) pages.keySet().iterator().next();
 
+            logger.debug("[Wiki] Response for {}: pageId={}, pages={}", name, pageId, pages);
+
             if ("-1".equals(pageId)) {
                 logger.warn("[Wiki] Not found: {}", name);
                 return null;
@@ -59,7 +61,7 @@ public class WikipediaClient {
             return result;
 
         } catch (Exception e) {
-            logger.error("[Wiki] Error for {}: {}", name, e.getMessage());
+            logger.error("[Wiki] Error for {}: {}", name, e.getMessage(), e);
             return null;
         }
     }
